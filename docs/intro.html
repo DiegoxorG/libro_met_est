@@ -23,7 +23,7 @@
 <meta name="author" content="Diego Payares y Salma Romero" />
 
 
-<meta name="date" content="2026-07-30" />
+<meta name="date" content="2026-08-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -180,7 +180,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Carguemos las librerias</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="intro.html#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="intro.html#cb1-2" tabindex="-1"></a><span class="fu">library</span>(Amelia)</span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="intro.html#cb2-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;C:/Users/diang/OneDrive - Universidad del Norte/Metodos Est/bookdown-demo-main/data/housing.csv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="intro.html#cb2-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/housing.csv&quot;</span>)</span></code></pre></div>
 <p>Muestrame las 5 primeras filas</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="intro.html#cb3-1" tabindex="-1"></a><span class="fu">head</span>(data, <span class="at">n=</span><span class="dv">5</span>)</span></code></pre></div>
 <pre><code>##   longitude latitude housing_median_age total_rooms total_bedrooms population
@@ -219,7 +219,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 1                     0                  0</code></pre>
 <p>Otra forma de detectar valores faltantes</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="intro.html#cb9-1" tabindex="-1"></a><span class="fu">missmap</span>(data)</span></code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/otra%20forma-1.png" alt="" width="672" /></p>
+<p><img src="bookdown-demo_files/figure-html/otra%20forma-1.png" width="672" /></p>
 <p>Ahora, hagamos imputacion de datos faltantes</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="intro.html#cb10-1" tabindex="-1"></a>data <span class="sc">|&gt;</span> </span>
 <span id="cb10-2"><a href="intro.html#cb10-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(</span>
