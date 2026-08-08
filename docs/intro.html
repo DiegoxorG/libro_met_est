@@ -23,7 +23,11 @@
 <meta name="author" content="Diego Payares y Salma Romero" />
 
 
+<<<<<<< Updated upstream
 <meta name="date" content="2026-08-01" />
+=======
+<meta name="date" content="2026-08-07" />
+>>>>>>> Stashed changes
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -142,7 +146,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Contexto del problema</a></li>
-<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> EDA</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> EDA</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#paquete-ggally"><i class="fa fa-check"></i><b>1.1</b> Paquete GGally</a></li>
+</ul></li>
 <li class="chapter" data-level="2" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>2</b> Literature</a></li>
 <li class="chapter" data-level="3" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>3</b> Methods</a>
 <ul>
@@ -179,7 +186,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">Chapter 1</span> EDA<a href="intro.html#intro" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>Carguemos las librerias</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="intro.html#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="intro.html#cb1-2" tabindex="-1"></a><span class="fu">library</span>(Amelia)</span></code></pre></div>
+<span id="cb1-2"><a href="intro.html#cb1-2" tabindex="-1"></a><span class="fu">library</span>(Amelia)</span>
+<span id="cb1-3"><a href="intro.html#cb1-3" tabindex="-1"></a><span class="fu">library</span>(moments)</span>
+<span id="cb1-4"><a href="intro.html#cb1-4" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb1-5"><a href="intro.html#cb1-5" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-6"><a href="intro.html#cb1-6" tabindex="-1"></a><span class="fu">library</span>(GGally)</span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="intro.html#cb2-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/housing.csv&quot;</span>)</span></code></pre></div>
 <p>Muestrame las 5 primeras filas</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="intro.html#cb3-1" tabindex="-1"></a><span class="fu">head</span>(data, <span class="at">n=</span><span class="dv">5</span>)</span></code></pre></div>
@@ -237,7 +248,281 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 1                     0                  0</code></pre>
 <p>Vamos a convertir la variable ‘ocean_proximity’ en un factor</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="intro.html#cb13-1" tabindex="-1"></a>df<span class="sc">$</span>ocean_proximity <span class="ot">&lt;-</span> <span class="fu">factor</span>(df<span class="sc">$</span>ocean_proximity)</span></code></pre></div>
+<p>##Analisis exploratorio de <code>median_house_value</code>
+(Target)</p>
+<p>Realicemos el resumen estadístico de la variable</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="intro.html#cb14-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">length</span>(median_house_value),</span>
+<span id="cb14-2"><a href="intro.html#cb14-2" tabindex="-1"></a>                 <span class="at">media =</span> <span class="fu">mean</span>(median_house_value),</span>
+<span id="cb14-3"><a href="intro.html#cb14-3" tabindex="-1"></a>                 <span class="at">sd =</span> <span class="fu">sd</span>(median_house_value),</span>
+<span id="cb14-4"><a href="intro.html#cb14-4" tabindex="-1"></a>                 <span class="at">mediana =</span> <span class="fu">median</span>(median_house_value),</span>
+<span id="cb14-5"><a href="intro.html#cb14-5" tabindex="-1"></a>                 <span class="at">RIC =</span> <span class="fu">IQR</span>(median_house_value), <span class="co">#Rango intercuartilico</span></span>
+<span id="cb14-6"><a href="intro.html#cb14-6" tabindex="-1"></a>                 <span class="at">Q1 =</span> <span class="fu">quantile</span>(median_house_value, <span class="fl">0.25</span>),</span>
+<span id="cb14-7"><a href="intro.html#cb14-7" tabindex="-1"></a>                 <span class="at">Q3 =</span> <span class="fu">quantile</span>(median_house_value, <span class="fl">0.75</span>),</span>
+<span id="cb14-8"><a href="intro.html#cb14-8" tabindex="-1"></a>                 <span class="at">minimo =</span> <span class="fu">min</span>(median_house_value),</span>
+<span id="cb14-9"><a href="intro.html#cb14-9" tabindex="-1"></a>                 <span class="at">maximo =</span> <span class="fu">max</span>(median_house_value),</span>
+<span id="cb14-10"><a href="intro.html#cb14-10" tabindex="-1"></a>                 <span class="at">asimetria =</span> <span class="fu">skewness</span>(median_house_value),</span>
+<span id="cb14-11"><a href="intro.html#cb14-11" tabindex="-1"></a>                 <span class="at">curtosis =</span> <span class="fu">kurtosis</span>(median_house_value))</span></code></pre></div>
+<pre><code>##       n    media       sd mediana    RIC     Q1     Q3 minimo maximo asimetria
+## 1 20640 206855.8 115395.6  179700 145125 119600 264725  14999 500001 0.9776922
+##   curtosis
+## 1   3.3275</code></pre>
+<p>En el conjunto de datos se registran 20.640 casas, cuyo valor promedio es de 206.855,8 dólares, con una desviación estándar de 179.700. El rango intercuartílico es de 145.125 dólares, el 25% de las casas presenta un valor igual o inferior a 119.600 dólares, mientras que el 75% se encuentra por debajo de 264.725 dólares. Los valores de las casas se encuentran entre 14.999 dólares y 500.001 dólares. El coeficiente de asimetría es 0.97, cercano a 1, lo que indica un sesgo hacia la derecha. La curtosis es de 3.32</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="intro.html#cb16-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="intro.html#cb16-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> median_house_value))<span class="sc">+</span></span>
+<span id="cb16-3"><a href="intro.html#cb16-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)),</span>
+<span id="cb16-4"><a href="intro.html#cb16-4" tabindex="-1"></a>                 <span class="at">binwidth =</span> <span class="dv">25000</span>,</span>
+<span id="cb16-5"><a href="intro.html#cb16-5" tabindex="-1"></a>                 <span class="at">fill =</span> <span class="st">&quot;#FFB6C1&quot;</span>,</span>
+<span id="cb16-6"><a href="intro.html#cb16-6" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">&quot;white&quot;</span>,</span>
+<span id="cb16-7"><a href="intro.html#cb16-7" tabindex="-1"></a>                 <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb16-8"><a href="intro.html#cb16-8" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">color =</span> <span class="st">&quot;darkblue&quot;</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>)<span class="sc">+</span></span>
+<span id="cb16-9"><a href="intro.html#cb16-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&#39;Distribuación del valor medio de las viviendas&#39;</span>,</span>
+<span id="cb16-10"><a href="intro.html#cb16-10" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&#39;Valor medio de la casa (USD)&#39;</span>) <span class="sc">+</span></span>
+<span id="cb16-11"><a href="intro.html#cb16-11" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
+<span id="cb16-12"><a href="intro.html#cb16-12" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/HistogramaHouse-1.png" width="672" /></p>
+<p>La mayoría de las viviendas tienen valores concentrados entre 100.000 y 200.000 dólares. Se observa un pico principal entre los 150.000/200.000 dólares. Sin embargo, también se observa una cola larga hacia la derecha con una segunda acumulación menor cerca de los 500.000 dólares. Lo cual, genera una distribución asimétrica positiva, donde predominan las casas de precios menores a los 300.000 dólares, pero existen valores extremos que elevan el promedio y aumentan la dispersión.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="intro.html#cb17-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="intro.html#cb17-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;&quot;</span>, <span class="at">y =</span> median_house_value))<span class="sc">+</span></span>
+<span id="cb17-3"><a href="intro.html#cb17-3" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">&quot;#FFB6C1&quot;</span>, <span class="at">color =</span> <span class="st">&quot;darkred&quot;</span>, <span class="at">outlier.color =</span> <span class="st">&#39;darkblue&#39;</span>)<span class="sc">+</span></span>
+<span id="cb17-4"><a href="intro.html#cb17-4" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> mean, <span class="at">geom =</span> <span class="st">&#39;point&#39;</span>, <span class="at">shape =</span> <span class="dv">20</span>,</span>
+<span id="cb17-5"><a href="intro.html#cb17-5" tabindex="-1"></a>               <span class="at">size=</span><span class="dv">3</span>, <span class="at">color =</span> <span class="st">&quot;darkred&quot;</span>) <span class="sc">+</span></span>
+<span id="cb17-6"><a href="intro.html#cb17-6" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb17-7"><a href="intro.html#cb17-7" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/boxplotvaluehouse-1.png" width="672" /></p>
+<p>Se observa que la mediana del valor de las viviendas se sitúa cerca de los 180.000 dólares, lo que significa que la mitad de las casas tiene un valor igual o inferior a esa cifra y la otra mitad igual o superior. El rango intercuartílico se extiende aproximadamente entre 125.000 y 275.000 dólares, mostrando que el 50% central de las viviendas se concentra en ese intervalo. El promedio se ubica algo por encima de la mediana, lo que evidencia un sesgo hacia la derecha: existen viviendas con valores más altos que elevan la media. El mínimo registrado es cercano a 15.000 dólares, mientras que el máximo alcanza los 500.000 dólares, lo que refleja una gran dispersión en los precios y la presencia de valores extremos que amplían la variabilidad de la distribución.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="intro.html#cb18-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="intro.html#cb18-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric), <span class="sc">-</span>median_house_value) <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="intro.html#cb18-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb18-4"><a href="intro.html#cb18-4" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb18-5"><a href="intro.html#cb18-5" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&#39;variable&#39;</span>,</span>
+<span id="cb18-6"><a href="intro.html#cb18-6" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&#39;valor&#39;</span></span>
+<span id="cb18-7"><a href="intro.html#cb18-7" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb18-8"><a href="intro.html#cb18-8" tabindex="-1"></a>  <span class="fu">group_by</span>(variable) <span class="sc">%&gt;%</span></span>
+<span id="cb18-9"><a href="intro.html#cb18-9" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">length</span>(valor),</span>
+<span id="cb18-10"><a href="intro.html#cb18-10" tabindex="-1"></a>                 <span class="at">media =</span> <span class="fu">mean</span>(valor),</span>
+<span id="cb18-11"><a href="intro.html#cb18-11" tabindex="-1"></a>                 <span class="at">sd =</span> <span class="fu">sd</span>(valor),</span>
+<span id="cb18-12"><a href="intro.html#cb18-12" tabindex="-1"></a>                 <span class="at">mediana =</span> <span class="fu">median</span>(valor),</span>
+<span id="cb18-13"><a href="intro.html#cb18-13" tabindex="-1"></a>                 <span class="at">RIC =</span> <span class="fu">IQR</span>(valor), <span class="co">#Rango intercuartilico</span></span>
+<span id="cb18-14"><a href="intro.html#cb18-14" tabindex="-1"></a>                 <span class="at">Q1 =</span> <span class="fu">quantile</span>(valor, <span class="fl">0.25</span>),</span>
+<span id="cb18-15"><a href="intro.html#cb18-15" tabindex="-1"></a>                 <span class="at">Q3 =</span> <span class="fu">quantile</span>(valor, <span class="fl">0.75</span>),</span>
+<span id="cb18-16"><a href="intro.html#cb18-16" tabindex="-1"></a>                 <span class="at">minimo =</span> <span class="fu">min</span>(valor),</span>
+<span id="cb18-17"><a href="intro.html#cb18-17" tabindex="-1"></a>                 <span class="at">maximo =</span> <span class="fu">max</span>(valor),</span>
+<span id="cb18-18"><a href="intro.html#cb18-18" tabindex="-1"></a>                 <span class="at">asimetria =</span> <span class="fu">skewness</span>(valor),</span>
+<span id="cb18-19"><a href="intro.html#cb18-19" tabindex="-1"></a>                 <span class="at">curtosis =</span> <span class="fu">kurtosis</span>(valor))</span></code></pre></div>
+<pre><code>## # A tibble: 8 × 12
+##   variable      n   media     sd mediana    RIC      Q1      Q3   minimo  maximo
+##   &lt;chr&gt;     &lt;int&gt;   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1 househol… 20640  500.   3.82e2  409    3.25e2  280     605       1      6082  
+## 2 housing_… 20640   28.6  1.26e1   29    1.9 e1   18      37       1        52  
+## 3 latitude  20640   35.6  2.14e0   34.3  3.78e0   33.9    37.7    32.5      42.0
+## 4 longitude 20640 -120.   2.00e0 -118.   3.79e0 -122.   -118.   -124.     -114. 
+## 5 median_i… 20640    3.87 1.90e0    3.53 2.18e0    2.56    4.74    0.500    15.0
+## 6 populati… 20640 1425.   1.13e3 1166    9.38e2  787    1725       3     35682  
+## 7 total_be… 20640  538.   4.19e2  438    3.46e2  297     643.      1      6445  
+## 8 total_ro… 20640 2636.   2.18e3 2127    1.70e3 1448.   3148       2     39320  
+## # ℹ 2 more variables: asimetria &lt;dbl&gt;, curtosis &lt;dbl&gt;</code></pre>
+<p>Households: Se registran 20.640 observaciones, con un promedio de 499,5 hogares y una desviación estándar de 382,3. La mediana es de 409 hogares, y el rango intercuartílico de 325 indica una dispersión considerable. El 25% de las comunidades tiene 280 hogares o menos, mientras que el 75% no supera los 605 hogares. Los valores van desde 1 hasta 6.082 hogares. La asimetría de 3,41 refleja un sesgo fuerte hacia la derecha, y la curtosis de 25,05 muestra colas muy pesadas.</p>
+<p>Housing median age: La edad mediana de las viviendas es de 29 años, con un promedio de 28,6 y desviación estándar de 12,6. El rango intercuartílico va de 18 a 37 años, indicando que la mitad de las viviendas se ubica en ese intervalo. Los valores oscilan entre 1 y 52 años. La asimetría de 0,06 muestra que la distribución es prácticamente simétrica, y la curtosis de 2,20 sugiere colas algo planas.</p>
+<p>Latitud: La latitud promedio es 35,63, con desviación estándar de 2,14 y una mediana de 34,26. El rango intercuartílico va de 33,93 a 37,71, lo que refleja que la mitad de las observaciones se encuentra en ese intervalo. Los valores van de 32,54 a 41,95. La asimetría de 0,46 indica un ligero sesgo hacia la derecha, y la curtosis de 1,88 evidencia colas más planas.</p>
+<p>Longitud: La longitud promedio es -119,57, con desviación estándar de 2,00 y una mediana de -118,49. El rango intercuartílico va de -121,80 a -118,01, mostrando que la mitad de las observaciones se concentra en ese intervalo. Los valores van de -124,35 a -114,31. La asimetría de -0,30 refleja un sesgo leve hacia la izquierda, y la curtosis de 1,67 indica colas planas.</p>
+<p>Median income: El ingreso mediano es de 3,53 unidades, con un promedio de 3,87 y desviación estándar de 1,90. El rango intercuartílico va de 2,56 a 4,74, señalando que la mitad de las observaciones se ubica en ese intervalo. Los valores van de 0,50 a 15,00. La asimetría de 1,65 evidencia un sesgo hacia la derecha, y la curtosis de 7,95 refleja colas pesadas.</p>
+<p>Population: La población promedio es de 1.425 personas, con una mediana de 1.166 y desviación estándar de 1.132. El rango intercuartílico va de 787 a 1.725 personas, mostrando que la mitad de las observaciones se concentra en ese intervalo. Los valores van de 3 hasta 35.682, lo que refleja gran dispersión. La asimetría de 4,94 indica un sesgo fuerte hacia la derecha y la curtosis de 76,53 confirma colas extremadamente pesadas.</p>
+<p>Total bedrooms: El número mediano de dormitorios es de 438, con un promedio de 538 y desviación estándar de 419. El rango intercuartílico va de 297 a 643 dormitorios, reflejando que la mitad de las observaciones se ubica en ese intervalo. Los valores van desde 1 hasta 6.445 dormitorios. La asimetría de 3,48 muestra un sesgo fuerte hacia la derecha, y la curtosis de 25,23 evidencia colas pesadas.</p>
+<p>Total rooms: El número mediano de habitaciones es de 2.127, con un promedio de 2.636 y desviación estándar de 2.182. El rango intercuartílico va de 1.447 a 3.148 habitaciones, indicando que la mitad de las observaciones se concentra en ese intervalo. Los valores van de 2 hasta 39.320 habitaciones, mostrando una dispersión muy amplia. La asimetría de 4,15 refleja un sesgo muy fuerte hacia la derecha, y la curtosis de 35,62 confirma colas extremadamente pesadas.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="intro.html#cb20-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="intro.html#cb20-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;&quot;</span>, <span class="at">y =</span> housing_median_age))<span class="sc">+</span></span>
+<span id="cb20-3"><a href="intro.html#cb20-3" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">&quot;#FFB6C1&quot;</span>, <span class="at">color =</span> <span class="st">&quot;darkred&quot;</span>, <span class="at">outlier.color =</span> <span class="st">&#39;darkblue&#39;</span>)<span class="sc">+</span></span>
+<span id="cb20-4"><a href="intro.html#cb20-4" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> mean, <span class="at">geom =</span> <span class="st">&#39;point&#39;</span>, <span class="at">shape =</span> <span class="dv">20</span>,</span>
+<span id="cb20-5"><a href="intro.html#cb20-5" tabindex="-1"></a>               <span class="at">size=</span><span class="dv">3</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
+<span id="cb20-6"><a href="intro.html#cb20-6" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb20-7"><a href="intro.html#cb20-7" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="ot">-&gt;</span> p1</span>
+<span id="cb20-8"><a href="intro.html#cb20-8" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="intro.html#cb20-9" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb20-10"><a href="intro.html#cb20-10" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;&quot;</span>, <span class="at">y =</span> total_rooms))<span class="sc">+</span></span>
+<span id="cb20-11"><a href="intro.html#cb20-11" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">&quot;#FFB6C1&quot;</span>, <span class="at">color =</span> <span class="st">&quot;darkred&quot;</span>, <span class="at">outlier.color =</span> <span class="st">&#39;darkblue&#39;</span>)<span class="sc">+</span></span>
+<span id="cb20-12"><a href="intro.html#cb20-12" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> mean, <span class="at">geom =</span> <span class="st">&#39;point&#39;</span>, <span class="at">shape =</span> <span class="dv">20</span>,</span>
+<span id="cb20-13"><a href="intro.html#cb20-13" tabindex="-1"></a>               <span class="at">size=</span><span class="dv">3</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
+<span id="cb20-14"><a href="intro.html#cb20-14" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb20-15"><a href="intro.html#cb20-15" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="ot">-&gt;</span> p2</span>
+<span id="cb20-16"><a href="intro.html#cb20-16" tabindex="-1"></a></span>
+<span id="cb20-17"><a href="intro.html#cb20-17" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb20-18"><a href="intro.html#cb20-18" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">&quot;&quot;</span>, <span class="at">y =</span> total_bedrooms))<span class="sc">+</span></span>
+<span id="cb20-19"><a href="intro.html#cb20-19" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">&quot;#FFB6C1&quot;</span>, <span class="at">color =</span> <span class="st">&quot;darkred&quot;</span>, <span class="at">outlier.color =</span> <span class="st">&#39;darkblue&#39;</span>)<span class="sc">+</span></span>
+<span id="cb20-20"><a href="intro.html#cb20-20" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> mean, <span class="at">geom =</span> <span class="st">&#39;point&#39;</span>, <span class="at">shape =</span> <span class="dv">20</span>,</span>
+<span id="cb20-21"><a href="intro.html#cb20-21" tabindex="-1"></a>               <span class="at">size=</span><span class="dv">3</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
+<span id="cb20-22"><a href="intro.html#cb20-22" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb20-23"><a href="intro.html#cb20-23" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="ot">-&gt;</span> p3</span>
+<span id="cb20-24"><a href="intro.html#cb20-24" tabindex="-1"></a></span>
+<span id="cb20-25"><a href="intro.html#cb20-25" tabindex="-1"></a>p1 <span class="sc">+</span> p2 <span class="sc">+</span> p3</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/graficoIndependiente-1.png" width="672" /></p>
+<p>Edad de las casas: Se evidencia que la mediana se sitúa alrededor de los 29–30 años. El 25% de las casas tiene una edad igual o menor a 18 años, mientras que el 75% se encuentra igual o por debajo de los 37 años. El mínimo registrado es de 1 año y el máximo alcanza los 52 años. La media se acerca bastante a la mediana (29 años aproximadamente), lo que refleja una distribución relativamente simétrica, con una dispersión moderada y sin valores extremos que alteren de manera significativa la forma general.</p>
+<p>Total de habitaciones: Se observa que la mediana está cerca de las 2.127 habitaciones. El 25% de las casas cuentan con 1.448 habitaciones o menos, mientras que el 75% no supera las 3.148 habitaciones. El mínimo es de 2 habitaciones y el máximo llega a 39.320. La media se ubica por encima de la mediana, lo que evidencia un sesgo hacia la derecha. Además, se identifican numerosos valores atípicos que representan casas con cantidades de habitaciones muy superiores al resto, generando una dispersión elevada y una distribución con colas largas hacia los valores altos.</p>
+<p>Total de dormitorios: Se aprecia que la mediana ronda los 400/500 dormitorios. El 25% de las casas tienen 297 dormitorios o menos, mientras que el 75% se encuentra igual o por debajo de 643 dormitorios. El mínimo registrado es de 1 dormitorio y el máximo alcanza los 6.445. La media se sitúa por encima de la mediana, lo que confirma un sesgo hacia la derecha. También se evidencian varios valores atípicos que corresponden a casas con un número de dormitorios muy elevado, reforzando la asimetría positiva de la distribución.</p>
+<p>AHora veamos la variable ocean_proximity</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="intro.html#cb21-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="intro.html#cb21-2" tabindex="-1"></a>  <span class="fu">count</span>(ocean_proximity, <span class="at">name =</span> <span class="st">&quot;n&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="intro.html#cb21-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Porcentaje =</span> <span class="fu">round</span>((n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>),</span>
+<span id="cb21-4"><a href="intro.html#cb21-4" tabindex="-1"></a>         <span class="at">Variable =</span> <span class="st">&#39;ocean_proximity&#39;</span>,</span>
+<span id="cb21-5"><a href="intro.html#cb21-5" tabindex="-1"></a>         <span class="at">Categoria =</span> <span class="fu">as.character</span>(ocean_proximity))</span></code></pre></div>
+<pre><code>##   ocean_proximity    n Porcentaje        Variable  Categoria
+## 1       &lt;1H OCEAN 9136      44.26 ocean_proximity  &lt;1H OCEAN
+## 2          INLAND 6551      31.74 ocean_proximity     INLAND
+## 3          ISLAND    5       0.02 ocean_proximity     ISLAND
+## 4        NEAR BAY 2290      11.09 ocean_proximity   NEAR BAY
+## 5      NEAR OCEAN 2658      12.88 ocean_proximity NEAR OCEAN</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="intro.html#cb23-1" tabindex="-1"></a>tabla_ocean <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="intro.html#cb23-2" tabindex="-1"></a>  <span class="fu">count</span>(ocean_proximity, <span class="at">name =</span> <span class="st">&quot;n&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb23-3"><a href="intro.html#cb23-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Porcentaje =</span> <span class="fu">round</span>((n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>),</span>
+<span id="cb23-4"><a href="intro.html#cb23-4" tabindex="-1"></a>         <span class="at">Variable =</span> <span class="st">&quot;ocean_proximity&quot;</span>,</span>
+<span id="cb23-5"><a href="intro.html#cb23-5" tabindex="-1"></a>         <span class="at">Categoria =</span> <span class="fu">as.character</span>(ocean_proximity)) <span class="sc">%&gt;%</span></span>
+<span id="cb23-6"><a href="intro.html#cb23-6" tabindex="-1"></a>  <span class="fu">select</span>(Variable, Categoria, n, Porcentaje)</span>
+<span id="cb23-7"><a href="intro.html#cb23-7" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="intro.html#cb23-8" tabindex="-1"></a>tabla_ocean</span></code></pre></div>
+<pre><code>##          Variable  Categoria    n Porcentaje
+## 1 ocean_proximity  &lt;1H OCEAN 9136      44.26
+## 2 ocean_proximity     INLAND 6551      31.74
+## 3 ocean_proximity     ISLAND    5       0.02
+## 4 ocean_proximity   NEAR BAY 2290      11.09
+## 5 ocean_proximity NEAR OCEAN 2658      12.88</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="intro.html#cb25-1" tabindex="-1"></a>tabla_ocean_b <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-2"><a href="intro.html#cb25-2" tabindex="-1"></a>  <span class="fu">count</span>(ocean_proximity, <span class="at">name =</span> <span class="st">&quot;n&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="intro.html#cb25-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Porcentaje =</span> <span class="fu">round</span>((n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>),</span>
+<span id="cb25-4"><a href="intro.html#cb25-4" tabindex="-1"></a>         <span class="at">Etiqueta =</span> <span class="fu">paste0</span>(n, <span class="st">&quot; (&quot;</span>, Porcentaje, <span class="st">&quot;%)&quot;</span>))</span>
+<span id="cb25-5"><a href="intro.html#cb25-5" tabindex="-1"></a>tabla_ocean <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb25-6"><a href="intro.html#cb25-6" tabindex="-1"></a>  <span class="fu">count</span>(ocean_proximity, <span class="at">name =</span> <span class="st">&quot;n&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb25-7"><a href="intro.html#cb25-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Porcentaje =</span> <span class="fu">round</span>((n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>),</span>
+<span id="cb25-8"><a href="intro.html#cb25-8" tabindex="-1"></a>         <span class="at">Variable =</span> <span class="st">&quot;ocean_proximity&quot;</span>,</span>
+<span id="cb25-9"><a href="intro.html#cb25-9" tabindex="-1"></a>         <span class="at">Categoria =</span> <span class="fu">as.character</span>(ocean_proximity)) <span class="sc">%&gt;%</span></span>
+<span id="cb25-10"><a href="intro.html#cb25-10" tabindex="-1"></a>  <span class="fu">select</span>(Variable, Categoria, n, Porcentaje)</span>
+<span id="cb25-11"><a href="intro.html#cb25-11" tabindex="-1"></a>tabla_ocean_b  <span class="sc">%&gt;%</span></span>
+<span id="cb25-12"><a href="intro.html#cb25-12" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> ocean_proximity, <span class="at">y=</span>n))<span class="sc">+</span></span>
+<span id="cb25-13"><a href="intro.html#cb25-13" tabindex="-1"></a>  <span class="co">#Variable categorica sin hacer conteo, geometriabar. Si tienes conteo, porcentaje, geometria de columnas</span></span>
+<span id="cb25-14"><a href="intro.html#cb25-14" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">&quot;#FF69B4&quot;</span>, <span class="at">width =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb25-15"><a href="intro.html#cb25-15" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> Etiqueta), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">4.5</span>) <span class="sc">+</span></span>
+<span id="cb25-16"><a href="intro.html#cb25-16" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span><span class="st">&#39;Distribución de la variable ocean proximity&#39;</span>) <span class="sc">+</span></span>
+<span id="cb25-17"><a href="intro.html#cb25-17" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.15</span>))) <span class="sc">+</span></span>
+<span id="cb25-18"><a href="intro.html#cb25-18" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/c%C3%B3mo%20est%C3%A1s-1.png" width="672" /></p>
+<p>El 44,3% de las viviendas se encuentran a menos de una hora del océano. En segundo lugar, se observa que un 31,7% de las viviendas están ubicadas en zonas interiores alejadas del mar. Las categorías cerca del océano y cerca la bahía representan porcentajes menores, de 12,9% y 11,1% respectivamente, mientras que solo 5 viviendas se ubican en islas, lo que equivale a un 0%.</p>
+<p>##Analisis exploratorio bivariado</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="intro.html#cb26-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb26-2"><a href="intro.html#cb26-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> median_income, <span class="at">y =</span> median_house_value))<span class="sc">+</span></span>
+<span id="cb26-3"><a href="intro.html#cb26-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">color =</span> <span class="st">&quot;pink&quot;</span>)<span class="sc">+</span></span>
+<span id="cb26-4"><a href="intro.html#cb26-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&#39;Valor medio de la vivienda&#39;</span>, <span class="at">x =</span> <span class="st">&#39;Ingreso medio&#39;</span>)<span class="sc">+</span></span>
+<span id="cb26-5"><a href="intro.html#cb26-5" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> <span class="st">&#39;Dispersión entre ingreso medio y el valor medio de la vivienda&#39;</span>)<span class="sc">+</span></span>
+<span id="cb26-6"><a href="intro.html#cb26-6" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
+<span id="cb26-7"><a href="intro.html#cb26-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/ValorVSIngreso-1.png" width="672" /></p>
+<p>Se evidencia una relación positiva, a medida que aumenta el ingreso medio, también incrementa el valor medio de las viviendas. Sin embargo, la nube de puntos indica una dispersión considerable, lo que muestra que no todas las viviendas siguen esa tendencia y existen variaciones importantes. En los niveles bajos de ingreso se concentran viviendas de menor valor, mientras que conforme el ingreso crece, aparecen viviendas con valores más altos. Se observan además algunos casos extremos de viviendas con precios muy elevados, que sobresalen del patrón general y no tienen una tendencia clara.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="intro.html#cb27-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb27-2"><a href="intro.html#cb27-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> latitude, <span class="at">y =</span> median_house_value))<span class="sc">+</span></span>
+<span id="cb27-3"><a href="intro.html#cb27-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">color =</span> <span class="st">&quot;lightblue&quot;</span>)<span class="sc">+</span></span>
+<span id="cb27-4"><a href="intro.html#cb27-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&#39;Valor medio de la vivienda&#39;</span>, <span class="at">x =</span> <span class="st">&#39;Latitud&#39;</span>)<span class="sc">+</span></span>
+<span id="cb27-5"><a href="intro.html#cb27-5" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> <span class="st">&#39;Dispersión entre ingreso medio y la latitud&#39;</span>)<span class="sc">+</span></span>
+<span id="cb27-6"><a href="intro.html#cb27-6" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
+<span id="cb27-7"><a href="intro.html#cb27-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/ValorVSLatitud-1.png" width="672" /></p>
+<p>Se observa que la mayoría de las viviendas se concentran en latitudes entre 33 y 37,7, donde los valores medios de las viviendas suelen oscilar entre 125.000 y 300.000 dólares. En esas franjas, la dispersión es amplia, con viviendas que alcanzan hasta 500.000 dólares. En latitudes más altas, cercanas a 40, predominan viviendas de menor valor, alrededor de 50.000 a 150.000 dólares. Mientras que en latitudes más bajas no existe un patrón único y los valores varían significativamente.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="intro.html#cb28-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="intro.html#cb28-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>longitude, <span class="at">y =</span> median_house_value))<span class="sc">+</span></span>
+<span id="cb28-3"><a href="intro.html#cb28-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">color =</span> <span class="st">&quot;lightgreen&quot;</span>)<span class="sc">+</span></span>
+<span id="cb28-4"><a href="intro.html#cb28-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&#39;Valor medio de la vivienda&#39;</span>, <span class="at">x =</span> <span class="st">&#39;Longitud&#39;</span>)<span class="sc">+</span></span>
+<span id="cb28-5"><a href="intro.html#cb28-5" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> <span class="st">&#39;Dispersión entre ingreso medio y la longitud&#39;</span>)<span class="sc">+</span></span>
+<span id="cb28-6"><a href="intro.html#cb28-6" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
+<span id="cb28-7"><a href="intro.html#cb28-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/ValorVSLongitud-1.png" width="672" /></p>
+<p>No se evidencia una relación lineal clara entre la longitud y el valor medio de la vivienda, ya que el comportamiento de los datos no es uniforme a lo largo del eje horizontal. La nube de puntos indica una alta dispersión y muestra concentraciones verticales muy marcadas, lo que refleja que el valor de las viviendas depende más de otros factores. En la mayoría de las coordenadas predomina una mayor densidad de viviendas con valores bajos y medios, entre los 100.000 a 300.000 dólares. Mientras que en franjas específicas, alrededor de -122.5 a -116.5, se alcanzan el precios más altos posible, 500.000 dólares. Por el contrario, en la zona central entre los -121.0 y -119.5 se nota una caída drástica en los precios, donde la gran mayoría de las propiedades se mantienen por debajo de los 150.000 dólares y raramente superan los 300.000 dólares. Asimismo, en los extremos por debajo de -123.0 y por encima de -115.0 la cantidad de viviendas disminuye considerablemente y sus precios difícilmente sobrepasan los 200.000 dólares.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="intro.html#cb29-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="intro.html#cb29-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> housing_median_age, <span class="at">y =</span> median_house_value))<span class="sc">+</span></span>
+<span id="cb29-3"><a href="intro.html#cb29-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">color =</span> <span class="st">&quot;yellow&quot;</span>)<span class="sc">+</span></span>
+<span id="cb29-4"><a href="intro.html#cb29-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&#39;Valor medio de la vivienda&#39;</span>, <span class="at">x =</span> <span class="st">&#39;Edad media de las viviendas&#39;</span>)<span class="sc">+</span></span>
+<span id="cb29-5"><a href="intro.html#cb29-5" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> <span class="st">&#39;Dispersión entre ingreso medio y edad de las viviendas&#39;</span>)<span class="sc">+</span></span>
+<span id="cb29-6"><a href="intro.html#cb29-6" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
+<span id="cb29-7"><a href="intro.html#cb29-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/ValorVSEdadCasa-1.png" width="672" /></p>
+<p>No se evidencia una relación lineal ni una tendencia clara entre la edad media de las viviendas y su valor medio, ya que los puntos se distribuyen de manera uniforme a lo largo de casi todas las edades. La nube de puntos muestra una alta dispersión en forma de franjas verticales continuas en todas las edades de las viviendas, lo que indica que la antigüedad de la propiedad no determina directamente su precio. En prácticamente todas las edades, la mayor densidad de datos se concentra en viviendas con valores situados entre los 100.000 y 250.000 dólares. Además, se percibe un leve incremento en la densidad general de viviendas conforme la edad supera los 15 a 20 años, manteniéndose hasta cerca los 50 años. Finalmente, llama la atención una acumulación vertical densa por encima de los 50 años, donde se agrupa una gran cantidad de viviendas que abarcan todos los rangos de precio, desde los 50.000 hasta los 500.000 dólares.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="intro.html#cb30-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="intro.html#cb30-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> total_rooms, <span class="at">y =</span> median_house_value))<span class="sc">+</span></span>
+<span id="cb30-3"><a href="intro.html#cb30-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>)<span class="sc">+</span></span>
+<span id="cb30-4"><a href="intro.html#cb30-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&#39;Valor medio de la vivienda&#39;</span>, <span class="at">x =</span> <span class="st">&#39;Total de habitaciones&#39;</span>)<span class="sc">+</span></span>
+<span id="cb30-5"><a href="intro.html#cb30-5" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> <span class="st">&#39;Dispersión entre ingreso medio y número de habitaciones&#39;</span>)<span class="sc">+</span></span>
+<span id="cb30-6"><a href="intro.html#cb30-6" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
+<span id="cb30-7"><a href="intro.html#cb30-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/ValorVSHabitaciones-1.png" width="672" /></p>
+<p>No se evidencia una relación lineal clara entre el total de habitaciones y el valor medio de la vivienda, ya que tener una mayor cantidad de habitaciones no garantiza un precio más alto. La nube de puntos muestra una concentración de datos en los menores números de habitaciones que parte desde las 0 hasta las 5.000 habitaciones, donde se encuentran viviendas con precios que abarcan todo el abanico posible, desde los 30.000 hasta los 500.000 dólares. A medida que el número de habitaciones aumenta hacia las 10000 unidades y más, la presencia de datos se vuelve dispersa y escasa, manteniéndose con valores variados sin una tendencia ascendente ni descendente. Al igual que en las gráficas anteriores, se distingue una marcada línea horizontal en el precio de 500.000 dólares, la cual se extiende desde las primeras habitaciones hasta casi las 20.000.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="intro.html#cb31-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb31-2"><a href="intro.html#cb31-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> total_bedrooms, <span class="at">y =</span> median_house_value))<span class="sc">+</span></span>
+<span id="cb31-3"><a href="intro.html#cb31-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">color =</span> <span class="st">&quot;blue&quot;</span>)<span class="sc">+</span></span>
+<span id="cb31-4"><a href="intro.html#cb31-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&#39;Valor medio de la vivienda&#39;</span>, <span class="at">x =</span> <span class="st">&#39;Total de dormitorios&#39;</span>)<span class="sc">+</span></span>
+<span id="cb31-5"><a href="intro.html#cb31-5" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> <span class="st">&#39;Dispersión entre ingreso medio y número de dormitorios&#39;</span>)<span class="sc">+</span></span>
+<span id="cb31-6"><a href="intro.html#cb31-6" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
+<span id="cb31-7"><a href="intro.html#cb31-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/ValorVSTotalDormitorios-1.png" width="672" /></p>
+<p>No se evidencia una relación lineal clara entre el total de dormitorios y el valor medio de la vivienda, pues un mayor número de dormitorios no se traduce en un incremento en el precio. La nube de puntos muestra una concentración de datos en los menores números de dormitorios, mayoritariamente comprendidos entre los 0 y 1000 dormitorios, donde se registra la mayor variación de precios, que van desde los 30.000 hasta los 500.000 dólares. Conforme el total de dormitorios supera las 1.500 unidades y se extiende hacia las 6.000, la presencia de observaciones se vuelve aislada y dispersa, sin mostrar un patrón de crecimiento claro en el valor de las viviendas. Se mantiene la línea horizontal continua en los 500.000 dólares, la cual es densa en el menor número de dormitorios y se prolonga de forma más espaciada más allá de los 2.000 dormitorios</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="intro.html#cb32-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href="intro.html#cb32-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> population, <span class="at">y =</span> median_house_value))<span class="sc">+</span></span>
+<span id="cb32-3"><a href="intro.html#cb32-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">color =</span> <span class="st">&quot;purple&quot;</span>)<span class="sc">+</span></span>
+<span id="cb32-4"><a href="intro.html#cb32-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&#39;Valor medio de la vivienda&#39;</span>, <span class="at">x =</span> <span class="st">&#39;Número de habitantes&#39;</span>)<span class="sc">+</span></span>
+<span id="cb32-5"><a href="intro.html#cb32-5" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> <span class="st">&#39;Dispersión entre ingreso medio y número de habitantes&#39;</span>)<span class="sc">+</span></span>
+<span id="cb32-6"><a href="intro.html#cb32-6" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
+<span id="cb32-7"><a href="intro.html#cb32-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/ValorVSHabitantes-1.png" width="672" /></p>
+<p>No se evidencia una relación lineal clara entre el número de habitantes y el valor medio de la vivienda, ya que una mayor población no se traduce en un incremento en el precio de las viviendas. La nube de puntos muestra una concentración masiva de datos agrupada en los menores números de habitantes, específicamente entre los 0 y 5.000 habitantes, donde se registran propiedades que cubren todo el rango de precios, desde los 3.0000 hasta los 500.000 dólares. Conforme la cantidad de habitantes supera los 5.000 y se extiende hacia los 15.000, la presencia de puntos se vuelve escasa y dispersa, manteniéndose viviendas con valores variados y sin una tendencia. Por otro lado, se observa una línea horizontal continua en 500.000 dólares, la cual es densa hasta alrededor de los 5.000 habitantes.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="intro.html#cb33-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="intro.html#cb33-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> households, <span class="at">y =</span> median_house_value))<span class="sc">+</span></span>
+<span id="cb33-3"><a href="intro.html#cb33-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">color =</span> <span class="st">&quot;gray&quot;</span>)<span class="sc">+</span></span>
+<span id="cb33-4"><a href="intro.html#cb33-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&#39;Valor medio de la vivienda&#39;</span>, <span class="at">x =</span> <span class="st">&#39;Hogares&#39;</span>)<span class="sc">+</span></span>
+<span id="cb33-5"><a href="intro.html#cb33-5" tabindex="-1"></a>  <span class="fu">facet_grid</span>(. <span class="sc">~</span> <span class="st">&#39;Dispersión entre ingreso medio y hogares&#39;</span>)<span class="sc">+</span></span>
+<span id="cb33-6"><a href="intro.html#cb33-6" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span></span>
+<span id="cb33-7"><a href="intro.html#cb33-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/ValorVSHogares-1.png" width="672" /></p>
+<p>No se evidencia una relación lineal clara entre la cantidad de hogares y el valor medio de la vivienda, ya que un mayor número de hogares no representa un incremento en el precio de las viviendas. La nube de puntos muestra una concentración de datos agrupada en los valores más bajos del eje horizontal, mayormente comprendidos entre los 0 y 1.000 hogares, donde se registran propiedades que abarcan todo el rango de precios, que va desde los 30.000 hasta los 500.000 dólares. A medida que la cantidad de hogares supera los 1.500 y se extiende hacia los 6.000, la presencia de registros se vuelve dispersa y aislada, con viviendas de precios variados sin una clara tendencia. Se aprecia nuevamente la marcada línea horizontal superior en los 500.000 dólares, la cual se muestra bastante densa en el tramo inicial de 0 a 1.000 hogares.</p>
+<p>Ahora comparemos el valor medio de las viviendas según la proximidad al oceano</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="intro.html#cb34-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb34-2"><a href="intro.html#cb34-2" tabindex="-1"></a>  <span class="fu">group_by</span>(ocean_proximity) <span class="sc">%&gt;%</span></span>
+<span id="cb34-3"><a href="intro.html#cb34-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">length</span>(median_house_value),</span>
+<span id="cb34-4"><a href="intro.html#cb34-4" tabindex="-1"></a>                 <span class="at">media =</span> <span class="fu">mean</span>(median_house_value),</span>
+<span id="cb34-5"><a href="intro.html#cb34-5" tabindex="-1"></a>                 <span class="at">sd =</span> <span class="fu">sd</span>(median_house_value),</span>
+<span id="cb34-6"><a href="intro.html#cb34-6" tabindex="-1"></a>                 <span class="at">mediana =</span> <span class="fu">median</span>(median_house_value),</span>
+<span id="cb34-7"><a href="intro.html#cb34-7" tabindex="-1"></a>                 <span class="at">RIC =</span> <span class="fu">IQR</span>(median_house_value), <span class="co">#Rango intercuartilico</span></span>
+<span id="cb34-8"><a href="intro.html#cb34-8" tabindex="-1"></a>                 <span class="at">Q1 =</span> <span class="fu">quantile</span>(median_house_value, <span class="fl">0.25</span>),</span>
+<span id="cb34-9"><a href="intro.html#cb34-9" tabindex="-1"></a>                 <span class="at">Q3 =</span> <span class="fu">quantile</span>(median_house_value, <span class="fl">0.75</span>),</span>
+<span id="cb34-10"><a href="intro.html#cb34-10" tabindex="-1"></a>                 <span class="at">minimo =</span> <span class="fu">min</span>(median_house_value),</span>
+<span id="cb34-11"><a href="intro.html#cb34-11" tabindex="-1"></a>                 <span class="at">maximo =</span> <span class="fu">max</span>(median_house_value),</span>
+<span id="cb34-12"><a href="intro.html#cb34-12" tabindex="-1"></a>                 <span class="at">asimetria =</span> <span class="fu">skewness</span>(median_house_value),</span>
+<span id="cb34-13"><a href="intro.html#cb34-13" tabindex="-1"></a>                 <span class="at">curtosis =</span> <span class="fu">kurtosis</span>(median_house_value))</span></code></pre></div>
+<pre><code>## # A tibble: 5 × 12
+##   ocean_proximity     n  media     sd mediana    RIC     Q1     Q3 minimo maximo
+##   &lt;fct&gt;           &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 &lt;1H OCEAN        9136 2.40e5 1.06e5  214850 125000 164100 289100  17500 500001
+## 2 INLAND           6551 1.25e5 7.00e4  108500  71450  77500 148950  14999 500001
+## 3 ISLAND              5 3.80e5 8.06e4  414700 150000 300000 450000 287500 450000
+## 4 NEAR BAY         2290 2.59e5 1.23e5  233800 183200 162500 345700  22500 500001
+## 5 NEAR OCEAN       2658 2.49e5 1.22e5  229450 172750 150000 322750  22500 500001
+## # ℹ 2 more variables: asimetria &lt;dbl&gt;, curtosis &lt;dbl&gt;</code></pre>
+<p>Se registran 9.136 datos en 1H OCEAN…</p>
+<p>Veamos un gráfico de cajas y bigotes</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="intro.html#cb36-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href="intro.html#cb36-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> ocean_proximity, <span class="at">y=</span>median_house_value))<span class="sc">+</span></span>
+<span id="cb36-3"><a href="intro.html#cb36-3" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb36-4"><a href="intro.html#cb36-4" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> comma)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/Boxplot-1.png" width="672" /></p>
+<div id="paquete-ggally" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Paquete GGally<a href="intro.html#paquete-ggally" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="intro.html#cb37-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="intro.html#cb37-2" tabindex="-1"></a>  <span class="fu">ggpairs</span>()</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</code></pre>
+<p><img src="bookdown-demo_files/figure-html/GGally-1.png" width="672" /></p>
 
+</div>
 </div>
             </section>
 
