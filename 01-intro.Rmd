@@ -4,13 +4,16 @@ Carguemos las librerias
 ```{r libreria, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(Amelia)
-<<<<<<< Updated upstream
-=======
 library(moments)
 library(scales)
 library(patchwork)
 library(GGally)
->>>>>>> Stashed changes
+
+=======
+library(moments)
+library(scales)
+library(patchwork)
+>>>>>>> 4cb6e0bfc481bb01632a475130f07ae3c66135e1
 ```
 
 
@@ -59,11 +62,9 @@ Vamos a convertir la variable 'ocean_proximity' en un factor
 df$ocean_proximity <- factor(df$ocean_proximity)
 ```
 
+##Analisis exploratorio de `median_house_value`
+(Target)
 
-<<<<<<< Updated upstream
-
-
-=======
 Realicemos el resumen estadístico de la variable
 ```{r median_house}
 df %>% summarise(n = length(median_house_value),
@@ -78,8 +79,8 @@ df %>% summarise(n = length(median_house_value),
                  asimetria = skewness(median_house_value),
                  curtosis = kurtosis(median_house_value))
 ```
-
 En el conjunto de datos se registran 20.640 casas, cuyo valor promedio es de 206.855,8 dólares, con una desviación estándar de 179.700. El rango intercuartílico es de 145.125 dólares, el 25% de las casas presenta un valor igual o inferior a 119.600 dólares, mientras que el 75% se encuentra por debajo de 264.725 dólares. Los valores de las casas se encuentran entre  14.999 dólares y 500.001 dólares. El coeficiente de asimetría es 0.97, cercano a 1, lo que indica un sesgo hacia la derecha. La curtosis es de 3.32
+
 
 ```{r HistogramaHouse}
 df %>%
@@ -96,8 +97,23 @@ df %>%
   scale_y_continuous(labels = comma)
                  
 ```
+La mayoría de las viviendas tienen valores concentrados entre 100.000 y 200.000 dólares. Se observa un pico principal entre los 150.000/200.000 dólares. Sin embargo, también se observa una cola larga hacia la derecha con una segunda acumulación menor cerca de los 500.000 dólares. Lo cual, genera una distribución asimétrica positiva, donde predominan las casas de precios medios, pero existen valores extremos que elevan el promedio y aumentan la dispersión.
 
-La mayoría de las viviendas tienen valores concentrados entre 100.000 y 200.000 dólares. Se observa un pico principal entre los 150.000/200.000 dólares. Sin embargo, también se observa una cola larga hacia la derecha con una segunda acumulación menor cerca de los 500.000 dólares. Lo cual, genera una distribución asimétrica positiva, donde predominan las casas de precios menores a los 300.000 dólares, pero existen valores extremos que elevan el promedio y aumentan la dispersión.
+```{r HistogramaHouse}
+df %>%
+  ggplot(aes(x= median_house_value))+
+  geom_histogram(aes(y = after_stat(density)),
+                 binwidth = 25000,
+                 fill = "#FFB6C1",
+                 color = "white",
+                 alpha = 0.6) +
+  geom_density(color = "darkblue", linewidth = 1.2)+
+  labs(title = 'Distribuación del valor medio de las viviendas',
+       x = 'Valor medio de la casa (USD)') +
+  scale_x_continuous(labels = comma) +
+  scale_y_continuous(labels = comma)
+
+```
 
 ```{r boxplotvaluehouse}
 df %>%
@@ -109,10 +125,11 @@ df %>%
   scale_y_continuous(labels = comma)
 
 ```
-
 Se observa que la mediana del valor de las viviendas se sitúa cerca de los 180.000 dólares, lo que significa que la mitad de las casas tiene un valor igual o inferior a esa cifra y la otra mitad igual o superior. El rango intercuartílico se extiende aproximadamente entre 125.000 y 275.000 dólares, mostrando que el 50% central de las viviendas se concentra en ese intervalo. El promedio se ubica algo por encima de la mediana, lo que evidencia un sesgo hacia la derecha: existen viviendas con valores más altos que elevan la media. El mínimo registrado es cercano a 15.000 dólares, mientras que el máximo alcanza los 500.000 dólares, lo que refleja una gran dispersión en los precios y la presencia de valores extremos que amplían la variabilidad de la distribución.
 
 ```{r hola}
+```
+
 df %>%
   select(where(is.numeric), -median_house_value) %>%
   pivot_longer(
@@ -135,22 +152,22 @@ df %>%
   
 
 ```
-
 Households: Se registran 20.640 observaciones, con un promedio de 499,5 hogares y una desviación estándar de 382,3. La mediana es de 409 hogares, y el rango intercuartílico de 325 indica una dispersión considerable. El 25% de las comunidades tiene 280 hogares o menos, mientras que el 75% no supera los 605 hogares. Los valores van desde 1 hasta 6.082 hogares. La asimetría de 3,41 refleja un sesgo fuerte hacia la derecha, y la curtosis de 25,05 muestra colas muy pesadas.
 
-Housing median age: La edad mediana de las viviendas es de 29 años, con un promedio de 28,6 y desviación estándar de 12,6. El rango intercuartílico va de 18 a 37 años, indicando que la mitad de las viviendas se ubica en ese intervalo. Los valores oscilan entre 1 y 52 años. La asimetría de 0,06 muestra que la distribución es prácticamente simétrica, y la curtosis de 2,20 sugiere colas algo planas.
+Housing Median Age: La edad mediana de las viviendas es de 29 años, con un promedio de 28,6 y desviación estándar de 12,6. El rango intercuartílico es de 19 años, el 25% de las viviendas tiene 18 años o menos, y el 75% no supera los 37 años. Los valores oscilan entre 1 y 52 años. La asimetría es muy baja (0,06), lo que indica simetría, y la curtosis de 2,20 sugiere colas algo planas.
 
-Latitud: La latitud promedio es 35,63, con desviación estándar de 2,14 y una mediana de 34,26. El rango intercuartílico va de 33,93 a 37,71, lo que refleja que la mitad de las observaciones se encuentra en ese intervalo. Los valores van de 32,54 a 41,95. La asimetría de 0,46 indica un ligero sesgo hacia la derecha, y la curtosis de 1,88 evidencia colas más planas.
+Latitud: La latitud promedio es 35,63, con desviación estándar de 2,14. La mediana es 34,26, y el rango intercuartílico de 3,78. El 25% de las observaciones está en latitudes menores o iguales a 33,93, y el 75% no supera 37,71. Los valores van de 32,54 a 41,95. La asimetría de 0,47 indica un ligero sesgo a la derecha, y la curtosis de 1,88 refleja colas más planas.
 
-Longitud: La longitud promedio es -119,57, con desviación estándar de 2,00 y una mediana de -118,49. El rango intercuartílico va de -121,80 a -118,01, mostrando que la mitad de las observaciones se concentra en ese intervalo. Los valores van de -124,35 a -114,31. La asimetría de -0,30 refleja un sesgo leve hacia la izquierda, y la curtosis de 1,67 indica colas planas.
+Longitud: La longitud promedio es -119,57, con desviación estándar de 2,00. La mediana es -118,49, y el rango intercuartílico de 3,79. El 25% de las observaciones está en valores menores o iguales a -121,80, y el 75% no supera -118,01. Los valores van de -124,35 a -114,31. La asimetría de -0,30 indica un sesgo leve hacia la izquierda, y la curtosis de 1,67 refleja colas planas.
 
-Median income: El ingreso mediano es de 3,53 unidades, con un promedio de 3,87 y desviación estándar de 1,90. El rango intercuartílico va de 2,56 a 4,74, señalando que la mitad de las observaciones se ubica en ese intervalo. Los valores van de 0,50 a 15,00. La asimetría de 1,65 evidencia un sesgo hacia la derecha, y la curtosis de 7,95 refleja colas pesadas.
+Ingreso mediano: El ingreso mediano es de 3,53 unidades, con un promedio de 3,87 y desviación estándar de 1,90. El rango intercuartílico es de 2,18. El 25% de las comunidades tiene ingresos menores o iguales a 2,56, y el 75% no supera 4,74. Los valores van de 0,50 a 15,00. La asimetría de 1,65 indica un sesgo hacia la derecha, y la curtosis de 7,95 refleja colas pesadas.
 
-Population: La población promedio es de 1.425 personas, con una mediana de 1.166 y desviación estándar de 1.132. El rango intercuartílico va de 787 a 1.725 personas, mostrando que la mitad de las observaciones se concentra en ese intervalo. Los valores van de 3 hasta 35.682, lo que refleja gran dispersión. La asimetría de 4,94 indica un sesgo fuerte hacia la derecha y la curtosis de 76,53 confirma colas extremadamente pesadas.
+Población: La población promedio es de 1.425 personas, con desviación estándar de 1.132. La mediana es de 1.166, y el rango intercuartílico de 938 muestra gran dispersión. El 25% de las casas tienen 787 personas o menos, y el 75% no supera 1.725. Los valores van de 3 hasta 35.682 personas. La asimetría de 4,94 indica un sesgo muy fuerte hacia la derecha, y la curtosis de 76,53 refleja colas extremadamente pesadas.
 
-Total bedrooms: El número mediano de dormitorios es de 438, con un promedio de 538 y desviación estándar de 419. El rango intercuartílico va de 297 a 643 dormitorios, reflejando que la mitad de las observaciones se ubica en ese intervalo. Los valores van desde 1 hasta 6.445 dormitorios. La asimetría de 3,48 muestra un sesgo fuerte hacia la derecha, y la curtosis de 25,23 evidencia colas pesadas.
+Dormitorios: El número promedio de dormitorios es de 538, con desviación estándar de 419. La mediana es de 438, y el rango intercuartílico de 346,25. El 25% de las casas tienen 297 dormitorios o menos, y el 75% no supera los 643,25 dormitorios. Los valores van desde 1 dormitorio hasta 6.445 dormitorios. La asimetría de 3,48 indica un sesgo fuerte hacia la derecha, y la curtosis de 25,23 refleja colas pesadas.
 
-Total rooms: El número mediano de habitaciones es de 2.127, con un promedio de 2.636 y desviación estándar de 2.182. El rango intercuartílico va de 1.447 a 3.148 habitaciones, indicando que la mitad de las observaciones se concentra en ese intervalo. Los valores van de 2 hasta 39.320 habitaciones, mostrando una dispersión muy amplia. La asimetría de 4,15 refleja un sesgo muy fuerte hacia la derecha, y la curtosis de 35,62 confirma colas extremadamente pesadas.
+Habitaciones: El número promedio de habitaciones es de 2.636, con desviación estándar de 2.182. La mediana es de 2.127, y el rango intercuartílico de 1.700,25. El 25% de las casas tienen 1.447,75 habitaciones o menos, y el 75% no supera las 3.148. Los valores van de 2 hasta 39.320 habitaciones. La asimetría de 4,15 indica un sesgo muy fuerte hacia la derecha, y la curtosis de 35,62 refleja colas extremadamente pesadas.
+
 
 ```{r graficoIndependiente}
 df %>%
@@ -179,12 +196,12 @@ df %>%
 
 p1 + p2 + p3
 ```
-
 Edad de las casas: Se evidencia que la mediana se sitúa alrededor de los 29–30 años. El 25% de las casas tiene una edad igual o menor a 18 años, mientras que el 75% se encuentra igual o por debajo de los 37 años. El mínimo registrado es de 1 año y el máximo alcanza los 52 años. La media se acerca bastante a la mediana (29 años aproximadamente), lo que refleja una distribución relativamente simétrica, con una dispersión moderada y sin valores extremos que alteren de manera significativa la forma general.
 
 Total de habitaciones: Se observa que la mediana está cerca de las 2.127 habitaciones. El 25% de las casas cuentan con 1.448 habitaciones o menos, mientras que el 75% no supera las 3.148 habitaciones. El mínimo es de 2 habitaciones y el máximo llega a 39.320. La media se ubica por encima de la mediana, lo que evidencia un sesgo hacia la derecha. Además, se identifican numerosos valores atípicos que representan casas con cantidades de habitaciones muy superiores al resto, generando una dispersión elevada y una distribución con colas largas hacia los valores altos.
 
 Total de dormitorios: Se aprecia que la mediana ronda los 400/500 dormitorios. El 25% de las casas tienen 297 dormitorios o menos, mientras que el 75% se encuentra igual o por debajo de 643 dormitorios. El mínimo registrado es de 1 dormitorio y el máximo alcanza los 6.445. La media se sitúa por encima de la mediana, lo que confirma un sesgo hacia la derecha. También se evidencian varios valores atípicos que corresponden a casas con un número de dormitorios muy elevado, reforzando la asimetría positiva de la distribución.
+<<<<<<< HEAD
 
 AHora veamos la variable ocean_proximity 
 ```{r variableOceano}
@@ -375,3 +392,5 @@ df %>%
 ```
 
 >>>>>>> Stashed changes
+=======
+>>>>>>> 4cb6e0bfc481bb01632a475130f07ae3c66135e1
