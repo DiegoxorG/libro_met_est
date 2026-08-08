@@ -8,6 +8,7 @@ library(moments)
 library(scales)
 library(patchwork)
 library(GGally)
+library(dplyr)
 ```
 
 
@@ -381,7 +382,3 @@ df %>%
   ggpairs()
 
 ```
-
->>>>>>> Stashed changes
-=======
->>>>>>> 4cb6e0bfc481bb01632a475130f07ae3c66135e1
