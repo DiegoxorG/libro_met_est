@@ -8,12 +8,6 @@ library(moments)
 library(scales)
 library(patchwork)
 library(GGally)
-
-=======
-library(moments)
-library(scales)
-library(patchwork)
->>>>>>> 4cb6e0bfc481bb01632a475130f07ae3c66135e1
 ```
 
 
@@ -128,8 +122,6 @@ df %>%
 Se observa que la mediana del valor de las viviendas se sitúa cerca de los 180.000 dólares, lo que significa que la mitad de las casas tiene un valor igual o inferior a esa cifra y la otra mitad igual o superior. El rango intercuartílico se extiende aproximadamente entre 125.000 y 275.000 dólares, mostrando que el 50% central de las viviendas se concentra en ese intervalo. El promedio se ubica algo por encima de la mediana, lo que evidencia un sesgo hacia la derecha: existen viviendas con valores más altos que elevan la media. El mínimo registrado es cercano a 15.000 dólares, mientras que el máximo alcanza los 500.000 dólares, lo que refleja una gran dispersión en los precios y la presencia de valores extremos que amplían la variabilidad de la distribución.
 
 ```{r hola}
-```
-
 df %>%
   select(where(is.numeric), -median_house_value) %>%
   pivot_longer(
@@ -149,9 +141,9 @@ df %>%
                  maximo = max(valor),
                  asimetria = skewness(valor),
                  curtosis = kurtosis(valor))
-  
-
 ```
+
+
 Households: Se registran 20.640 observaciones, con un promedio de 499,5 hogares y una desviación estándar de 382,3. La mediana es de 409 hogares, y el rango intercuartílico de 325 indica una dispersión considerable. El 25% de las comunidades tiene 280 hogares o menos, mientras que el 75% no supera los 605 hogares. Los valores van desde 1 hasta 6.082 hogares. La asimetría de 3,41 refleja un sesgo fuerte hacia la derecha, y la curtosis de 25,05 muestra colas muy pesadas.
 
 Housing Median Age: La edad mediana de las viviendas es de 29 años, con un promedio de 28,6 y desviación estándar de 12,6. El rango intercuartílico es de 19 años, el 25% de las viviendas tiene 18 años o menos, y el 75% no supera los 37 años. Los valores oscilan entre 1 y 52 años. La asimetría es muy baja (0,06), lo que indica simetría, y la curtosis de 2,20 sugiere colas algo planas.
@@ -253,7 +245,6 @@ df %>%
   facet_grid(. ~ 'Dispersión entre ingreso medio y el valor medio de la vivienda')+
   scale_y_continuous(labels = comma) +
   theme_bw()
-
 ```
 
 Se evidencia una relación positiva, a medida que aumenta el ingreso medio, también incrementa el valor medio de las viviendas. Sin embargo, la nube de puntos indica una dispersión considerable, lo que muestra que no todas las viviendas siguen esa tendencia y existen variaciones importantes. En los niveles bajos de ingreso se concentran viviendas de menor valor, mientras que conforme el ingreso crece, aparecen viviendas con valores más altos. Se observan además algunos casos extremos de viviendas con precios muy elevados, que sobresalen del patrón general y no tienen una tendencia clara.
