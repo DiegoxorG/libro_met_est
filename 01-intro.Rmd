@@ -77,7 +77,7 @@ df %>% summarise(n = length(median_house_value),
 En el conjunto de datos se registran 20.640 casas, cuyo valor promedio es de 206.855,8 dólares, con una desviación estándar de 179.700. El rango intercuartílico es de 145.125 dólares, el 25% de las casas presenta un valor igual o inferior a 119.600 dólares, mientras que el 75% se encuentra por debajo de 264.725 dólares. Los valores de las casas se encuentran entre  14.999 dólares y 500.001 dólares. El coeficiente de asimetría es 0.97, cercano a 1, lo que indica un sesgo hacia la derecha. La curtosis es de 3.32
 
 
-```{r HistogramaHouse}
+```{r histograma-valor-vivienda-principal}
 df %>%
   ggplot(aes(x= median_house_value))+
   geom_histogram(aes(y = after_stat(density)),
@@ -194,7 +194,148 @@ Edad de las casas: Se evidencia que la mediana se sitúa alrededor de los 29–3
 Total de habitaciones: Se observa que la mediana está cerca de las 2.127 habitaciones. El 25% de las casas cuentan con 1.448 habitaciones o menos, mientras que el 75% no supera las 3.148 habitaciones. El mínimo es de 2 habitaciones y el máximo llega a 39.320. La media se ubica por encima de la mediana, lo que evidencia un sesgo hacia la derecha. Además, se identifican numerosos valores atípicos que representan casas con cantidades de habitaciones muy superiores al resto, generando una dispersión elevada y una distribución con colas largas hacia los valores altos.
 
 Total de dormitorios: Se aprecia que la mediana ronda los 400/500 dormitorios. El 25% de las casas tienen 297 dormitorios o menos, mientras que el 75% se encuentra igual o por debajo de 643 dormitorios. El mínimo registrado es de 1 dormitorio y el máximo alcanza los 6.445. La media se sitúa por encima de la mediana, lo que confirma un sesgo hacia la derecha. También se evidencian varios valores atípicos que corresponden a casas con un número de dormitorios muy elevado, reforzando la asimetría positiva de la distribución.
-<<<<<<< HEAD
+### Gráficos univariados de las demás variables numéricas
+
+```{r univariados-faltantes, fig.width=12, fig.height=8}
+df %>%
+  select(longitude, latitude, population, households, median_income) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "valor"
+  ) %>%
+  ggplot(aes(x = valor)) +
+  geom_histogram(bins = 30, fill = "#FFB6C1", color = "white", alpha = 0.6) +
+  facet_wrap(~ variable, scales = "free", ncol = 2) +
+  scale_x_continuous(labels = comma) +
+  labs(
+    title = "Distribución de las variables independientes numéricas",
+    x = NULL,
+    y = "Frecuencia"
+  ) +
+  theme_bw()
+```
+
+**Longitud y latitud.** Ambas variables se concentran en rangos geográficos específicos de California y no siguen una distribución simétrica perfecta. Estas concentraciones reflejan la ubicación de la mayor parte de los distritos incluidos en la muestra.
+
+**Población y hogares.** Las dos distribuciones presentan asimetría positiva: la mayoría de los distritos tiene valores bajos o medios, mientras que unos pocos registran poblaciones y números de hogares muy altos. Por ello se observan colas largas hacia la derecha.
+
+**Ingreso mediano.** La distribución se concentra en los niveles de ingreso bajos y medios, con una cola hacia valores altos. Esto indica que hay menos distritos con ingresos medianos elevados y algunos valores extremos que conviene tener presentes en análisis posteriores.
+
+## Relaciones entre las variables independientes numéricas
+
+```{r matriz-correlaciones, fig.width=9, fig.height=8}
+variables_numericas <- df %>%
+  select(where(is.numeric), -median_house_value)
+
+matriz_correlaciones <- cor(variables_numericas)
+
+as.data.frame(as.table(matriz_correlaciones)) %>%
+  ggplot(aes(x = Var1, y = Var2, fill = Freq)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = round(Freq, 2)), size = 3) +
+  scale_fill_gradient2(
+    low = "lightblue", mid = "white", high = "#FFB6C1", midpoint = 0,
+    limits = c(-1, 1), name = "Correlación"
+  ) +
+  coord_equal() +
+  labs(
+    title = "Matriz de correlaciones de las variables independientes numéricas",
+    x = NULL,
+    y = NULL
+  ) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+La matriz muestra asociaciones lineales muy altas entre `total_bedrooms` y `households` (0,97), `total_rooms` y `total_bedrooms` (0,93), y entre `longitude` y `latitude` (-0,92). También se observan correlaciones altas entre las variables de tamaño del distrito: habitaciones, dormitorios, población y hogares. Estas relaciones sugieren posible multicolinealidad si se usan simultáneamente en un modelo.
+
+```{r dispersion-independientes, fig.width=12, fig.height=10}
+grafico_dispersion <- function(x, y, titulo) {
+  ggplot(df, aes(x = .data[[x]], y = .data[[y]])) +
+    geom_point(alpha = 0.4, color = "pink") +
+    geom_smooth(method = "lm", se = FALSE, color = "darkblue") +
+    labs(title = titulo, x = x, y = y) +
+    theme_bw()
+}
+
+p_cor1 <- grafico_dispersion("total_bedrooms", "households", "Dormitorios y hogares")
+p_cor2 <- grafico_dispersion("total_rooms", "total_bedrooms", "Habitaciones y dormitorios")
+p_cor3 <- grafico_dispersion("longitude", "latitude", "Longitud y latitud")
+p_cor4 <- grafico_dispersion("total_rooms", "households", "Habitaciones y hogares")
+p_cor5 <- grafico_dispersion("population", "households", "Población y hogares")
+
+(p_cor1 + p_cor2) / (p_cor3 + p_cor4) / p_cor5
+```
+
+Los gráficos confirman una relación positiva fuerte entre dormitorios, habitaciones, población y hogares: los distritos más grandes suelen tener más hogares, población y viviendas. La relación entre longitud y latitud es negativa y responde a la distribución geográfica de los registros, no a una relación causal. En todos los pares de tamaño se observan algunos valores muy altos, coherentes con las colas derechas identificadas en el análisis univariado.
+
+## Ingeniería de características
+
+Las variables de tamaño del distrito presentan correlaciones altas. Para resumirlas en medidas comparables entre distritos, se crean razones que describen habitaciones por hogar, proporción de dormitorios y habitantes por hogar. No se combinan longitud y latitud porque ambas variables representan coordenadas geográficas y una razón o suma entre ellas no tendría una interpretación directa.
+
+```{r crear-caracteristicas}
+df <- df %>%
+  mutate(
+    rooms_per_household = total_rooms / households,
+    bedrooms_per_room = total_bedrooms / total_rooms,
+    population_per_household = population / households
+  )
+```
+
+```{r resumen-caracteristicas}
+df %>%
+  select(rooms_per_household, bedrooms_per_room, population_per_household) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "valor"
+  ) %>%
+  group_by(variable) %>%
+  summarise(
+    media = mean(valor),
+    mediana = median(valor),
+    sd = sd(valor),
+    minimo = min(valor),
+    maximo = max(valor),
+    asimetria = skewness(valor)
+  )
+```
+
+```{r graficos-caracteristicas, fig.width=12, fig.height=9}
+datos_caracteristicas <- df %>%
+  select(rooms_per_household, bedrooms_per_room, population_per_household) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "valor"
+  )
+
+p_hist_caracteristicas <- datos_caracteristicas %>%
+  ggplot(aes(x = valor)) +
+  geom_histogram(bins = 30, fill = "#FFB6C1", color = "white", alpha = 0.6) +
+  facet_wrap(~ variable, scales = "free", ncol = 1) +
+  labs(title = "Distribución de las características creadas", x = NULL, y = "Frecuencia") +
+  theme_bw()
+
+p_box_caracteristicas <- datos_caracteristicas %>%
+  ggplot(aes(x = variable, y = valor)) +
+  geom_boxplot(fill = "#FFB6C1", color = "darkred", outlier.color = "darkblue") +
+  stat_summary(fun = mean, geom = "point", shape = 20, size = 3, color = "darkred") +
+  facet_wrap(~ variable, scales = "free", ncol = 1) +
+  labs(title = "Valores atípicos de las características creadas", x = NULL, y = NULL) +
+  theme_bw() +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+
+p_hist_caracteristicas + p_box_caracteristicas
+```
+
+**Habitaciones por hogar.** La media es 5,43 y la mediana 5,23 habitaciones por hogar. La mayor parte de los distritos se concentra en valores bajos y medios, pero hay una cola larga a la derecha y valores atípicos muy altos; estos corresponden a distritos con muchas habitaciones para un número reducido de hogares.
+
+**Proporción de dormitorios.** La proporción media de dormitorios es 0,21 y su mediana es 0,20. En la mayoría de los distritos los dormitorios representan cerca de una quinta parte del total de habitaciones. Los valores muy altos son atípicos y pueden deberse a distritos con pocas habitaciones o a configuraciones inusuales de vivienda.
+
+**Habitantes por hogar.** La media es 3,07 habitantes por hogar y la mediana 2,82. La distribución presenta una asimetría positiva marcada por algunos distritos con una relación población-hogares extremadamente alta. Estos casos atípicos deben considerarse al interpretar modelos que incorporen esta característica.
+
 
 AHora veamos la variable ocean_proximity 
 ```{r variableOceano}
@@ -375,10 +516,3 @@ Island: Se registran únicamente 5 observaciones, constituyendo el grupo más pe
 Near bay: Se registran 2.290 observaciones, con un precio medio de 259.212,3 dólares y una desviación estándar de 122.818,54 dólares. El 50% de los sectores cercanos a la bahía cotiza por debajo de los 233.800 dólares. El 25% no supera los 162.500 dólares, mientras que el 75% de las viviendas no excede los 345.700 dólares, lo que refleja una amplia dispersión en la zona. El precio menor es de 22.500 dólares y el valor máximo es de 500.000 dólares. No se observan puntos atípicos aislados.
 
 Near ocean: Se registran 2.658 observaciones, presentando un promedio de 249.434,0 dólares y una desviación estándar de 122.477,15 dólares. El 50% de las viviendas situadas cerca del océano registra valores inferiores a los 229.450 dólares, con una estructura muy similar a la de la bahía. El 25% de las viviendas no supera los 150.000 dólares, mientras que el 75% se mantiene por debajo de los 322.750 dólares. El precio menor parte de los 22.500 dólares y los datos se distribuyen uniformemente hasta llegar al valor máximo de 500.000 dólares, pues no posee valores atípicos aislados.
-
-## Paquete GGally
-```{r GGally}
-df %>%
-  ggpairs()
-
-```
