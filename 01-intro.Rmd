@@ -28,7 +28,7 @@ str(data)
 
 Veamos si hay datos faltantes
 ```{r faltante}
-data |> 
+data |>
   summarise(across(everything(), ~ sum(is.na(.)), .names = "NA_{.col}"))
 ```
 
@@ -39,16 +39,16 @@ missmap(data)
 
 Ahora, hagamos imputacion de datos faltantes
 ```{r imp}
-data |> 
+data |>
   mutate(across(
-    where(is.numeric), 
+    where(is.numeric),
     ~ ifelse(is.na(.), mean(.,na.rm=TRUE),.)
   )) -> df
 ```
 
 Verificar si tiene datos faltantes
 ```{r faltante2}
-df |> 
+df |>
   summarise(across(everything(), ~sum(is.na(.)),.names = "NA_{.col}"))
 ```
 
@@ -90,7 +90,7 @@ df %>%
        x = 'Valor medio de la casa (USD)') +
   scale_x_continuous(labels = comma) +
   scale_y_continuous(labels = comma)
-                 
+
 ```
 La mayoría de las viviendas tienen valores concentrados entre 100.000 y 200.000 dólares. Se observa un pico principal entre los 150.000/200.000 dólares. Sin embargo, también se observa una cola larga hacia la derecha con una segunda acumulación menor cerca de los 500.000 dólares. Lo cual, genera una distribución asimétrica positiva, donde predominan las casas de precios medios, pero existen valores extremos que elevan el promedio y aumentan la dispersión.
 
@@ -337,7 +337,7 @@ p_hist_caracteristicas + p_box_caracteristicas
 **Habitantes por hogar.** La media es 3,07 habitantes por hogar y la mediana 2,82. La distribución presenta una asimetría positiva marcada por algunos distritos con una relación población-hogares extremadamente alta. Estos casos atípicos deben considerarse al interpretar modelos que incorporen esta característica.
 
 
-AHora veamos la variable ocean_proximity 
+AHora veamos la variable ocean_proximity
 ```{r variableOceano}
 df %>%
   count(ocean_proximity, name = "n") %>%
@@ -438,7 +438,7 @@ df %>%
   theme_bw()
 ```
 
-No se evidencia una relación lineal clara entre el total de habitaciones y el valor medio de la vivienda, ya que tener una mayor cantidad de habitaciones no garantiza un precio más alto. La nube de puntos muestra una concentración de datos en los menores números de habitaciones que parte desde las 0 hasta las 5.000 habitaciones, donde se encuentran viviendas con precios que abarcan todo el abanico posible, desde los 30.000 hasta los 500.000 dólares. A medida que el número de habitaciones aumenta hacia las 10000 unidades y más, la presencia de datos se vuelve dispersa y escasa, manteniéndose con valores variados sin una tendencia ascendente ni descendente. Al igual que en las gráficas anteriores, se distingue una marcada línea horizontal en el precio de 500.000 dólares, la cual se extiende desde las primeras habitaciones hasta casi las 20.000. 
+No se evidencia una relación lineal clara entre el total de habitaciones y el valor medio de la vivienda, ya que tener una mayor cantidad de habitaciones no garantiza un precio más alto. La nube de puntos muestra una concentración de datos en los menores números de habitaciones que parte desde las 0 hasta las 5.000 habitaciones, donde se encuentran viviendas con precios que abarcan todo el abanico posible, desde los 30.000 hasta los 500.000 dólares. A medida que el número de habitaciones aumenta hacia las 10000 unidades y más, la presencia de datos se vuelve dispersa y escasa, manteniéndose con valores variados sin una tendencia ascendente ni descendente. Al igual que en las gráficas anteriores, se distingue una marcada línea horizontal en el precio de 500.000 dólares, la cual se extiende desde las primeras habitaciones hasta casi las 20.000.
 
 ```{r ValorVSTotalDormitorios}
 df %>%
@@ -462,7 +462,7 @@ df %>%
   theme_bw()
 ```
 
-No se evidencia una relación lineal clara entre el número de habitantes y el valor medio de la vivienda, ya que una mayor población no se traduce en un incremento en el precio de las viviendas. La nube de puntos muestra una concentración masiva de datos agrupada en los menores números de habitantes, específicamente entre los 0 y 5.000 habitantes, donde se registran propiedades que cubren todo el rango de precios, desde los 3.0000 hasta los 500.000 dólares. Conforme la cantidad de habitantes supera los 5.000 y se extiende hacia los 15.000, la presencia de puntos se vuelve escasa y dispersa, manteniéndose viviendas con valores variados y sin una tendencia. Por otro lado, se observa una línea horizontal continua en 500.000 dólares, la cual es densa hasta alrededor de los 5.000 habitantes. 
+No se evidencia una relación lineal clara entre el número de habitantes y el valor medio de la vivienda, ya que una mayor población no se traduce en un incremento en el precio de las viviendas. La nube de puntos muestra una concentración masiva de datos agrupada en los menores números de habitantes, específicamente entre los 0 y 5.000 habitantes, donde se registran propiedades que cubren todo el rango de precios, desde los 3.0000 hasta los 500.000 dólares. Conforme la cantidad de habitantes supera los 5.000 y se extiende hacia los 15.000, la presencia de puntos se vuelve escasa y dispersa, manteniéndose viviendas con valores variados y sin una tendencia. Por otro lado, se observa una línea horizontal continua en 500.000 dólares, la cual es densa hasta alrededor de los 5.000 habitantes.
 
 ```{r ValorVSHogares}
 df %>%
@@ -477,9 +477,9 @@ df %>%
 No se evidencia una relación lineal clara entre la cantidad de hogares y el valor medio de la vivienda, ya que un mayor número de hogares no representa un incremento en el precio de las viviendas. La nube de puntos muestra una concentración de datos agrupada en los valores más bajos del eje horizontal, mayormente comprendidos entre los 0 y 1.000 hogares, donde se registran propiedades que abarcan todo el rango de precios, que va desde los 30.000 hasta los 500.000 dólares. A medida que la cantidad de hogares supera los 1.500 y se extiende hacia los 6.000, la presencia de registros se vuelve dispersa y aislada, con viviendas de precios variados sin una clara tendencia. Se aprecia nuevamente la marcada línea horizontal superior en los 500.000 dólares, la cual se muestra bastante densa en el tramo inicial de 0 a 1.000 hogares.
 
 
-Ahora comparemos el valor medio de las viviendas según la proximidad al oceano 
+Ahora comparemos el valor medio de las viviendas según la proximidad al oceano
 ```{r BivalorVSOceano}
-df %>% 
+df %>%
   group_by(ocean_proximity) %>%
   summarise(n = length(median_house_value),
                  media = mean(median_house_value),
@@ -516,3 +516,406 @@ Island: Se registran únicamente 5 observaciones, constituyendo el grupo más pe
 Near bay: Se registran 2.290 observaciones, con un precio medio de 259.212,3 dólares y una desviación estándar de 122.818,54 dólares. El 50% de los sectores cercanos a la bahía cotiza por debajo de los 233.800 dólares. El 25% no supera los 162.500 dólares, mientras que el 75% de las viviendas no excede los 345.700 dólares, lo que refleja una amplia dispersión en la zona. El precio menor es de 22.500 dólares y el valor máximo es de 500.000 dólares. No se observan puntos atípicos aislados.
 
 Near ocean: Se registran 2.658 observaciones, presentando un promedio de 249.434,0 dólares y una desviación estándar de 122.477,15 dólares. El 50% de las viviendas situadas cerca del océano registra valores inferiores a los 229.450 dólares, con una estructura muy similar a la de la bahía. El 25% de las viviendas no supera los 150.000 dólares, mientras que el 75% se mantiene por debajo de los 322.750 dólares. El precio menor parte de los 22.500 dólares y los datos se distribuyen uniformemente hasta llegar al valor máximo de 500.000 dólares, pues no posee valores atípicos aislados.
+
+```{r Clase}
+# Libreria ----
+library(readxl)
+library(dplyr)
+library(effsize)
+library(openintro)
+library(nortest)
+library(car)
+
+#Data ----
+df <- read_excel("data/datos_medicos.xlsx")
+
+##Transformación (de caracter a factor) ----
+df$Presion <- factor(df$Presion)
+
+#Diferencias estadisticas en el promedio de la presión sistolica y diastolica
+
+##Resumen exploratorio ----
+df %>%
+  group_by(Presion) %>%
+  summarise(n= length(Valores),
+          promedio = mean(Valores),
+          ds = sd(Valores),
+          mediana = median(Valores),
+          RIC = IQR(Valores),
+          min = min(Valores),
+          max = max(Valores))
+
+## EDA: presión sistólica vs. diastólica ----
+df %>%
+  ggplot(aes(x = Presion, y = Valores)) +
+  geom_boxplot(fill = "#FFB6C1", color = "darkred", outlier.color = "darkblue") +
+  stat_summary(fun = mean, geom = "point", shape = 20, size = 3, color = "darkred") +
+  labs(title = "Presión sistólica y diastólica", x = "Tipo de presión", y = "Presión arterial") +
+  theme_bw()
+
+##Supuesto de normalidad ----
+
+###Primero separar los grupos
+dfs <- df %>%
+  filter(Presion == 'PresionSistolica') %>%
+  pull(Valores) #Me quedo con la númerica, me da un vector con solo los valores
+
+dfd <- df %>%
+  filter(Presion == 'PresionDiastolica') %>%
+  pull(Valores)
+
+##Estandarizar (restar por el promedio y dividir por la desviación) y aplicar Kolmogorov
+ks.test(scale(dfs), 'pnorm')
+ks.test(scale(dfd), 'pnorm')
+
+###Supuesto de homocedasticidad (igual varianzas) ----
+prueba_f_presion <- var.test(dfs, dfd)
+prueba_f_presion
+
+#### Verificación de var.test con el teorema de razón de varianzas
+n1 <- length(dfs)
+n2 <- length(dfd)
+s1 <- sum((dfs-mean(dfs))^2)/(n1-1)
+s2 <- sum((dfd-mean(dfd))^2)/(n2-1)
+
+##### Estadistico F
+F0 <- s1/s2
+
+##### Grados de libertad
+df1 <- n1 - 1
+df2 <- n2 - 1
+
+##### P-valor
+pvalor <- 2 * min(pf(F0, df1, df2), pf(F0, df1, df2, lower.tail = FALSE))
+
+##### Intervalos de confianza
+alpha = 0.05
+int_inf = (s1/s2)*(1/qf(1-alpha/2, df1, df2))
+int_sup = (s1/s2)*(1/qf(alpha/2, df1, df2))
+
+tibble(
+  estadistico_F_manual = F0,
+  estadistico_F_var_test = unname(prueba_f_presion$statistic),
+  gl_numerador = df1,
+  gl_denominador = df2,
+  p_valor_manual = pvalor,
+  p_valor_var_test = prueba_f_presion$p.value,
+  IC_inferior_manual = int_inf,
+  IC_superior_manual = int_sup,
+  IC_inferior_var_test = prueba_f_presion$conf.int[1],
+  IC_superior_var_test = prueba_f_presion$conf.int[2]
+)
+
+cat("Interpretación: como el intervalo de confianza de la razón de varianzas contiene 1 y el p-valor es mayor que 0,05, no se rechaza la igualdad de varianzas.\n")
+
+
+##T student ----
+prueba_t_presion <- t.test(x = dfs, y = dfd, var.equal = TRUE, paired = FALSE)
+prueba_t_presion
+
+#### Verificar la salida anterior
+n1 <- length(dfs)
+n2 <- length(dfd)
+
+m1 <- mean(dfs)
+m2 <- mean(dfd)
+
+s1_cuad <- var(dfs)
+s2_cuad <- var(dfd)
+
+##### Varianza combinada
+sp_cuad <- ((n1 - 1) * s1_cuad + (n2 - 1) * s2_cuad) / (n1 + n2 - 2)
+
+##### Estadístico t de Student tradicional
+t0 <- (m1 - m2) / sqrt(sp_cuad * (1/n1 + 1/n2))
+
+##### Grados de libertad
+df_t <- n1 + n2 - 2
+
+##### P-valor (prueba bilateral)
+pvalor_t <- 2 * pt(abs(t0), df = df_t, lower.tail = FALSE)
+
+##### Intervalo de confianza
+alpha <- 0.05
+t_critico <- qt(1 - alpha/2, df = df_t)
+error_estandar <- sqrt(sp_cuad * (1/n1 + 1/n2))
+
+int_inf <- (m1 - m2) - t_critico * error_estandar
+int_sup <- (m1 - m2) + t_critico * error_estandar
+
+tibble(
+  estadistico_t_manual = t0,
+  estadistico_t_t_test = unname(prueba_t_presion$statistic),
+  grados_libertad_manual = df_t,
+  grados_libertad_t_test = unname(prueba_t_presion$parameter),
+  p_valor_manual = pvalor_t,
+  p_valor_t_test = prueba_t_presion$p.value,
+  IC_inferior_manual = int_inf,
+  IC_superior_manual = int_sup,
+  IC_inferior_t_test = prueba_t_presion$conf.int[1],
+  IC_superior_t_test = prueba_t_presion$conf.int[2]
+)
+
+cat("Interpretación: el p-valor es menor que 0,05; se rechaza la igualdad de medias. La presión sistólica promedio es mayor que la diastólica.\n")
+
+### Diferencia de medias con aproximación normal ----
+
+# Para presión sistólica
+ks.test(dfs, "pnorm", mean = mean(dfs), sd = sd(dfs))
+
+# Para presión diastólica
+ks.test(dfd, "pnorm", mean = mean(dfd), sd = sd(dfd))
+
+#### Verificación con estadístico z
+z0 <- (m1 - m2) / error_estandar
+pvalor_z <- 2 * pnorm(abs(z0), lower.tail = FALSE)
+z_critico <- qnorm(1 - alpha / 2)
+int_inf_z <- (m1 - m2) - z_critico * error_estandar
+int_sup_z <- (m1 - m2) + z_critico * error_estandar
+
+tibble(
+  estadistico_z = z0,
+  p_valor_z = pvalor_z,
+  IC_inferior_z = int_inf_z,
+  IC_superior_z = int_sup_z
+)
+
+cat("Interpretación: esta es la aproximación z bajo el supuesto de normalidad o de muestras grandes. En estos datos, la presión diastólica no cumple estrictamente normalidad según Shapiro-Wilk; por tanto, la prueba t es preferible, aunque con n = 100 por grupo la aproximación normal es cercana.\n")
+
+
+##Tamaño del efecto ----
+cohen.d(dfs, dfd, paired = FALSE)
+
+
+# Diferencia de medias varianzas distintas ----
+
+#Data 2 ----
+df <- read_excel("data/datos_economia.xlsx")
+df $`Tipo de cuenta` <- factor(df$`Tipo de cuenta`)
+
+## EDA: inversión vs. ganancia ----
+df %>%
+  ggplot(aes(x = `Tipo de cuenta`, y = Precio)) +
+  geom_boxplot(fill = "#FFB6C1", color = "darkred", outlier.color = "darkblue") +
+  stat_summary(fun = mean, geom = "point", shape = 20, size = 3, color = "darkred") +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Precios por tipo de cuenta", x = "Tipo de cuenta", y = "Precio") +
+  theme_bw()
+
+##Transformacion 2 ----
+dfi <- df %>%
+  filter(`Tipo de cuenta` == 'Inversion') %>%
+  pull(Precio)
+
+dfg <- df %>%
+  filter(`Tipo de cuenta` == 'Ganancia') %>%
+  pull(Precio)
+
+#Supuesto de normalidad ----
+ks.test(scale(dfi), 'pnorm')
+ks.test(scale(dfg), 'pnorm')
+
+##Homogeneidad 2 ----
+prueba_f_precios <- var.test(dfi, dfg)
+prueba_f_precios
+
+## Bartlett, Levene y Fligner-Killeen ----
+prueba_bartlett <- bartlett.test(Precio ~ `Tipo de cuenta`, data = df)
+prueba_levene <- car::leveneTest(Precio ~ `Tipo de cuenta`, data = df, center = median)
+prueba_fligner <- fligner.test(Precio ~ `Tipo de cuenta`, data = df)
+
+prueba_bartlett
+prueba_levene
+prueba_fligner
+
+cat("Bartlett contrasta igualdad de varianzas con una aproximación chi-cuadrado y supone normalidad. Levene contrasta igualdad de varianzas mediante un estadístico F sobre desviaciones respecto a la mediana; es más robusta ante falta de normalidad. Fligner-Killeen usa rangos y una aproximación chi-cuadrado; es una alternativa no paramétrica robusta.\n")
+cat("Interpretación: los tres p-valores son menores que 0,05, por lo que se rechaza la homogeneidad de varianzas entre inversión y ganancia.\n")
+
+###Comprobación de homocedasticidad
+n1 <- length(dfi)
+n2 <- length(dfg)
+s1 <- sum((dfi-mean(dfi))^2)/(n1-1)
+s2 <- sum((dfg-mean(dfg))^2)/(n2-1)
+
+##### Estadistico F
+F0 <- s1/s2
+
+##### Grados de libertad
+df1 <- n1 - 1
+df2 <- n2 - 1
+
+##### P-valor
+pvalor <- 2 * min(pf(F0, df1, df2), pf(F0, df1, df2, lower.tail = FALSE))
+
+##### Intervalos de confianza
+alpha = 0.05
+int_inf = (s1/s2)*(1/qf(1-alpha/2, df1, df2))
+int_sup = (s1/s2)*(1/qf(alpha/2, df1, df2))
+
+tibble(
+  estadistico_F_manual = F0,
+  estadistico_F_var_test = unname(prueba_f_precios$statistic),
+  p_valor_manual = pvalor,
+  p_valor_var_test = prueba_f_precios$p.value,
+  IC_inferior_manual = int_inf,
+  IC_superior_manual = int_sup
+)
+
+
+## t.test con corrección del Welch ----
+t.test(x = dfi, y = dfg, var.equal = FALSE, paired = FALSE)
+
+###Verificación de la salida anterior
+m1 <- mean(dfi)
+m2 <- mean(dfg)
+
+v1 <- var(dfi)
+v2 <- var(dfg)
+
+##### Estadistico t de Welch
+t0 <- (m1 - m2) / sqrt((v1/n1) + (v2/n2))
+
+##### Grados de libertad de Welch
+num_df <- ((v1/n1) + (v2/n2))^2
+den_df <- (((v1/n1)^2) / (n1 - 1)) + (((v2/n2)^2) / (n2 - 1))
+
+df_welch <- num_df / den_df
+
+##### 4. P-valor (prueba bilateral)
+pvalor <- 2 * pt(abs(t0), df = df_welch, lower.tail = FALSE)
+
+
+##Exploratorio data 2 ----
+df %>%
+  group_by(`Tipo de cuenta`) %>%
+  summarise(n= length(Precio),
+            promedio = mean(Precio),
+            ds = sd(Precio),
+            mediana = median(Precio),
+            RIC = IQR(Precio),
+            min = min(Precio),
+            max = max(Precio))
+##Tamaño del efecto 2 ----
+cohen.d(dfi,dfg,paired = FALSE)
+
+# Estadística parametrica con dependencia ----
+
+# Datos de tiempos antes y después de la intervención educativa
+datos <- data.frame(
+  estudiante = c(1:10),
+  antes = c(12.9, 13.5, 12.8, 15.6, 17.2, 19.2, 12.6, 15.3, 14.4, 11.3),
+  despues = c(12.7, 13.6, 12.0, 15.2, 16.8, 20.0, 12.0, 15.9, 16.0, 11.1)
+)
+
+##Exploratorio ----
+summary(datos$antes)
+summary(datos$despues)
+
+datos %>%
+  summarise(n= n(),
+            promedio_antes = mean(antes),
+            promedio_despues = mean(despues),
+            sd_antes = sd(antes),
+            sd_despues = sd(despues),
+            mediana_antes = median(antes),
+            mediana_despues = median(despues),
+            min_antes = min(antes),
+            max_antes = max(antes),
+            min_despues = min(despues),
+            max_despues = max(despues))
+
+##Supuesto de normalidad ----
+diferencias <- datos$despues - datos$antes
+shapiro.test(diferencias)
+
+##Diferencia entre las medias ----
+prueba_t_pareada <- t.test(x = datos$despues, y = datos$antes, paired = TRUE)
+prueba_t_pareada
+
+### Teorema diferencia de medias para datos pareados
+##### Estadísticos descriptivos de las diferencias
+n_pareado <- length(diferencias)
+media_diff <- mean(diferencias)
+sd_diff <- sd(diferencias)
+
+##### Error estándar de las diferencias
+se_diff <- sd_diff / sqrt(n_pareado)
+
+##### Estadístico t de la prueba pareada (t0)
+t0 <- media_diff / se_diff
+
+##### Grados de libertad pareados
+df_pareado <- n_pareado - 1
+
+##### P-valor (prueba bilateral)
+pvalor_pareado <- 2 * pt(abs(t0), df = df_pareado, lower.tail = FALSE)
+
+##### Intervalo de confianza
+alpha <- 0.05
+t_critico <- qt(1 - alpha/2, df = df_pareado)
+
+int_inf <- media_diff - t_critico * se_diff
+int_sup <- media_diff + t_critico * se_diff
+
+tibble(
+  estadistico_t_manual = t0,
+  estadistico_t_t_test = unname(prueba_t_pareada$statistic),
+  grados_libertad_manual = df_pareado,
+  grados_libertad_t_test = unname(prueba_t_pareada$parameter),
+  p_valor_manual = pvalor_pareado,
+  p_valor_t_test = prueba_t_pareada$p.value,
+  IC_inferior_manual = int_inf,
+  IC_superior_manual = int_sup,
+  IC_inferior_t_test = prueba_t_pareada$conf.int[1],
+  IC_superior_t_test = prueba_t_pareada$conf.int[2]
+)
+
+cat("Interpretación: el p-valor es mayor que 0,05 y el intervalo contiene 0; no hay evidencia de un cambio promedio después de la intervención educativa.\n")
+
+##Tamaño del efecto ----
+cohen.d(datos$despues, datos$antes, paired = TRUE)
+
+## Verificación de teoremas completada ----
+
+#Diferencia de medianas con estadistica No Parametrica ----
+data('births')
+df <- births
+
+##Exploratorio ----
+df %>%
+  group_by(smoke) %>%
+  summarise(n = length(weight),
+            promedio = mean(weight),
+            ds = sd(weight),
+            mediana = median(weight),
+            RIC = IQR(weight),
+            min = min(weight),
+            max = max(weight)
+            )
+##Supuesto de normalidad ----
+df %>%
+  group_by(smoke) %>%
+  summarise(n = length(weight),
+            est_ks = ks.test(scale(weight), 'pnorm')$statistic, #Estadistico de Kolmogorov
+            p_ks = ks.test(scale(weight), 'pnorm')$p.value, #Kolmogorov
+            est_w = shapiro.test(weight)$statistic, #Shapiro
+            p_sw = shapiro.test(weight)$p.value,
+            est_l = lillie.test(weight)$statistic, #Lilliefers
+            p_l = lillie.test(weight)$p.value)
+
+prueba_levene_peso <- car::leveneTest(weight ~ smoke, data = df, center = median)
+prueba_levene_peso
+
+prueba_t_peso <- t.test(weight ~ smoke, data = df)
+prueba_wilcox_peso <- wilcox.test(weight ~ smoke, data = df)
+
+prueba_t_peso
+prueba_wilcox_peso
+
+cat("Decisión: las pruebas de normalidad rechazan normalidad en ambos grupos, pero las muestras son de tamaño 100 y 50, y Levene no rechaza igualdad de varianzas. Por el teorema central del límite, la prueba t de Welch es una aproximación paramétrica razonable; se reporta junto con Mann-Whitney como análisis de sensibilidad.\n")
+cat("Comparación: ambas pruebas presentan p-valores mayores que 0,05, por lo que coinciden en que no hay evidencia suficiente de diferencia en el peso al nacer entre fumadoras y no fumadoras.\n")
+
+
+
+#
+```
