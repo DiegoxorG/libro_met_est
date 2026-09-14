@@ -14,8 +14,31 @@ description: "This is a minimal example of using the bookdown package to write a
 
 # Contexto del problema {-}
 
-Los datos que vamos a analizar estan relacionados con el precio promedio de las casas en el estado de California
+La enfermedad de Parkinson es un trastorno neurodegenerativo que puede afectar diferentes aspectos del movimiento y del habla.  La evaluación estándar de la severidad del síntoma se realiza mediante la escala unificada de calificación de la enfermedad de Parkinson (UPDRS). El monitoreo de la progresión de sus síntomas requiere evaluaciones periódicas, por lo que las técnicas de telemonitorización pueden constituir una alternativa para obtener información de manera remota y no invasiva.
 
+El conjunto de datos a analizar (Parkinsons Telemonitoring, disponible en el UCI Machine Learning Repository), contiene mediciones biomédicas de la voz obtenidas de 42 personas con enfermedad de Parkinson en etapa temprana, quienes participaron en una prueba de seis meses de un dispositivo de telemonitorización. Las grabaciones fueron realizadas automáticamente en los domicilios de los pacientes. El conjunto contiene 5.875 registros de voz, correspondientes a múltiples grabaciones realizadas a estos participantes.
+
+Para cada registro se dispone de información demográfica y temporal, como la edad, el sexo y el tiempo transcurrido desde el reclutamiento, además de 16 medidas biomédicas relacionadas con características de la voz. También se registran las puntuaciones motor_UPDRS y total_UPDRS, correspondientes a medidas clínicas de la sintomatología de la enfermedad.
+
+# Objetivo general {-}
+
+Analizar exploratoria e inferencialmente las características demográficas, temporales y biomédicas de las mediciones de voz de pacientes con enfermedad de Parkinson, con el fin de identificar relaciones entre las variables independientes y las puntuaciones UPDRS, así como diferencias estadísticamente significativas entre los grupos y características analizadas.
+
+# Objetivos específicos {-}
+
+Describir y visualizar las variables independientes numéricas del conjunto de datos mediante medidas estadísticas y gráficos univariados, con el propósito de identificar su distribución, tendencia central, dispersión y posibles valores atípicos.
+
+Analizar gráficamente la relación entre cada variable independiente numérica y la puntuación UPDRS seleccionada como variable respuesta, mediante gráficos de dispersión, con el fin de identificar patrones de asociación, tendencias y posibles valores atípicos.
+
+Explorar las relaciones entre las variables independientes numéricas mediante gráficos de dispersión y medidas de asociación, con el propósito de identificar posibles relaciones lineales, redundancias y grupos de variables con comportamientos similares.
+
+Identificar pares o grupos de variables independientes con alta correlación y evaluar la posibilidad de construir características derivadas que permitan reducir información redundante, comparando mediante gráficos univariados las características originales con las características transformadas.
+
+Evaluar los supuestos estadísticos necesarios para la aplicación de las pruebas de hipótesis seleccionadas, mediante procedimientos gráficos y pruebas de normalidad y homocedasticidad, determinando la pertinencia de utilizar métodos paramétricos o no paramétricos.
+
+Determinar, mediante pruebas de hipótesis adecuadas, si existen diferencias o asociaciones estadísticamente significativas entre las variables de interés, de acuerdo con los objetivos planteados a partir del análisis exploratorio.
+
+Cuantificar la magnitud de las diferencias o asociaciones encontradas mediante medidas de tamaño del efecto apropiadas, según el tipo de prueba utilizada, con el propósito de complementar la significancia estadística con una medida de relevancia práctica.
 ```{r include=FALSE}
 # automatically create a bib database for R packages
 knitr::write_bib(c(

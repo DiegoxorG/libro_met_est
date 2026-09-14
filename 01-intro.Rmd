@@ -16,111 +16,117 @@ library(dplyr)
 data <- read.csv("data/parkinsons_updrs.data")
 ```
 
-Muestrame las 5 primeras filas
-```{r filas}
-head(data, n=5)
+
+```{r Ver las primeras filas}
+head(data, n=10)
 ```
 
-La estructura de los datos
-```{r estructura}
+```{r Estructura de los datos}
 str(data)
 ```
 
-Veamos si hay datos faltantes
-```{r faltante}
+```{r Comprobar si hay datos faltante}
 data |>
   summarise(across(everything(), ~ sum(is.na(.)), .names = "NA_{.col}"))
 ```
 
-Otra forma de detectar valores faltantes
-```{r otra forma}
-missmap(data)
+
+```{r Transformación de variables}
+data$subject. <- factor(data$subject.)
+
+data$sex <- factor(data$sex,
+                   levels = c(0, 1),
+                   labels = c("Masculino", "Femenino"))
+str(data)
+table(data$sex)
+nlevels(data$subject.)
 ```
 
-Ahora, hagamos imputacion de datos faltantes
-```{r imp}
-data |>
-  mutate(across(
-    where(is.numeric),
-    ~ ifelse(is.na(.), mean(.,na.rm=TRUE),.)
-  )) -> df
+## Análisis exploratorio de `motor_UPDRS`
+(Variable respuesta)
+
+Realicemos el resumen estadístico de la variable respuesta motor UPDRS
+```{r motor_UPDRS}
+data %>% 
+  summarise(
+    n = length(motor_UPDRS),
+    media = mean(motor_UPDRS),
+    sd = sd(motor_UPDRS),
+    mediana = median(motor_UPDRS),
+    RIC = IQR(motor_UPDRS), 
+    Q1 = quantile(motor_UPDRS, 0.25),
+    Q3 = quantile(motor_UPDRS, 0.75),
+    minimo = min(motor_UPDRS),
+    maximo = max(motor_UPDRS),
+    asimetria = skewness(motor_UPDRS),
+    curtosis = kurtosis(motor_UPDRS))
 ```
+La variable motor_UPDRS presenta 5.875 registros, con una media de 21.30 puntos y una desviación estándar de 8.13 puntos, lo que demuestra una variabilidad considerable en las evaluaciones de los pacientes a lo largo del estudio. Exactamente el 50 % de los registros presenta un puntaje inferior a 20.87 puntos, mientras que el 50 % restante supera esta cifra. La cercanía entre este punto medio y el promedio general (21.30 puntos) concuerda con un coeficiente de asimetría cercano a cero (0.075), sugiriendo que las puntuaciones de afectación motora se distribuyen de forma balanceada alrededor de su centro.
 
-Verificar si tiene datos faltantes
-```{r faltante2}
-df |>
-  summarise(across(everything(), ~sum(is.na(.)),.names = "NA_{.col}"))
-```
+El 50 % central de las observaciones se encuentra entre 15.00 y 27.60 puntos, con un rango intercuartílico de 12.60. Esto deja al 25 % de la muestra en un estado de deterioro leve (por debajo de 15.00 puntos) y al 25 % restante en una condición más severa (por encima de 27.60 puntos).
 
-Vamos a convertir la variable 'ocean_proximity' en un factor
-```{r factorocean}
-df$ocean_proximity <- factor(df$ocean_proximity)
-```
+La amplitud de la escala observada abarca desde un estado de afectación motora mínima de 5.04 puntos hasta un deterioro severo alcanzando los 39.51 puntos. Esta brecha confirma que la muestra integra tanto a pacientes en estadios iniciales o altamente controlados de la enfermedad como a individuos con una alteración motora considerablemente avanzada.
 
-##Analisis exploratorio de `median_house_value`
-(Target)
-
-Realicemos el resumen estadístico de la variable
-```{r median_house}
-df %>% summarise(n = length(median_house_value),
-                 media = mean(median_house_value),
-                 sd = sd(median_house_value),
-                 mediana = median(median_house_value),
-                 RIC = IQR(median_house_value), #Rango intercuartilico
-                 Q1 = quantile(median_house_value, 0.25),
-                 Q3 = quantile(median_house_value, 0.75),
-                 minimo = min(median_house_value),
-                 maximo = max(median_house_value),
-                 asimetria = skewness(median_house_value),
-                 curtosis = kurtosis(median_house_value))
-```
-En el conjunto de datos se registran 20.640 casas, cuyo valor promedio es de 206.855,8 dólares, con una desviación estándar de 179.700. El rango intercuartílico es de 145.125 dólares, el 25% de las casas presenta un valor igual o inferior a 119.600 dólares, mientras que el 75% se encuentra por debajo de 264.725 dólares. Los valores de las casas se encuentran entre  14.999 dólares y 500.001 dólares. El coeficiente de asimetría es 0.97, cercano a 1, lo que indica un sesgo hacia la derecha. La curtosis es de 3.32
+La asimetría es cercana a cero (0.075), lo que indica una distribución aproximadamente simétrica, con una ligera asimetría positiva. La curtosis de 2.06, es inferior a la correspondiente a una distribución normal (3). Esto implica una menor concentración de datos alrededor del centro y colas más ligeras, lo que nuevamente refleja que las puntuaciones del motor UPDRS están dispersas de manera más uniforme a lo largo del rango medio en lugar de agruparse de forma pronunciada en un único punto.
 
 
-```{r histograma-valor-vivienda-principal}
-df %>%
-  ggplot(aes(x= median_house_value))+
+```{r Histograma motor_UPDRS}
+data %>%
+  ggplot(aes(x = motor_UPDRS)) +
   geom_histogram(aes(y = after_stat(density)),
-                 binwidth = 25000,
-                 fill = "#FFB6C1",
-                 color = "white",
-                 alpha = 0.6) +
-  geom_density(color = "darkblue", linewidth = 1.2)+
-  labs(title = 'Distribuación del valor medio de las viviendas',
-       x = 'Valor medio de la casa (USD)') +
-  scale_x_continuous(labels = comma) +
-  scale_y_continuous(labels = comma)
-
+                 binwidth = 2,
+                 fill = "#FAD0C4",
+                 color = "#E8A598",
+                 alpha = 0.7) +
+  geom_density(color = "#C2185B",
+               linewidth = 1.2) +
+  labs(title = "Distribución de la puntuación motor UPDRS",
+       subtitle = "Evaluación de densidad y frecuencia relativa",
+       x = "Motor UPDRS (Puntos)",
+       y = "Densidad") +
+  theme_minimal(base_family = "sans") +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14, color = "#4A4A4A"),
+    plot.subtitle = element_text(hjust = 0.5, size = 10, color = "gray40", margin = margin(b = 10)),
+    axis.title.x = element_text(face = "bold", size = 10, margin = margin(t = 10), color = "#4A4A4A"),
+    axis.title.y = element_text(face = "bold", size = 10, margin = margin(r = 10), color = "#4A4A4A"),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(color = "gray92")
+  )
 ```
-La mayoría de las viviendas tienen valores concentrados entre 100.000 y 200.000 dólares. Se observa un pico principal entre los 150.000/200.000 dólares. Sin embargo, también se observa una cola larga hacia la derecha con una segunda acumulación menor cerca de los 500.000 dólares. Lo cual, genera una distribución asimétrica positiva, donde predominan las casas de precios medios, pero existen valores extremos que elevan el promedio y aumentan la dispersión.
+El gráfico revela una distribución bimodal en la puntuación motor UPDRS, evidenciada por dos picos o modas principales en la curva de densidad: el primero en torno a los 17 puntos (afectación leve-moderada) y el segundo alrededor de los 26 puntos (afectación moderada-avanzada), separados por un valle relativo cerca de los 21 puntos. Este comportamiento bimodal demuestra que la muestra global no sigue una distribución normal univariada y sugiere la existencia de dos subgrupos clínicos diferenciados dentro del estudio, lo que puede asociarse a distintas etapas de progresión de la enfermedad de Parkinson o a la variabilidad propia de la enfermedad en la respuesta al tratamiento de los pacientes monitoreados.
 
-```{r HistogramaHouse}
-df %>%
-  ggplot(aes(x= median_house_value))+
-  geom_histogram(aes(y = after_stat(density)),
-                 binwidth = 25000,
-                 fill = "#FFB6C1",
-                 color = "white",
-                 alpha = 0.6) +
-  geom_density(color = "darkblue", linewidth = 1.2)+
-  labs(title = 'Distribuación del valor medio de las viviendas',
-       x = 'Valor medio de la casa (USD)') +
-  scale_x_continuous(labels = comma) +
-  scale_y_continuous(labels = comma)
-
+```{r boxplot motor_UPDRS}
+data %>%
+  ggplot(aes(x = "", y = motor_UPDRS)) +
+  geom_boxplot(fill = "#FAD0C4",
+               color = "#C2185B",
+               width = 0.3,
+               outlier.color = "#8E0038",
+               outlier.shape = 16,
+               outlier.size = 2,
+               outlier.alpha = 0.6) +
+  stat_summary(fun = mean,
+               geom = "point",
+               shape = 18,
+               size = 3.5,
+               color = "#8E0038") +
+  labs(title = "Boxplot de la puntuación motor UPDRS",
+       x = NULL,
+       y = "Motor UPDRS (Puntos)") +
+  theme_minimal(base_family = "sans") +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14, color = "#4A4A4A"),
+    plot.subtitle = element_text(hjust = 0.5, size = 10, color = "gray40", margin = margin(b = 10)),
+    axis.title.y = element_text(face = "bold", size = 10, margin = margin(r = 10), color = "#4A4A4A"),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(color = "gray92")
+  )
 ```
-
-```{r boxplotvaluehouse}
-df %>%
-  ggplot(aes(x = "", y = median_house_value))+
-  geom_boxplot(fill = "#FFB6C1", color = "darkred", outlier.color = 'darkblue')+
-  stat_summary(fun = mean, geom = 'point', shape = 20,
-               size=3, color = "darkred") +
-  theme_bw() +
-  scale_y_continuous(labels = comma)
-
-```
-Se observa que la mediana del valor de las viviendas se sitúa cerca de los 180.000 dólares, lo que significa que la mitad de las casas tiene un valor igual o inferior a esa cifra y la otra mitad igual o superior. El rango intercuartílico se extiende aproximadamente entre 125.000 y 275.000 dólares, mostrando que el 50% central de las viviendas se concentra en ese intervalo. El promedio se ubica algo por encima de la mediana, lo que evidencia un sesgo hacia la derecha: existen viviendas con valores más altos que elevan la media. El mínimo registrado es cercano a 15.000 dólares, mientras que el máximo alcanza los 500.000 dólares, lo que refleja una gran dispersión en los precios y la presencia de valores extremos que amplían la variabilidad de la distribución.
+El diagrama de caja confirma una distribución simétrica en la severidad motora de los pacientes, reflejando un valor central de 20.87 puntos que coincide estrechamente con el promedio muestral de 21.3 puntos. La caja abarca un amplio rango intercuartílico de 12.6 puntos, delimitado entre un estado de deterioro leve de 15 puntos y una etapa de afectación moderada-avanzada de 27.6 puntos. La extensión completa del dominio (entre 5.04 y 39.51 puntos) demuestra que la muestra de pacientes abarca todo el espectro funcional de la enfermedad. Destaca la ausencia total de valores atípicos, lo que indica que la dispersión observada no se debe a inconsistencias de medición, sino a la variabilidad biológica esperada en el progreso del Parkinson.
 
 ```{r hola}
 df %>%

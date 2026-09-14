@@ -56,8 +56,8 @@ library(dplyr)
 data <- read.csv("data/parkinsons_updrs.data")
 ```
 
-Muestrame las 5 primeras filas
-```{r filas}
+
+```{r Ver las primeras filas}
 head(data, n=5)
 ```
 
