@@ -1,0 +1,16 @@
+# Conclusiones {#conclusiones}
+
+El objetivo era ver qué tanto se relacionan las características demográficas, temporales y acústicas de la voz con la severidad motora de 42 pacientes con Parkinson en etapa temprana, a partir de 5.863 grabaciones de telemonitoreo. Esto es lo que encontramos.
+
+**Sobre los datos.** La severidad motora (`motor_UPDRS`) cubre casi toda la escala, de 5 a 40 puntos, con una distribución bimodal que no responde a dos tipos de pacientes sino a que cada persona aporta unas 140 grabaciones con puntuaciones muy parecidas. Las 16 medidas acústicas están fuertemente sesgadas hacia la derecha: la mayoría de las grabaciones tiene voces relativamente estables y unas pocas concentran las alteraciones graves. Además, las medidas de jitter y de shimmer son redundantes entre sí (correlaciones de 0.79 a 1, con dos pares que son múltiplos exactos), por lo que se resumieron en dos índices que conservan la información de sus familias con correlaciones superiores a 0.9.
+
+**Sobre la relación con la severidad motora.** Registro a registro, ninguna característica de la voz se asocia linealmente de forma fuerte con `motor_UPDRS`; la mayor correlación es la de la edad (0.27). A nivel de paciente, que es la unidad correcta para las pruebas de hipótesis, los resultados fueron:
+
+- El sexo no marca diferencia (t = 0.36, p = 0.721, d = 0.12).
+- La edad sí parece importar: los mayores de 70 años promedian casi 7 puntos más que los menores de 60, con un tamaño del efecto medio-grande (eta cuadrado = 0.13). El ANOVA queda justo por encima del umbral (p = 0.065) y Kruskal-Wallis justo por debajo (p = 0.049), señal de que con 42 pacientes falta potencia, no relación.
+- La inestabilidad vocal no separa grupos de severidad: ni el shimmer (d = 0.19) ni el jitter (d = 0.44, p = 0.163), aunque este último muestra 3.4 puntos más en el grupo alto y merecería una muestra mayor.
+- La severidad motora aumenta a lo largo del seguimiento: 2.08 puntos en promedio en unos seis meses (t pareada, p = 0.037), un efecto pequeño y desigual, porque cerca de un tercio de los pacientes mejora.
+
+**En síntesis**, la edad y el paso del tiempo son los factores más claramente vinculados con la severidad motora en esta muestra, mientras que las medidas acústicas, tomadas de forma individual o resumidas en índices, guardan con ella una relación débil. Esto no contradice el uso de la voz para telemonitoreo: los estudios originales del dataset predicen el UPDRS combinando las 16 medidas en modelos de regresión, algo distinto de comparar grupos con una sola característica como hicimos aquí.
+
+**Limitaciones.** La muestra es pequeña para las pruebas por paciente (42 personas, 14 mujeres), las puntuaciones UPDRS están interpoladas entre visitas clínicas y no medidas en cada grabación, la clasificación alto/bajo por la mediana pierde información de los índices, y el seguimiento es de solo seis meses en pacientes en etapa temprana, donde la progresión es lenta. Un paso natural sería modelar la severidad con todas las características a la vez (regresión, o modelos mixtos que aprovechen las grabaciones repetidas de cada paciente) en lugar de comparar grupos de una variable en una.

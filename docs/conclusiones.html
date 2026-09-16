@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Referencias | Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo</title>
+  <title>Capítulo 3 Conclusiones | Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo</title>
   <meta name="description" content="Análisis exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI): relación entre características demográficas, temporales y acústicas de la voz y la severidad motora (motor_UPDRS). Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
   <meta name="generator" content="bookdown 0.47 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Referencias | Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo" />
+  <meta property="og:title" content="Capítulo 3 Conclusiones | Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="Análisis exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI): relación entre características demográficas, temporales y acústicas de la voz y la severidad motora (motor_UPDRS). Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
   <meta name="github-repo" content="DiegoxorG/libro_met_est" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Referencias | Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo" />
+  <meta name="twitter:title" content="Capítulo 3 Conclusiones | Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo" />
   
   <meta name="twitter:description" content="Análisis exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI): relación entre características demográficas, temporales y acústicas de la voz y la severidad motora (motor_UPDRS). Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="conclusiones.html"/>
-
+<link rel="prev" href="inferencial.html"/>
+<link rel="next" href="referencias.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -263,25 +263,28 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="referencias" class="section level1 unnumbered hasAnchor">
-<h1>Referencias<a href="referencias.html#referencias" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="conclusiones" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Capítulo 3</span> Conclusiones<a href="conclusiones.html#conclusiones" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>El objetivo era ver qué tanto se relacionan las características demográficas, temporales y acústicas de la voz con la severidad motora de 42 pacientes con Parkinson en etapa temprana, a partir de 5.863 grabaciones de telemonitoreo. Esto es lo que encontramos.</p>
+<p><strong>Sobre los datos.</strong> La severidad motora (<code>motor_UPDRS</code>) cubre casi toda la escala, de 5 a 40 puntos, con una distribución bimodal que no responde a dos tipos de pacientes sino a que cada persona aporta unas 140 grabaciones con puntuaciones muy parecidas. Las 16 medidas acústicas están fuertemente sesgadas hacia la derecha: la mayoría de las grabaciones tiene voces relativamente estables y unas pocas concentran las alteraciones graves. Además, las medidas de jitter y de shimmer son redundantes entre sí (correlaciones de 0.79 a 1, con dos pares que son múltiplos exactos), por lo que se resumieron en dos índices que conservan la información de sus familias con correlaciones superiores a 0.9.</p>
+<p><strong>Sobre la relación con la severidad motora.</strong> Registro a registro, ninguna característica de la voz se asocia linealmente de forma fuerte con <code>motor_UPDRS</code>; la mayor correlación es la de la edad (0.27). A nivel de paciente, que es la unidad correcta para las pruebas de hipótesis, los resultados fueron:</p>
+<ul>
+<li>El sexo no marca diferencia (t = 0.36, p = 0.721, d = 0.12).</li>
+<li>La edad sí parece importar: los mayores de 70 años promedian casi 7 puntos más que los menores de 60, con un tamaño del efecto medio-grande (eta cuadrado = 0.13). El ANOVA queda justo por encima del umbral (p = 0.065) y Kruskal-Wallis justo por debajo (p = 0.049), señal de que con 42 pacientes falta potencia, no relación.</li>
+<li>La inestabilidad vocal no separa grupos de severidad: ni el shimmer (d = 0.19) ni el jitter (d = 0.44, p = 0.163), aunque este último muestra 3.4 puntos más en el grupo alto y merecería una muestra mayor.</li>
+<li>La severidad motora aumenta a lo largo del seguimiento: 2.08 puntos en promedio en unos seis meses (t pareada, p = 0.037), un efecto pequeño y desigual, porque cerca de un tercio de los pacientes mejora.</li>
+</ul>
+<p><strong>En síntesis</strong>, la edad y el paso del tiempo son los factores más claramente vinculados con la severidad motora en esta muestra, mientras que las medidas acústicas, tomadas de forma individual o resumidas en índices, guardan con ella una relación débil. Esto no contradice el uso de la voz para telemonitoreo: los estudios originales del dataset predicen el UPDRS combinando las 16 medidas en modelos de regresión, algo distinto de comparar grupos con una sola característica como hicimos aquí.</p>
+<p><strong>Limitaciones.</strong> La muestra es pequeña para las pruebas por paciente (42 personas, 14 mujeres), las puntuaciones UPDRS están interpoladas entre visitas clínicas y no medidas en cada grabación, la clasificación alto/bajo por la mediana pierde información de los índices, y el seguimiento es de solo seis meses en pacientes en etapa temprana, donde la progresión es lenta. Un paso natural sería modelar la severidad con todas las características a la vez (regresión, o modelos mixtos que aprovechen las grabaciones repetidas de cada paciente) en lugar de comparar grupos de una variable en una.</p>
 
-<div id="refs" class="references csl-bib-body hanging-indent">
-<div class="csl-entry">
-Little, Max A., Patrick E. McSharry, Eric J. Hunter, Jennifer Spielman, y Lorraine O. Ramig. 2009. <span>«Suitability of dysphonia measurements for telemonitoring of <span>P</span>arkinson’s disease»</span>. <em>IEEE Transactions on Biomedical Engineering</em> 56 (4): 1015-22. <a href="https://doi.org/10.1109/TBME.2008.2005954">https://doi.org/10.1109/TBME.2008.2005954</a>.
-</div>
-<div class="csl-entry">
-Tsanas, Athanasios, Max A. Little, Patrick E. McSharry, y Lorraine O. Ramig. 2010. <span>«Accurate telemonitoring of <span>P</span>arkinson’s disease progression by noninvasive speech tests»</span>. <em>IEEE Transactions on Biomedical Engineering</em> 57 (4): 884-93. <a href="https://doi.org/10.1109/TBME.2009.2036000">https://doi.org/10.1109/TBME.2009.2036000</a>.
-</div>
-</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="conclusiones.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="inferencial.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="referencias.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -312,7 +315,7 @@ gitbook.start({
     "size": 2
   },
   "edit": {
-    "link": "https://github.com/DiegoxorG/libro_met_est/edit/main/06-references.Rmd",
+    "link": "https://github.com/DiegoxorG/libro_met_est/edit/main/03-conclusiones.Rmd",
     "text": "Edit"
   },
   "history": {

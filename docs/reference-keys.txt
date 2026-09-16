@@ -50,3 +50,4 @@ prueba-de-hipótesis-t-pareada
 tamaño-del-efecto-3
 conclusión-3
 síntesis-de-resultados
+conclusiones
