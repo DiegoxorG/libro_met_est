@@ -144,7 +144,7 @@ pacientes %>%
   theme_minimal()
 ```
 
-Los 28 hombres promedian 21.27 puntos (mediana 21.37, desviación 7.74) y las 14 mujeres 20.33 (mediana 19.70, desviación 8.40). La diferencia no llega a un punto, las cajas se solapan casi por completo y no hay atípicos.
+Los 28 hombres promedian 21.27 puntos (mediana 21.37, desviación 7.74) y las 14 mujeres 20.33 (mediana 19.7, desviación 8.4). La diferencia no llega a un punto, las cajas se solapan casi por completo y no hay atípicos.
 
 ### Supuesto de normalidad
 
@@ -164,7 +164,7 @@ pacientes %>%
   theme_minimal()
 ```
 
-Ninguna prueba rechaza la normalidad: Shapiro-Wilk da p = 0.663 en hombres y p = 0.318 en mujeres, y Kolmogorov-Smirnov y Lilliefors coinciden (p entre 0.30 y 0.87). En los QQ-plots los puntos siguen la recta, con las desviaciones leves en los extremos que son normales en muestras pequeñas. Asumimos normalidad en ambos grupos.
+Ninguna prueba rechaza la normalidad: Shapiro-Wilk da p = 0.663 en hombres y p = 0.318 en mujeres, y Kolmogorov-Smirnov y Lilliefors coinciden (p entre 0.3 y 0.87). En los QQ-plots los puntos siguen la recta, con las desviaciones leves en los extremos que son normales en muestras pequeñas. Asumimos normalidad en ambos grupos.
 
 ### Supuesto de homocedasticidad
 
@@ -219,7 +219,7 @@ leveneTest(motor ~ sex, data = pacientes, center = median)
 bartlett.test(motor ~ sex, data = pacientes)
 ```
 
-Las varianzas son 59.98 y 70.61. La prueba F da F = 0.849 (27 y 13 g.l., p = 0.692) y su intervalo para la razón de varianzas, de 0.30 a 2.06, contiene al 1; el cálculo manual coincide exactamente con `var.test`. Levene (p = 0.786) y Bartlett (p = 0.734) dicen lo mismo. No se rechaza la igualdad de varianzas, así que usamos la t de Student con varianzas iguales.
+Las varianzas son 59.98 y 70.61. La prueba F da F = 0.849 (27 y 13 g.l., p = 0.692) y su intervalo para la razón de varianzas, de 0.3 a 2.06, contiene al 1; el cálculo manual coincide exactamente con `var.test`. Levene (p = 0.786) y Bartlett (p = 0.734) dicen lo mismo. No se rechaza la igualdad de varianzas, así que usamos la t de Student con varianzas iguales.
 
 ### Prueba de hipótesis: t de Student
 
@@ -269,7 +269,7 @@ Como el grupo de mujeres es pequeño (n = 14), añadimos Mann-Whitney como anál
 wilcox.test(x = motor_hombres, y = motor_mujeres, paired = FALSE)
 ```
 
-La prueba t da t = 0.360 con 40 g.l. y p = 0.721; la diferencia estimada es de 0.94 puntos, con un intervalo de -4.33 a 6.21 que incluye al 0. El cálculo manual reproduce todos los valores de `t.test`, y Mann-Whitney (W = 212, p = 0.683) lleva a la misma decisión.
+La prueba t da t = 0.36 con 40 g.l. y p = 0.721; la diferencia estimada es de 0.94 puntos, con un intervalo de -4.33 a 6.21 que incluye al 0. El cálculo manual reproduce todos los valores de `t.test`, y Mann-Whitney (W = 212, p = 0.683) lleva a la misma decisión.
 
 ### Tamaño del efecto
 
@@ -282,7 +282,7 @@ La d de Cohen es 0.12, un efecto despreciable, con un intervalo de -0.54 a 0.78 
 
 ### Conclusión
 
-Con una confianza del 95 %, no hay evidencia de que la severidad motora difiera entre hombres y mujeres (t = 0.360, p = 0.721). La diferencia observada, menos de un punto, tampoco tiene relevancia práctica (d = 0.12).
+Con una confianza del 95 %, no hay evidencia de que la severidad motora difiera entre hombres y mujeres (t = 0.36, p = 0.721). La diferencia observada, menos de un punto, tampoco tiene relevancia práctica (d = 0.12).
 
 ## Objetivo 2: severidad motora según el grupo de edad
 
@@ -308,7 +308,7 @@ pacientes %>%
   theme_minimal()
 ```
 
-La severidad sube con la edad: 18.24 puntos en los menores de 60 (mediana 15.71), 19.96 entre 60 y 70 (mediana 19.77) y 25.02 en los mayores de 70 (mediana 26.40), casi 7 puntos entre los extremos. Las desviaciones estándar son parecidas (7.33, 8.27 y 6.81), el grupo mayor es el más homogéneo y no hay atípicos.
+La severidad sube con la edad: 18.24 puntos en los menores de 60 (mediana 15.71), 19.96 entre 60 y 70 (mediana 19.77) y 25.02 en los mayores de 70 (mediana 26.4), casi 7 puntos entre los extremos. Las desviaciones estándar son parecidas (7.33, 8.27 y 6.81), el grupo mayor es el más homogéneo y no hay atípicos.
 
 ### Supuesto de normalidad
 
@@ -337,7 +337,7 @@ leveneTest(motor ~ grupo_edad, data = pacientes, center = median)
 bartlett.test(motor ~ grupo_edad, data = pacientes)
 ```
 
-Levene (p = 0.774) y Bartlett (p = 0.780) no rechazan la igualdad de varianzas.
+Levene (p = 0.774) y Bartlett (p = 0.78) no rechazan la igualdad de varianzas.
 
 ### Prueba de hipótesis: ANOVA de un factor
 
@@ -414,7 +414,7 @@ kruskal.test(motor ~ grupo_edad, data = pacientes)
 dunn.test(x = pacientes$motor, g = pacientes$grupo_edad, method = "bonferroni")
 ```
 
-Kruskal-Wallis da $\chi^2$ = 6.02 (2 g.l., p = 0.049), justo por debajo de 0.05, y Dunn señala como única diferencia significativa la de mayores de 70 frente a menores de 60 (z = -2.40, p ajustado = 0.024). Ambas aproximaciones coinciden en la dirección y en el par de grupos; discrepan en si se cruza o no el umbral del 5 %, señal de que con 42 pacientes estamos al límite de la potencia necesaria.
+Kruskal-Wallis da $\chi^2$ = 6.02 (2 g.l., p = 0.049), justo por debajo de 0.05, y Dunn señala como única diferencia significativa la de mayores de 70 frente a menores de 60 (z = -2.4, p ajustado = 0.024). Ambas aproximaciones coinciden en la dirección y en el par de grupos; discrepan en si se cruza o no el umbral del 5 %, señal de que con 42 pacientes estamos al límite de la potencia necesaria.
 
 ### Tamaño del efecto
 
@@ -471,7 +471,7 @@ p_shimmer <- pacientes %>%
 p_jitter + p_shimmer
 ```
 
-Con jitter alto la severidad promedio es 22.66 (mediana 24.50) frente a 19.24 (mediana 18.99) con jitter bajo: 3.4 puntos de diferencia en las medias y 5.5 en las medianas, con dispersiones casi iguales. Con el shimmer la brecha es menor: 21.71 frente a 20.20. En los cuatro grupos el rango es amplio, no hay atípicos y las cajas se solapan bastante.
+Con jitter alto la severidad promedio es 22.66 (mediana 24.5) frente a 19.24 (mediana 18.99) con jitter bajo: 3.4 puntos de diferencia en las medias y 5.5 en las medianas, con dispersiones casi iguales. Con el shimmer la brecha es menor: 21.71 frente a 20.2. En los cuatro grupos el rango es amplio, no hay atípicos y las cajas se solapan bastante.
 
 ### Supuesto de normalidad
 
@@ -497,7 +497,7 @@ pacientes %>%
   theme_minimal()
 ```
 
-Nada rechaza la normalidad: Shapiro-Wilk da p = 0.287 y 0.645 para jitter bajo y alto, y 0.132 y 0.785 para shimmer; las otras dos pruebas superan 0.20 en todos los casos y los QQ-plots se ajustan bien a la recta.
+Nada rechaza la normalidad: Shapiro-Wilk da p = 0.287 y 0.645 para jitter bajo y alto, y 0.132 y 0.785 para shimmer; las otras dos pruebas superan 0.2 en todos los casos y los QQ-plots se ajustan bien a la recta.
 
 ### Supuesto de homocedasticidad
 
@@ -514,7 +514,7 @@ var.test(motor_shimmer_alto, motor_shimmer_bajo)
 leveneTest(motor ~ nivel_shimmer, data = pacientes, center = median)
 ```
 
-Para el jitter la razón de varianzas es 0.92 (p = 0.862; Levene p = 0.820) y para el shimmer 0.84 (p = 0.706; Levene p = 0.464). En ambos casos se mantiene la homocedasticidad y usamos la t de Student con varianzas iguales.
+Para el jitter la razón de varianzas es 0.92 (p = 0.862; Levene p = 0.82) y para el shimmer 0.84 (p = 0.706; Levene p = 0.464). En ambos casos se mantiene la homocedasticidad y usamos la t de Student con varianzas iguales.
 
 ### Prueba de hipótesis: t de Student
 
@@ -629,7 +629,7 @@ p_diferencias <- pacientes %>%
 p_trayectorias + p_diferencias
 ```
 
-La severidad promedio pasa de 19.58 puntos en la primera grabación a 21.65 en la última: un aumento medio de 2.08 puntos (mediana 2.05, desviación 6.23). No es parejo: 27 de los 42 pacientes (64 %) empeoran y 15 mejoran, con cambios individuales entre -13.12 y 14.70 puntos, como se ve en las trayectorias.
+La severidad promedio pasa de 19.58 puntos en la primera grabación a 21.65 en la última: un aumento medio de 2.08 puntos (mediana 2.05, desviación 6.23). No es parejo: 27 de los 42 pacientes (64 %) empeoran y 15 mejoran, con cambios individuales entre -13.12 y 14.7 puntos, como se ve en las trayectorias.
 
 ### Supuesto de normalidad de las diferencias
 
@@ -650,7 +650,7 @@ pacientes %>%
   theme_minimal()
 ```
 
-Las diferencias se ajustan muy bien a la normal: Shapiro-Wilk da W = 0.987 (p = 0.920), Kolmogorov-Smirnov p = 0.995 y Lilliefors p = 0.958, y el QQ-plot es prácticamente una recta. Se cumple el supuesto de la t pareada.
+Las diferencias se ajustan muy bien a la normal: Shapiro-Wilk da W = 0.987 (p = 0.92), Kolmogorov-Smirnov p = 0.995 y Lilliefors p = 0.958, y el QQ-plot es prácticamente una recta. Se cumple el supuesto de la t pareada.
 
 ### Prueba de hipótesis: t pareada
 

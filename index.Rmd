@@ -43,7 +43,7 @@ Analizar exploratoria e inferencialmente las características demográficas, tem
 
 7. Cuantificar la magnitud de las diferencias encontradas mediante medidas de tamaño del efecto apropiadas según el tipo de prueba utilizada (d de Cohen, r o eta cuadrado), con el propósito de complementar la significancia estadística con una medida de relevancia práctica.
 
-```{r include=FALSE}
+```{r bibliografia-paquetes, include=FALSE}
 # automatically create a bib database for R packages
 knitr::write_bib(c(
   .packages(), 'bookdown', 'knitr', 'rmarkdown'

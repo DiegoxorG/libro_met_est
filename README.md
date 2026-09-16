@@ -21,7 +21,6 @@ y las puntuaciones clínicas `motor_UPDRS` (variable respuesta) y `total_UPDRS`.
 | `data/parkinsons_updrs.data` | Datos (CSV) |
 | `data/parkinsons_updrs.names` | Diccionario de variables |
 | `docs/` | Libro renderizado (GitHub Pages) |
-| `_apuntes_clase.Rmd` | Apuntes de clase de referencia; bookdown lo ignora (empieza por `_`) |
 
 ## Cómo compilar
 
