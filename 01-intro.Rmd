@@ -382,7 +382,7 @@ for (variable in variables_numericas) {
 
 ### Dispersión frente a `motor_UPDRS`
 
-```{r dispersion-vs-motor-updrs}
+```{r dispersion-vs-motor-updrs, message=FALSE}
 variables_numericas <- data %>%
   select(where(is.numeric), -motor_UPDRS, -total_UPDRS) %>%
   names()
@@ -609,7 +609,7 @@ La conclusión es que usar las once medidas de Jitter y Shimmer a la vez sería 
 
 ### Pares más correlacionados
 
-```{r dispersion-pares-correlacionados, fig.width=12, fig.height=8}
+```{r dispersion-pares-correlacionados, fig.width=12, fig.height=8, message=FALSE}
 grafico_dispersion <- function(x, y, titulo) {
   ggplot(data, aes(x = .data[[x]], y = .data[[y]])) +
     geom_point(alpha = 0.4, color = "#C77D98") +

@@ -49,5 +49,11 @@ supuesto-de-normalidad-de-las-diferencias
 prueba-de-hipótesis-t-pareada
 tamaño-del-efecto-3
 conclusión-3
+objetivo-5-correlación-entre-las-características-y-la-severidad-motora
+análisis-exploratorio-4
+supuesto-de-normalidad-3
+prueba-de-hipótesis-correlación-de-pearson-y-de-spearman
+tamaño-del-efecto-4
+conclusión-4
 síntesis-de-resultados
 conclusiones
