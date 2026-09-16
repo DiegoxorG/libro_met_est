@@ -27,7 +27,7 @@ Para cada registro se dispone de información demográfica y temporal, como la e
 
 Analizar exploratoria e inferencialmente las características demográficas, temporales y biomédicas de la voz en pacientes con enfermedad de Parkinson, con el fin de evaluar su relación con la severidad del deterioro motor, identificando patrones de asociación y diferencias estadísticamente significativas entre los grupos analizados.
 
-# Objetivos específicos {-}
+# Objetivos específicos {- #objetivos-especificos}
 
 1. Describir y visualizar la variable respuesta motor_UPDRS, las variables independientes numéricas y la variable categórica sexo mediante medidas estadísticas y gráficos univariados, con el propósito de identificar su distribución, tendencia central, dispersión y posibles valores atípicos.
 

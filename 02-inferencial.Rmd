@@ -199,6 +199,8 @@ int_inf_F <- (s1 / s2) * (1 / qf(1 - alpha / 2, df1, df2))
 int_sup_F <- (s1 / s2) * (1 / qf(alpha / 2, df1, df2))
 
 tibble(
+  varianza_hombres = s1,
+  varianza_mujeres = s2,
   estadistico_F_manual = F0,
   estadistico_F_var_test = unname(prueba_f_sexo$statistic),
   gl_numerador = df1,
@@ -820,7 +822,7 @@ tibble(
   as.data.frame()
 ```
 
-La edad es la única característica que se acerca al umbral: r = 0.299 (intervalo de -0.005 a 0.553), t = 1.98 y p = 0.054, apenas por debajo del r crítico de 0.304; con Spearman, que no depende de la normalidad ni de los valores extremos, la asociación sí resulta significativa (ρ = 0.343, p = 0.026). El cálculo manual coincide con `cor.test`. Las demás no alcanzan la significancia con ninguno de los dos métodos: `PPE` (r = 0.26, p = 0.095), `HNR` (r = -0.25, p = 0.109) y `RPDE` (r = 0.24, p = 0.129) quedan cerca, mientras que los índices de jitter y shimmer, `NHR` y `DFA` tienen correlaciones de Pearson entre 0.12 y 0.18 en valor absoluto. `NHR` es un caso aparte: su Pearson es 0.13 pero su Spearman 0.32 (p = 0.038), porque los pocos pacientes con ruido muy alto distorsionan la correlación lineal. Como son ocho pruebas sobre la misma respuesta, la última columna ajusta los p-valores de Pearson por el método de Holm: ninguno se mantiene por debajo de 0.05.
+La edad es la única característica que se acerca al umbral: r = 0.299 (intervalo de -0.005 a 0.553), apenas por debajo del r crítico de 0.304, con t = 1.98 y p = 0.054; con Spearman, que no depende de la normalidad ni de los valores extremos, la asociación sí resulta significativa (ρ = 0.343, p = 0.026). El cálculo manual coincide con `cor.test`. Las demás no alcanzan la significancia con ninguno de los dos métodos: `PPE` (r = 0.26, p = 0.095), `HNR` (r = -0.25, p = 0.109) y `RPDE` (r = 0.24, p = 0.129) quedan cerca, mientras que los índices de jitter y shimmer, `NHR` y `DFA` tienen correlaciones de Pearson entre 0.12 y 0.18 en valor absoluto. `NHR` es un caso aparte: su Pearson es 0.13 pero su Spearman 0.32 (p = 0.038), porque los pocos pacientes con ruido muy alto distorsionan la correlación lineal. Como son ocho pruebas sobre la misma respuesta, la última columna ajusta los p-valores de Pearson por el método de Holm: ninguno se mantiene por debajo de 0.05.
 
 ### Tamaño del efecto
 

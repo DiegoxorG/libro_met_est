@@ -1,5 +1,5 @@
 intro
-análisis-exploratorio-de-motor_updrs
+análisis-exploratorio-de-motor_updrs-variable-respuesta
 resumen-estadístico
 histograma
 diagrama-de-caja
