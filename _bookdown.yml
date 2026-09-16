@@ -1,6 +1,9 @@
-book_filename: "bookdown-demo"
+book_filename: "parkinson-updrs"
 language:
   ui:
-    chapter_name: "Chapter "
+    chapter_name: "Capítulo "
+  label:
+    fig: "Figura "
+    tab: "Tabla "
 delete_merged_file: true
 output_dir: "docs"
