@@ -1,0 +1,746 @@
+# Estadística inferencial {#inferencial}
+
+Este capítulo cubre los objetivos 5, 6 y 7: revisamos los supuestos de normalidad y homocedasticidad, contrastamos si la severidad motora cambia según el sexo, la edad, la inestabilidad vocal y el momento del seguimiento, y medimos el tamaño de cada efecto. En todas las pruebas usamos $\alpha = 0.05$.
+
+```{r inf-librerias, message=FALSE, warning=FALSE}
+library(effsize)
+library(nortest)
+library(car)
+library(rstatix)
+library(dunn.test)
+```
+
+## Unidad de análisis: tabla por paciente
+
+Las pruebas de hipótesis suponen observaciones independientes, y los 5.863 registros no lo son: vienen de 42 pacientes con entre 101 y 168 grabaciones cada uno, que comparten edad y sexo y cuyas puntuaciones `motor_UPDRS` están interpoladas entre visitas, así que casi no varían dentro de una misma persona. Tratarlos como independientes inflaría el tamaño de muestra y daría p-valores engañosamente pequeños (pseudorreplicación).
+
+Por eso armamos una tabla con **un registro por paciente**: la severidad motora es el promedio de todas sus grabaciones, y de ahí salen las variables de agrupación: sexo, grupo de edad (menor de 60, 60 a 70 y mayor de 70 años) y nivel de inestabilidad vocal, alto o bajo según el promedio de cada índice esté por encima o por debajo de la mediana. Para comparar el inicio y el final del seguimiento guardamos la primera y la última grabación de cada paciente.
+
+```{r inf-pacientes}
+pacientes <- data %>%
+  arrange(subject., test_time) %>%
+  group_by(subject., sex, age) %>%
+  summarise(
+    n_registros = n(),
+    motor = mean(motor_UPDRS),
+    motor_inicio = first(motor_UPDRS),
+    motor_final = last(motor_UPDRS),
+    dias_seguimiento = last(test_time) - first(test_time),
+    jitter = mean(indice_jitter),
+    shimmer = mean(indice_shimmer),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    grupo_edad = cut(age,
+                     breaks = c(0, 59, 70, Inf),
+                     labels = c("Menor de 60", "60 a 70", "Mayor de 70")),
+    nivel_jitter = factor(if_else(jitter > median(jitter), "Alto", "Bajo"),
+                          levels = c("Bajo", "Alto")),
+    nivel_shimmer = factor(if_else(shimmer > median(shimmer), "Alto", "Bajo"),
+                           levels = c("Bajo", "Alto"))
+  )
+
+head(pacientes) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 2))) %>%
+  as.data.frame()
+```
+
+```{r inf-pacientes-resumen}
+pacientes %>%
+  summarise(
+    n = n(),
+    media = mean(motor),
+    sd = sd(motor),
+    mediana = median(motor),
+    RIC = IQR(motor),
+    minimo = min(motor),
+    maximo = max(motor),
+    asimetria = skewness(motor),
+    curtosis = kurtosis(motor)
+  ) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
+  as.data.frame()
+
+table(pacientes$sex)
+table(pacientes$grupo_edad)
+table(jitter = pacientes$nivel_jitter, shimmer = pacientes$nivel_shimmer)
+```
+
+Quedan 42 pacientes: 28 hombres y 14 mujeres; 14, 15 y 13 por grupo de edad; y 21 con nivel alto y 21 con nivel bajo en cada índice (las dos clasificaciones coinciden en 32 pacientes, reflejo de la correlación de 0.71 entre los índices). La severidad promedio por paciente tiene media 20.95, mediana 19.83 y desviación estándar 7.88, entre 5.82 y 35.99; es simétrica (asimetría 0.02) y algo plana (curtosis 1.92), sin las dos modas del nivel de registro, porque ahora cada paciente cuenta una sola vez.
+
+Para ver el problema en concreto, comparamos `motor_UPDRS` por sexo en los dos niveles:
+
+```{r inf-pseudorreplicacion}
+tibble(
+  nivel = c("Registro (n = 5863)", "Paciente (n = 42)"),
+  p_valor_t = c(t.test(motor_UPDRS ~ sex, data = data, var.equal = TRUE)$p.value,
+                t.test(motor ~ sex, data = pacientes, var.equal = TRUE)$p.value),
+  d_cohen = c(cohen.d(motor_UPDRS ~ sex, data = data)$estimate,
+              cohen.d(motor ~ sex, data = pacientes)$estimate)
+) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
+  as.data.frame()
+```
+
+A nivel de registro sale p = 0.019 con un efecto despreciable (d = 0.07): la "significancia" viene solo de contar a cada paciente unas 140 veces. Por paciente, con una diferencia parecida, p = 0.72. Todo lo que sigue usa la tabla `pacientes`.
+
+Para no repetir código, definimos dos funciones: el resumen descriptivo por grupo y las pruebas de normalidad vistas en clase (Shapiro-Wilk, Kolmogorov-Smirnov sobre datos estandarizados y Lilliefors).
+
+```{r inf-funciones}
+resumen_grupo <- function(datos, grupo, variable = "motor") {
+  datos %>%
+    group_by(.data[[grupo]]) %>%
+    summarise(
+      n = n(),
+      promedio = mean(.data[[variable]]),
+      ds = sd(.data[[variable]]),
+      mediana = median(.data[[variable]]),
+      RIC = IQR(.data[[variable]]),
+      min = min(.data[[variable]]),
+      max = max(.data[[variable]])
+    ) %>%
+    mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
+    as.data.frame()
+}
+
+normalidad_grupo <- function(datos, grupo, variable = "motor") {
+  datos %>%
+    group_by(.data[[grupo]]) %>%
+    summarise(
+      n = n(),
+      est_w = shapiro.test(.data[[variable]])$statistic,
+      p_sw = shapiro.test(.data[[variable]])$p.value,
+      est_ks = ks.test(scale(.data[[variable]]), "pnorm")$statistic,
+      p_ks = ks.test(scale(.data[[variable]]), "pnorm")$p.value,
+      est_l = lillie.test(.data[[variable]])$statistic,
+      p_l = lillie.test(.data[[variable]])$p.value
+    ) %>%
+    mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
+    as.data.frame()
+}
+```
+
+## Objetivo 1: severidad motora según el sexo
+
+¿Difiere la severidad motora promedio entre hombres y mujeres?
+
+$$H_0: \mu_{\text{Masculino}} = \mu_{\text{Femenino}} \qquad H_1: \mu_{\text{Masculino}} \neq \mu_{\text{Femenino}}$$
+
+### Análisis exploratorio
+
+```{r inf-sexo-resumen}
+resumen_grupo(pacientes, "sex")
+```
+
+```{r inf-sexo-boxplot}
+pacientes %>%
+  ggplot(aes(x = sex, y = motor)) +
+  geom_boxplot(fill = "#FAD0C4", color = "#C2185B", width = 0.4,
+               outlier.color = "#8E0038") +
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 3.5, color = "#8E0038") +
+  labs(title = "Severidad motora promedio por paciente según el sexo",
+       x = NULL,
+       y = "Motor UPDRS promedio (Puntos)") +
+  theme_minimal()
+```
+
+Los 28 hombres promedian 21.27 puntos (mediana 21.37, desviación 7.74) y las 14 mujeres 20.33 (mediana 19.70, desviación 8.40). La diferencia no llega a un punto, las cajas se solapan casi por completo y no hay atípicos.
+
+### Supuesto de normalidad
+
+```{r inf-sexo-normalidad}
+normalidad_grupo(pacientes, "sex")
+```
+
+```{r inf-sexo-qq, fig.height=4}
+pacientes %>%
+  ggplot(aes(sample = motor)) +
+  stat_qq(color = "#C77D98") +
+  stat_qq_line(color = "#8F4A68") +
+  facet_wrap(~ sex) +
+  labs(title = "Gráficos cuantil-cuantil de la severidad motora por sexo",
+       x = "Cuantiles teóricos",
+       y = "Cuantiles muestrales") +
+  theme_minimal()
+```
+
+Ninguna prueba rechaza la normalidad: Shapiro-Wilk da p = 0.663 en hombres y p = 0.318 en mujeres, y Kolmogorov-Smirnov y Lilliefors coinciden (p entre 0.30 y 0.87). En los QQ-plots los puntos siguen la recta, con las desviaciones leves en los extremos que son normales en muestras pequeñas. Asumimos normalidad en ambos grupos.
+
+### Supuesto de homocedasticidad
+
+```{r inf-sexo-varianzas}
+motor_hombres <- pacientes %>%
+  filter(sex == "Masculino") %>%
+  pull(motor)
+
+motor_mujeres <- pacientes %>%
+  filter(sex == "Femenino") %>%
+  pull(motor)
+
+prueba_f_sexo <- var.test(motor_hombres, motor_mujeres)
+prueba_f_sexo
+```
+
+Verificamos `var.test` con el teorema de la razón de varianzas:
+
+```{r inf-sexo-varianzas-manual}
+n1 <- length(motor_hombres)
+n2 <- length(motor_mujeres)
+s1 <- sum((motor_hombres - mean(motor_hombres))^2) / (n1 - 1)
+s2 <- sum((motor_mujeres - mean(motor_mujeres))^2) / (n2 - 1)
+
+F0 <- s1 / s2
+df1 <- n1 - 1
+df2 <- n2 - 1
+pvalor_F <- 2 * min(pf(F0, df1, df2), pf(F0, df1, df2, lower.tail = FALSE))
+
+alpha <- 0.05
+int_inf_F <- (s1 / s2) * (1 / qf(1 - alpha / 2, df1, df2))
+int_sup_F <- (s1 / s2) * (1 / qf(alpha / 2, df1, df2))
+
+tibble(
+  estadistico_F_manual = F0,
+  estadistico_F_var_test = unname(prueba_f_sexo$statistic),
+  gl_numerador = df1,
+  gl_denominador = df2,
+  p_valor_manual = pvalor_F,
+  p_valor_var_test = prueba_f_sexo$p.value,
+  IC_inferior_manual = int_inf_F,
+  IC_superior_manual = int_sup_F,
+  IC_inferior_var_test = prueba_f_sexo$conf.int[1],
+  IC_superior_var_test = prueba_f_sexo$conf.int[2]
+) %>%
+  mutate(across(everything(), ~ round(.x, 4))) %>%
+  as.data.frame()
+```
+
+```{r inf-sexo-levene}
+leveneTest(motor ~ sex, data = pacientes, center = median)
+bartlett.test(motor ~ sex, data = pacientes)
+```
+
+Las varianzas son 59.98 y 70.61. La prueba F da F = 0.849 (27 y 13 g.l., p = 0.692) y su intervalo para la razón de varianzas, de 0.30 a 2.06, contiene al 1; el cálculo manual coincide exactamente con `var.test`. Levene (p = 0.786) y Bartlett (p = 0.734) dicen lo mismo. No se rechaza la igualdad de varianzas, así que usamos la t de Student con varianzas iguales.
+
+### Prueba de hipótesis: t de Student
+
+```{r inf-sexo-t}
+prueba_t_sexo <- t.test(x = motor_hombres, y = motor_mujeres,
+                        var.equal = TRUE, paired = FALSE)
+prueba_t_sexo
+```
+
+Verificación con el teorema de la diferencia de medias:
+
+```{r inf-sexo-t-manual}
+m1 <- mean(motor_hombres)
+m2 <- mean(motor_mujeres)
+s1_cuad <- var(motor_hombres)
+s2_cuad <- var(motor_mujeres)
+
+sp_cuad <- ((n1 - 1) * s1_cuad + (n2 - 1) * s2_cuad) / (n1 + n2 - 2)
+error_estandar <- sqrt(sp_cuad * (1 / n1 + 1 / n2))
+t0 <- (m1 - m2) / error_estandar
+df_t <- n1 + n2 - 2
+pvalor_t <- 2 * pt(abs(t0), df = df_t, lower.tail = FALSE)
+
+t_critico <- qt(1 - alpha / 2, df = df_t)
+int_inf_t <- (m1 - m2) - t_critico * error_estandar
+int_sup_t <- (m1 - m2) + t_critico * error_estandar
+
+tibble(
+  estadistico_t_manual = t0,
+  estadistico_t_t_test = unname(prueba_t_sexo$statistic),
+  grados_libertad_manual = df_t,
+  grados_libertad_t_test = unname(prueba_t_sexo$parameter),
+  p_valor_manual = pvalor_t,
+  p_valor_t_test = prueba_t_sexo$p.value,
+  IC_inferior_manual = int_inf_t,
+  IC_superior_manual = int_sup_t,
+  IC_inferior_t_test = prueba_t_sexo$conf.int[1],
+  IC_superior_t_test = prueba_t_sexo$conf.int[2]
+) %>%
+  mutate(across(everything(), ~ round(.x, 4))) %>%
+  as.data.frame()
+```
+
+Como el grupo de mujeres es pequeño (n = 14), añadimos Mann-Whitney como análisis de sensibilidad:
+
+```{r inf-sexo-wilcox}
+wilcox.test(x = motor_hombres, y = motor_mujeres, paired = FALSE)
+```
+
+La prueba t da t = 0.360 con 40 g.l. y p = 0.721; la diferencia estimada es de 0.94 puntos, con un intervalo de -4.33 a 6.21 que incluye al 0. El cálculo manual reproduce todos los valores de `t.test`, y Mann-Whitney (W = 212, p = 0.683) lleva a la misma decisión.
+
+### Tamaño del efecto
+
+```{r inf-sexo-cohen}
+d_sexo <- cohen.d(motor_hombres, motor_mujeres, paired = FALSE)
+d_sexo
+```
+
+La d de Cohen es 0.12, un efecto despreciable, con un intervalo de -0.54 a 0.78 que incluye al 0.
+
+### Conclusión
+
+Con una confianza del 95 %, no hay evidencia de que la severidad motora difiera entre hombres y mujeres (t = 0.360, p = 0.721). La diferencia observada, menos de un punto, tampoco tiene relevancia práctica (d = 0.12).
+
+## Objetivo 2: severidad motora según el grupo de edad
+
+¿Difiere la severidad motora promedio entre los tres grupos de edad?
+
+$$H_0: \mu_{<60} = \mu_{60-70} = \mu_{>70} \qquad H_1: \text{al menos una media es diferente}$$
+
+### Análisis exploratorio
+
+```{r inf-edad-resumen}
+resumen_grupo(pacientes, "grupo_edad")
+```
+
+```{r inf-edad-boxplot}
+pacientes %>%
+  ggplot(aes(x = grupo_edad, y = motor)) +
+  geom_boxplot(fill = "#FAD0C4", color = "#C2185B", width = 0.5,
+               outlier.color = "#8E0038") +
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 3.5, color = "#8E0038") +
+  labs(title = "Severidad motora promedio por paciente según el grupo de edad",
+       x = "Grupo de edad (años)",
+       y = "Motor UPDRS promedio (Puntos)") +
+  theme_minimal()
+```
+
+La severidad sube con la edad: 18.24 puntos en los menores de 60 (mediana 15.71), 19.96 entre 60 y 70 (mediana 19.77) y 25.02 en los mayores de 70 (mediana 26.40), casi 7 puntos entre los extremos. Las desviaciones estándar son parecidas (7.33, 8.27 y 6.81), el grupo mayor es el más homogéneo y no hay atípicos.
+
+### Supuesto de normalidad
+
+```{r inf-edad-normalidad}
+normalidad_grupo(pacientes, "grupo_edad")
+```
+
+```{r inf-edad-qq, fig.height=4}
+pacientes %>%
+  ggplot(aes(sample = motor)) +
+  stat_qq(color = "#C77D98") +
+  stat_qq_line(color = "#8F4A68") +
+  facet_wrap(~ grupo_edad) +
+  labs(title = "Gráficos cuantil-cuantil de la severidad motora por grupo de edad",
+       x = "Cuantiles teóricos",
+       y = "Cuantiles muestrales") +
+  theme_minimal()
+```
+
+Shapiro-Wilk no rechaza en ningún grupo (p = 0.105, 0.964 y 0.257) y Kolmogorov-Smirnov tampoco. Solo Lilliefors queda al límite en los menores de 60 (p = 0.049), cuyo QQ-plot se curva un poco por la concentración de valores bajos. Como Shapiro-Wilk, la prueba más potente en muestras pequeñas, no rechaza, y el ANOVA es robusto a desvíos moderados con grupos de tamaño parecido, asumimos normalidad.
+
+### Supuesto de homocedasticidad
+
+```{r inf-edad-varianzas}
+leveneTest(motor ~ grupo_edad, data = pacientes, center = median)
+bartlett.test(motor ~ grupo_edad, data = pacientes)
+```
+
+Levene (p = 0.774) y Bartlett (p = 0.780) no rechazan la igualdad de varianzas.
+
+### Prueba de hipótesis: ANOVA de un factor
+
+```{r inf-edad-anova}
+modelo_anova <- aov(motor ~ grupo_edad, data = pacientes)
+summary(modelo_anova)
+```
+
+Verificación del ANOVA con la descomposición de la suma de cuadrados:
+
+```{r inf-edad-anova-manual}
+menores_60 <- pacientes %>% filter(grupo_edad == "Menor de 60") %>% pull(motor)
+de_60_a_70 <- pacientes %>% filter(grupo_edad == "60 a 70") %>% pull(motor)
+mayores_70 <- pacientes %>% filter(grupo_edad == "Mayor de 70") %>% pull(motor)
+
+n1 <- length(menores_60)
+n2 <- length(de_60_a_70)
+n3 <- length(mayores_70)
+N <- n1 + n2 + n3
+k <- 3
+
+xbar_1 <- mean(menores_60)
+xbar_2 <- mean(de_60_a_70)
+xbar_3 <- mean(mayores_70)
+xbar_total <- (sum(menores_60) + sum(de_60_a_70) + sum(mayores_70)) / N
+
+SST <- sum((menores_60 - xbar_total)^2) + sum((de_60_a_70 - xbar_total)^2) +
+  sum((mayores_70 - xbar_total)^2)
+SSA <- n1 * (xbar_1 - xbar_total)^2 + n2 * (xbar_2 - xbar_total)^2 +
+  n3 * (xbar_3 - xbar_total)^2
+SSE <- SST - SSA
+
+MSA <- SSA / (k - 1)
+MSE <- SSE / (N - k)
+F0 <- MSA / MSE
+
+v1 <- k - 1
+v2 <- N - k
+F_critico <- qf(1 - alpha, v1, v2)
+p_valor_F <- 1 - pf(F0, v1, v2)
+
+tibble(
+  SST = SST,
+  SSA = SSA,
+  SSE = SSE,
+  MSA = MSA,
+  MSE = MSE,
+  estadistico_F_manual = F0,
+  estadistico_F_aov = summary(modelo_anova)[[1]]$`F value`[1],
+  F_critico = F_critico,
+  p_valor_manual = p_valor_F,
+  p_valor_aov = summary(modelo_anova)[[1]]$`Pr(>F)`[1]
+) %>%
+  mutate(across(everything(), ~ round(.x, 4))) %>%
+  as.data.frame()
+```
+
+La suma de cuadrados total (2545.71) se reparte en 333.49 entre grupos y 2212.21 dentro de ellos, lo que da F = 2.94 con 2 y 39 g.l., por debajo del valor crítico de 3.24, y p = 0.065, igual al de `aov`. Con $\alpha = 0.05$ no se rechaza $H_0$, aunque por poco.
+
+Como el ANOVA no rechaza, la prueba de Tukey se muestra solo con fines exploratorios, para ver dónde está la diferencia:
+
+```{r inf-edad-tukey}
+TukeyHSD(modelo_anova)
+```
+
+La única comparación que se acerca es mayores de 70 frente a menores de 60: 6.79 puntos de diferencia, p ajustado = 0.062, intervalo de -0.28 a 13.85. Las que involucran al grupo intermedio quedan lejos (p = 0.81 y 0.19).
+
+### Análisis de sensibilidad: Kruskal-Wallis y prueba de Dunn
+
+Como el resultado quedó al límite y una prueba de normalidad también, repetimos el contraste con Kruskal-Wallis y el post hoc de Dunn con corrección de Bonferroni.
+
+```{r inf-edad-kw}
+kruskal.test(motor ~ grupo_edad, data = pacientes)
+dunn.test(x = pacientes$motor, g = pacientes$grupo_edad, method = "bonferroni")
+```
+
+Kruskal-Wallis da $\chi^2$ = 6.02 (2 g.l., p = 0.049), justo por debajo de 0.05, y Dunn señala como única diferencia significativa la de mayores de 70 frente a menores de 60 (z = -2.40, p ajustado = 0.024). Ambas aproximaciones coinciden en la dirección y en el par de grupos; discrepan en si se cruza o no el umbral del 5 %, señal de que con 42 pacientes estamos al límite de la potencia necesaria.
+
+### Tamaño del efecto
+
+```{r inf-edad-eta}
+eta_cuadrado_manual <- SSA / SST
+eta_cuadrado_manual
+
+eta_squared(modelo_anova)
+
+pacientes %>%
+  kruskal_effsize(motor ~ grupo_edad)
+```
+
+El eta cuadrado, SSA / SST, es 0.131 (igual al de `rstatix`): el grupo de edad explica el 13 % de la variabilidad de la severidad entre pacientes, un efecto medio-grande (referencias: 0.01 pequeño, 0.06 medio, 0.14 grande). El basado en el H de Kruskal-Wallis es 0.103, también moderado.
+
+### Conclusión
+
+Con una confianza del 95 %, el ANOVA no permite afirmar que la severidad motora difiera entre grupos de edad (F = 2.94, p = 0.065), aunque Kruskal-Wallis sí detecta una diferencia marginal (p = 0.049) entre los mayores de 70 y los menores de 60. El tamaño del efecto (eta cuadrado = 0.13, casi 7 puntos entre extremos) indica que la diferencia es relevante en la práctica y que lo que falta es muestra, no relación: es coherente con la correlación positiva entre edad y `motor_UPDRS` que ya aparecía en el exploratorio.
+
+## Objetivo 3: severidad motora según el nivel de inestabilidad vocal
+
+¿Tienen los pacientes con alta inestabilidad vocal una severidad motora distinta de los de baja inestabilidad? Lo contrastamos por separado para el índice de jitter (frecuencia) y el de shimmer (amplitud):
+
+$$H_0: \mu_{\text{Alto}} = \mu_{\text{Bajo}} \qquad H_1: \mu_{\text{Alto}} \neq \mu_{\text{Bajo}}$$
+
+### Análisis exploratorio
+
+```{r inf-voz-resumen}
+resumen_grupo(pacientes, "nivel_jitter")
+resumen_grupo(pacientes, "nivel_shimmer")
+```
+
+```{r inf-voz-boxplot, fig.width=10, fig.height=4.5}
+p_jitter <- pacientes %>%
+  ggplot(aes(x = nivel_jitter, y = motor)) +
+  geom_boxplot(fill = "#FAD0C4", color = "#C2185B", width = 0.4,
+               outlier.color = "#8E0038") +
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 3.5, color = "#8E0038") +
+  labs(title = "Según el nivel del índice de jitter",
+       x = "Nivel de inestabilidad de la frecuencia",
+       y = "Motor UPDRS promedio (Puntos)") +
+  theme_minimal()
+
+p_shimmer <- pacientes %>%
+  ggplot(aes(x = nivel_shimmer, y = motor)) +
+  geom_boxplot(fill = "#FAD0C4", color = "#C2185B", width = 0.4,
+               outlier.color = "#8E0038") +
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 3.5, color = "#8E0038") +
+  labs(title = "Según el nivel del índice de shimmer",
+       x = "Nivel de inestabilidad de la amplitud",
+       y = NULL) +
+  theme_minimal()
+
+p_jitter + p_shimmer
+```
+
+Con jitter alto la severidad promedio es 22.66 (mediana 24.50) frente a 19.24 (mediana 18.99) con jitter bajo: 3.4 puntos de diferencia en las medias y 5.5 en las medianas, con dispersiones casi iguales. Con el shimmer la brecha es menor: 21.71 frente a 20.20. En los cuatro grupos el rango es amplio, no hay atípicos y las cajas se solapan bastante.
+
+### Supuesto de normalidad
+
+```{r inf-voz-normalidad}
+normalidad_grupo(pacientes, "nivel_jitter")
+normalidad_grupo(pacientes, "nivel_shimmer")
+```
+
+```{r inf-voz-qq, fig.width=10, fig.height=4}
+pacientes %>%
+  select(motor, nivel_jitter, nivel_shimmer) %>%
+  pivot_longer(cols = c(nivel_jitter, nivel_shimmer),
+               names_to = "indice", values_to = "nivel") %>%
+  mutate(indice = if_else(indice == "nivel_jitter", "Jitter", "Shimmer"),
+         grupo = paste(indice, nivel)) %>%
+  ggplot(aes(sample = motor)) +
+  stat_qq(color = "#C77D98") +
+  stat_qq_line(color = "#8F4A68") +
+  facet_wrap(~ grupo, nrow = 1) +
+  labs(title = "Gráficos cuantil-cuantil de la severidad motora por nivel de inestabilidad vocal",
+       x = "Cuantiles teóricos",
+       y = "Cuantiles muestrales") +
+  theme_minimal()
+```
+
+Nada rechaza la normalidad: Shapiro-Wilk da p = 0.287 y 0.645 para jitter bajo y alto, y 0.132 y 0.785 para shimmer; las otras dos pruebas superan 0.20 en todos los casos y los QQ-plots se ajustan bien a la recta.
+
+### Supuesto de homocedasticidad
+
+```{r inf-voz-varianzas}
+motor_jitter_alto <- pacientes %>% filter(nivel_jitter == "Alto") %>% pull(motor)
+motor_jitter_bajo <- pacientes %>% filter(nivel_jitter == "Bajo") %>% pull(motor)
+motor_shimmer_alto <- pacientes %>% filter(nivel_shimmer == "Alto") %>% pull(motor)
+motor_shimmer_bajo <- pacientes %>% filter(nivel_shimmer == "Bajo") %>% pull(motor)
+
+var.test(motor_jitter_alto, motor_jitter_bajo)
+leveneTest(motor ~ nivel_jitter, data = pacientes, center = median)
+
+var.test(motor_shimmer_alto, motor_shimmer_bajo)
+leveneTest(motor ~ nivel_shimmer, data = pacientes, center = median)
+```
+
+Para el jitter la razón de varianzas es 0.92 (p = 0.862; Levene p = 0.820) y para el shimmer 0.84 (p = 0.706; Levene p = 0.464). En ambos casos se mantiene la homocedasticidad y usamos la t de Student con varianzas iguales.
+
+### Prueba de hipótesis: t de Student
+
+La verificación manual es idéntica a la del objetivo 1, así que aquí mostramos directamente `t.test` junto con Mann-Whitney como análisis de sensibilidad.
+
+```{r inf-voz-t}
+prueba_t_jitter <- t.test(x = motor_jitter_alto, y = motor_jitter_bajo,
+                          var.equal = TRUE, paired = FALSE)
+prueba_t_jitter
+wilcox.test(x = motor_jitter_alto, y = motor_jitter_bajo, paired = FALSE)
+
+prueba_t_shimmer <- t.test(x = motor_shimmer_alto, y = motor_shimmer_bajo,
+                           var.equal = TRUE, paired = FALSE)
+prueba_t_shimmer
+wilcox.test(x = motor_shimmer_alto, y = motor_shimmer_bajo, paired = FALSE)
+```
+
+Para el jitter, t = 1.423 (40 g.l., p = 0.163): 3.42 puntos más en el grupo alto, con un intervalo de -1.44 a 8.27 que incluye al 0; Mann-Whitney coincide (W = 276, p = 0.168). Para el shimmer, t = 0.617 (p = 0.541), 1.51 puntos de diferencia e intervalo de -3.44 a 6.46; Mann-Whitney da W = 243 y p = 0.584. No se rechaza $H_0$ en ningún caso.
+
+### Tamaño del efecto
+
+```{r inf-voz-cohen}
+d_jitter <- cohen.d(motor_jitter_alto, motor_jitter_bajo, paired = FALSE)
+d_jitter
+
+d_shimmer <- cohen.d(motor_shimmer_alto, motor_shimmer_bajo, paired = FALSE)
+d_shimmer
+```
+
+La d de Cohen es 0.44 para el jitter, un efecto pequeño que roza el medio (intervalo de -0.19 a 1.07), y 0.19 para el shimmer, despreciable (intervalo de -0.43 a 0.82). Ambos intervalos incluyen al 0.
+
+### Conclusión
+
+Con una confianza del 95 %, no hay evidencia de que la severidad motora difiera entre pacientes con alta y baja inestabilidad vocal, ni en frecuencia (jitter: t = 1.42, p = 0.163) ni en amplitud (shimmer: t = 0.62, p = 0.541). Los tamaños del efecto sí los distinguen: el del shimmer es despreciable (d = 0.19), pero el del jitter (d = 0.44, 3.4 puntos más de severidad) no es trivial; con 21 pacientes por grupo no alcanza la significancia, pero va en la misma dirección que la asociación débil entre jitter y `motor_UPDRS` que vimos en el exploratorio.
+
+## Objetivo 4: evolución de la severidad motora durante el seguimiento
+
+¿Cambia la severidad motora entre la primera y la última grabación de cada paciente? Las separan entre 153 y 204 días (mediana 170, unos seis meses). Como son dos medidas del mismo paciente, los datos son pareados y la hipótesis se plantea sobre la media de las diferencias:
+
+$$H_0: \mu_{\text{final} - \text{inicio}} = 0 \qquad H_1: \mu_{\text{final} - \text{inicio}} \neq 0$$
+
+### Análisis exploratorio
+
+```{r inf-pareado-resumen}
+pacientes <- pacientes %>%
+  mutate(diferencia = motor_final - motor_inicio)
+
+pacientes %>%
+  summarise(
+    n = n(),
+    promedio_inicio = mean(motor_inicio),
+    promedio_final = mean(motor_final),
+    sd_inicio = sd(motor_inicio),
+    sd_final = sd(motor_final),
+    mediana_inicio = median(motor_inicio),
+    mediana_final = median(motor_final),
+    min_inicio = min(motor_inicio),
+    max_inicio = max(motor_inicio),
+    min_final = min(motor_final),
+    max_final = max(motor_final)
+  ) %>%
+  mutate(across(everything(), ~ round(.x, 3))) %>%
+  as.data.frame()
+
+pacientes %>%
+  summarise(
+    n = n(),
+    promedio_diferencia = mean(diferencia),
+    sd_diferencia = sd(diferencia),
+    mediana_diferencia = median(diferencia),
+    min_diferencia = min(diferencia),
+    max_diferencia = max(diferencia),
+    pacientes_que_aumentan = sum(diferencia > 0),
+    pacientes_que_disminuyen = sum(diferencia < 0)
+  ) %>%
+  mutate(across(everything(), ~ round(.x, 3))) %>%
+  as.data.frame()
+```
+
+```{r inf-pareado-grafico, fig.width=10, fig.height=4.5}
+p_trayectorias <- pacientes %>%
+  select(subject., motor_inicio, motor_final) %>%
+  pivot_longer(cols = c(motor_inicio, motor_final),
+               names_to = "momento", values_to = "motor") %>%
+  mutate(momento = factor(momento,
+                          levels = c("motor_inicio", "motor_final"),
+                          labels = c("Primera grabación", "Última grabación"))) %>%
+  ggplot(aes(x = momento, y = motor, group = subject.)) +
+  geom_line(color = "gray75") +
+  geom_point(color = "#C77D98", alpha = 0.7) +
+  stat_summary(aes(group = 1), fun = mean, geom = "line",
+               color = "#8E0038", linewidth = 1.2) +
+  stat_summary(aes(group = 1), fun = mean, geom = "point",
+               color = "#8E0038", size = 3.5, shape = 18) +
+  labs(title = "Severidad motora al inicio y al final del seguimiento",
+       subtitle = "Una línea gris por paciente; en rojo, el promedio",
+       x = NULL,
+       y = "Motor UPDRS (Puntos)") +
+  theme_minimal()
+
+p_diferencias <- pacientes %>%
+  ggplot(aes(x = diferencia)) +
+  geom_histogram(bins = 12, fill = "#FAD0C4", color = "#E8A598") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray40") +
+  geom_vline(xintercept = mean(pacientes$diferencia), color = "#8E0038", linewidth = 1) +
+  labs(title = "Diferencias final - inicio por paciente",
+       subtitle = "Línea roja: diferencia promedio",
+       x = "Diferencia en motor UPDRS (Puntos)",
+       y = "Número de pacientes") +
+  theme_minimal()
+
+p_trayectorias + p_diferencias
+```
+
+La severidad promedio pasa de 19.58 puntos en la primera grabación a 21.65 en la última: un aumento medio de 2.08 puntos (mediana 2.05, desviación 6.23). No es parejo: 27 de los 42 pacientes (64 %) empeoran y 15 mejoran, con cambios individuales entre -13.12 y 14.70 puntos, como se ve en las trayectorias.
+
+### Supuesto de normalidad de las diferencias
+
+```{r inf-pareado-normalidad}
+shapiro.test(pacientes$diferencia)
+ks.test(scale(pacientes$diferencia), "pnorm")
+lillie.test(pacientes$diferencia)
+```
+
+```{r inf-pareado-qq, fig.height=4}
+pacientes %>%
+  ggplot(aes(sample = diferencia)) +
+  stat_qq(color = "#C77D98") +
+  stat_qq_line(color = "#8F4A68") +
+  labs(title = "Gráfico cuantil-cuantil de las diferencias final - inicio",
+       x = "Cuantiles teóricos",
+       y = "Cuantiles muestrales") +
+  theme_minimal()
+```
+
+Las diferencias se ajustan muy bien a la normal: Shapiro-Wilk da W = 0.987 (p = 0.920), Kolmogorov-Smirnov p = 0.995 y Lilliefors p = 0.958, y el QQ-plot es prácticamente una recta. Se cumple el supuesto de la t pareada.
+
+### Prueba de hipótesis: t pareada
+
+```{r inf-pareado-t}
+prueba_t_pareada <- t.test(x = pacientes$motor_final, y = pacientes$motor_inicio,
+                           paired = TRUE)
+prueba_t_pareada
+```
+
+Verificación con el teorema de la diferencia de medias para datos pareados:
+
+```{r inf-pareado-t-manual}
+n_pareado <- nrow(pacientes)
+media_diff <- mean(pacientes$diferencia)
+sd_diff <- sd(pacientes$diferencia)
+se_diff <- sd_diff / sqrt(n_pareado)
+
+t0 <- media_diff / se_diff
+df_pareado <- n_pareado - 1
+pvalor_pareado <- 2 * pt(abs(t0), df = df_pareado, lower.tail = FALSE)
+
+t_critico <- qt(1 - alpha / 2, df = df_pareado)
+int_inf_pareado <- media_diff - t_critico * se_diff
+int_sup_pareado <- media_diff + t_critico * se_diff
+
+tibble(
+  estadistico_t_manual = t0,
+  estadistico_t_t_test = unname(prueba_t_pareada$statistic),
+  grados_libertad_manual = df_pareado,
+  grados_libertad_t_test = unname(prueba_t_pareada$parameter),
+  p_valor_manual = pvalor_pareado,
+  p_valor_t_test = prueba_t_pareada$p.value,
+  IC_inferior_manual = int_inf_pareado,
+  IC_superior_manual = int_sup_pareado,
+  IC_inferior_t_test = prueba_t_pareada$conf.int[1],
+  IC_superior_t_test = prueba_t_pareada$conf.int[2]
+) %>%
+  mutate(across(everything(), ~ round(.x, 4))) %>%
+  as.data.frame()
+```
+
+Como análisis de sensibilidad, la prueba de rangos con signo de Wilcoxon:
+
+```{r inf-pareado-wilcox}
+wilcox.test(x = pacientes$motor_final, y = pacientes$motor_inicio, paired = TRUE)
+```
+
+La t pareada da t = 2.159 (41 g.l., p = 0.037); el aumento medio de 2.08 puntos tiene un intervalo de 0.13 a 4.02 que no incluye al 0. El cálculo manual coincide con `t.test` y Wilcoxon confirma (V = 630, p = 0.025).
+
+### Tamaño del efecto
+
+```{r inf-pareado-cohen}
+d_pareado <- cohen.d(pacientes$motor_final, pacientes$motor_inicio, paired = TRUE)
+d_pareado
+```
+
+La d de Cohen pareada es 0.25, un efecto pequeño, pero esta vez el intervalo (0.02 a 0.48) no incluye al 0. Medido con la desviación estándar de las diferencias, el cambio equivale a 0.33 desviaciones (2.08 / 6.23).
+
+### Conclusión
+
+Con una confianza del 95 %, la severidad motora aumenta de forma significativa entre la primera y la última grabación (t = 2.16, p = 0.037): en promedio, 2.08 puntos en unos seis meses. El efecto es pequeño (d = 0.25), lo que encaja con una progresión lenta en la etapa temprana de la enfermedad y con la heterogeneidad entre pacientes: cerca de un tercio mejora en ese periodo.
+
+## Síntesis de resultados
+
+```{r inf-sintesis}
+tibble(
+  objetivo = c("Sexo (hombres vs. mujeres)",
+               "Grupo de edad (3 grupos)",
+               "Inestabilidad de la frecuencia (jitter alto vs. bajo)",
+               "Inestabilidad de la amplitud (shimmer alto vs. bajo)",
+               "Seguimiento (última vs. primera grabación)"),
+  prueba = c("t de Student", "ANOVA de un factor", "t de Student",
+             "t de Student", "t pareada"),
+  estadistico = c(prueba_t_sexo$statistic,
+                  summary(modelo_anova)[[1]]$`F value`[1],
+                  prueba_t_jitter$statistic,
+                  prueba_t_shimmer$statistic,
+                  prueba_t_pareada$statistic),
+  p_valor = c(prueba_t_sexo$p.value,
+              summary(modelo_anova)[[1]]$`Pr(>F)`[1],
+              prueba_t_jitter$p.value,
+              prueba_t_shimmer$p.value,
+              prueba_t_pareada$p.value),
+  tamano_efecto = c(d_sexo$estimate, eta_cuadrado_manual, d_jitter$estimate,
+                    d_shimmer$estimate, d_pareado$estimate),
+  medida = c("d de Cohen", "eta cuadrado", "d de Cohen", "d de Cohen", "d de Cohen")
+) %>%
+  mutate(decision = if_else(p_valor < 0.05, "Se rechaza H0", "No se rechaza H0"),
+         across(where(is.numeric), ~ round(.x, 3))) %>%
+  as.data.frame()
+```
+
+Solo la comparación entre el inicio y el final del seguimiento resulta significativa: la severidad motora sube en promedio 2.08 puntos en seis meses, con un efecto pequeño. El sexo y el shimmer no se asocian con la severidad ni estadística ni prácticamente. Los otros dos resultados muestran la diferencia entre significancia y relevancia: el grupo de edad (eta cuadrado = 0.13, casi 7 puntos entre extremos) y el jitter (d = 0.44, 3.4 puntos) tienen efectos apreciables que con 42 pacientes no cruzan el umbral del 5 % en las pruebas paramétricas, aunque en el caso de la edad la no paramétrica sí lo hace por poco. En conjunto, la edad y el paso del tiempo son lo que más claramente se vincula con la severidad motora; la voz, tal como la analizamos aquí, guarda con ella una relación débil.

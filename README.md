@@ -1,5 +1,39 @@
-[![Build Status](https://travis-ci.com/rstudio/bookdown-demo.svg?branch=master)](https://travis-ci.com/rstudio/bookdown-demo)
+# Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo
 
-This is a minimal example of a book based on R Markdown and **bookdown** (https://github.com/rstudio/bookdown). Please see the page "[Get Started](https://bookdown.org/yihui/bookdown/get-started.html)" at https://bookdown.org/yihui/bookdown/ for how to compile this example into HTML. You may generate a copy of the book in `bookdown::pdf_book` format by calling `bookdown::render_book('index.Rmd', 'bookdown::pdf_book')`. More detailed instructions are available here https://bookdown.org/yihui/bookdown/build-the-book.html.
+**Autores:** Diego Payares & Salma Romero
+**Curso:** Métodos Estadísticos — Universidad del Norte
 
-You can find the preview of this example at https://bookdown.org/yihui/bookdown-demo/.
+Libro escrito con [bookdown](https://bookdown.org/) que documenta el análisis
+exploratorio (EDA) e inferencial del conjunto de datos
+[Parkinsons Telemonitoring](https://archive.ics.uci.edu/dataset/189/parkinsons+telemonitoring)
+(Tsanas et al., 2010): 5.875 grabaciones de voz de 42 pacientes con Parkinson
+en etapa temprana, con 16 medidas acústicas, variables demográficas/temporales
+y las puntuaciones clínicas `motor_UPDRS` (variable respuesta) y `total_UPDRS`.
+
+## Estructura
+
+| Archivo | Contenido |
+|---|---|
+| `index.Rmd` | Contexto del problema, objetivo general y objetivos específicos |
+| `01-intro.Rmd` | Análisis exploratorio de datos (EDA) e ingeniería de características |
+| `02-inferencial.Rmd` | Estadística inferencial: supuestos, pruebas de hipótesis y tamaños del efecto (a nivel de paciente) |
+| `06-references.Rmd` | Referencias |
+| `data/parkinsons_updrs.data` | Datos (CSV) |
+| `data/parkinsons_updrs.names` | Diccionario de variables |
+| `docs/` | Libro renderizado (GitHub Pages) |
+| `_apuntes_clase.Rmd` | Apuntes de clase de referencia; bookdown lo ignora (empieza por `_`) |
+
+## Cómo compilar
+
+Desde RStudio: abrir `metest.Rproj` y usar **Build > Build Book**, o desde R:
+
+```r
+bookdown::render_book("index.Rmd", "bookdown::gitbook")
+```
+
+El resultado se escribe en `docs/`.
+
+## Paquetes necesarios
+
+`bookdown`, `tidyverse`, `moments`, `scales`, `patchwork`, `GGally`, `Amelia`,
+`effsize`, `nortest`, `car`, `rstatix`, `coin`, `dunn.test`.

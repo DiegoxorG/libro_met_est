@@ -1,6 +1,6 @@
 --- 
 title: "Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo"
-author: "Diego Payares y Salma Romero"
+author: "Diego Payares & Salma Romero"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
@@ -8,37 +8,41 @@ documentclass: book
 bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
-github-repo: rstudio/bookdown-demo
-description: "This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook."
+lang: es
+nocite: |
+  @tsanas2010, @little2009
+github-repo: DiegoxorG/libro_met_est
+description: "Análisis exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI): relación entre características demográficas, temporales y acústicas de la voz y la severidad motora (motor_UPDRS). Trabajo del curso Métodos Estadísticos, Universidad del Norte."
 ---
 
 # Contexto del problema {-}
 
-La enfermedad de Parkinson es un trastorno neurodegenerativo que puede afectar diferentes aspectos del movimiento y del habla.  La evaluación estándar de la severidad del síntoma se realiza mediante la escala unificada de calificación de la enfermedad de Parkinson (UPDRS). El monitoreo de la progresión de sus síntomas requiere evaluaciones periódicas, por lo que las técnicas de telemonitorización pueden constituir una alternativa para obtener información de manera remota y no invasiva.
+La enfermedad de Parkinson es un trastorno neurodegenerativo que puede afectar diferentes aspectos del movimiento y del habla. La evaluación estándar de la severidad del síntoma se realiza mediante la escala unificada de calificación de la enfermedad de Parkinson (UPDRS). El monitoreo de la progresión de sus síntomas requiere evaluaciones periódicas, por lo que las técnicas de telemonitorización pueden constituir una alternativa para obtener información de manera remota y no invasiva.
 
-El conjunto de datos a analizar (Parkinsons Telemonitoring), contiene mediciones biomédicas de la voz obtenidas de 42 personas con enfermedad de Parkinson en etapa temprana, quienes participaron en una prueba de seis meses de un dispositivo de telemonitorización. Las grabaciones fueron realizadas automáticamente en los domicilios de los pacientes. El conjunto contiene 5.875 registros de voz, correspondientes a múltiples grabaciones realizadas a estos participantes.
+El conjunto de datos a analizar, Parkinsons Telemonitoring [@tsanas2010], contiene mediciones biomédicas de la voz obtenidas de 42 personas con enfermedad de Parkinson en etapa temprana, quienes participaron en una prueba de seis meses de un dispositivo de telemonitorización. Las grabaciones fueron realizadas automáticamente en los domicilios de los pacientes. El conjunto contiene 5.875 registros de voz, correspondientes a múltiples grabaciones realizadas a estos participantes (alrededor de 140 por paciente).
 
-Para cada registro se dispone de información demográfica y temporal, como la edad, el sexo y el tiempo transcurrido desde el reclutamiento, además de 16 medidas biomédicas relacionadas con características de la voz. También se registran las puntuaciones motor_UPDRS y total_UPDRS, correspondientes a medidas clínicas de la sintomatología de la enfermedad.
+Para cada registro se dispone de información demográfica y temporal, como la edad, el sexo y el tiempo transcurrido desde el reclutamiento, además de 16 medidas biomédicas relacionadas con características de la voz [@little2009]. También se registran las puntuaciones motor_UPDRS y total_UPDRS, correspondientes a medidas clínicas de la sintomatología de la enfermedad. En este trabajo la variable respuesta es motor_UPDRS, la puntuación de la parte motora de la escala. Como las grabaciones de un mismo paciente se parecen mucho entre sí, el análisis exploratorio se hace sobre los registros y las pruebas de hipótesis sobre un valor resumen por paciente.
 
 # Objetivo general {-}
 
-Analizar exploratoria e inferencialmente las características demográficas, temporales y biomédicas de la voz en pacientes con enfermedad de Parkinson, con el fin de evaluar su relación con la severidad del deterioro motor de pacientes con enfermedad de Parkinson, identificando patrones de asociación y diferencias estadísticamente significativas entre los grupos analizados.
+Analizar exploratoria e inferencialmente las características demográficas, temporales y biomédicas de la voz en pacientes con enfermedad de Parkinson, con el fin de evaluar su relación con la severidad del deterioro motor, identificando patrones de asociación y diferencias estadísticamente significativas entre los grupos analizados.
 
 # Objetivos específicos {-}
 
-Describir y visualizar las variables independientes numéricas del conjunto de datos mediante medidas estadísticas y gráficos univariados, con el propósito de identificar su distribución, tendencia central, dispersión y posibles valores atípicos.
+1. Describir y visualizar la variable respuesta motor_UPDRS, las variables independientes numéricas y la variable categórica sexo mediante medidas estadísticas y gráficos univariados, con el propósito de identificar su distribución, tendencia central, dispersión y posibles valores atípicos.
 
-Analizar gráficamente la relación entre cada variable independiente numérica y la puntuación motora UPDRS, mediante gráficos de dispersión, con el fin de identificar patrones de asociación, tendencias y posibles valores atípicos.
+2. Analizar gráficamente la relación entre cada variable independiente numérica y la puntuación motora UPDRS, mediante gráficos de dispersión, con el fin de identificar patrones de asociación, tendencias y posibles valores atípicos.
 
-Explorar la relación entre pares seleccionados de variables independientes numéricas mediante gráficos de dispersión, con el propósito de identificar patrones de asociación y posibles relaciones lineales entre características relacionadas con las mediciones biomédicas de la voz.
+3. Explorar la relación entre pares de variables independientes numéricas mediante gráficos de dispersión y la matriz de correlaciones, con el propósito de identificar asociaciones lineales y redundancias entre las características demográficas, temporales y biomédicas de la voz.
 
-Explorar gráficamente la relación entre pares seleccionados de variables independientes numéricas, mediante gráficos de dispersión, con el propósito de identificar visualmente patrones, tendencias y posibles asociaciones entre características demográficas, temporales y biomédicas de la voz.
+4. Construir, mediante ingeniería de características, nuevas variables que resuman las familias de medidas acústicas altamente correlacionadas (jitter y shimmer), y describirlas mediante medidas estadísticas y gráficos univariados.
 
-Evaluar los supuestos estadísticos necesarios para la aplicación de las pruebas de hipótesis seleccionadas, mediante procedimientos gráficos y pruebas de normalidad y homocedasticidad, determinando la pertinencia de utilizar métodos paramétricos o no paramétricos.
+5. Evaluar, a nivel de paciente, los supuestos de normalidad y homocedasticidad necesarios para la aplicación de las pruebas de hipótesis seleccionadas, mediante procedimientos gráficos y pruebas formales, determinando la pertinencia de utilizar métodos paramétricos o no paramétricos.
 
-Determinar, mediante pruebas de hipótesis adecuadas, si existen diferencias o asociaciones estadísticamente significativas entre las variables de interés, de acuerdo con los objetivos planteados a partir del análisis exploratorio.
+6. Determinar, mediante pruebas de hipótesis, si existen diferencias estadísticamente significativas en la severidad motora (motor_UPDRS) según el sexo, el grupo de edad y el nivel de inestabilidad vocal de los pacientes, así como entre el inicio y el final del periodo de seguimiento.
 
-Cuantificar la magnitud de las diferencias o asociaciones encontradas mediante medidas de tamaño del efecto apropiadas, según el tipo de prueba utilizada, con el propósito de complementar la significancia estadística con una medida de relevancia práctica.
+7. Cuantificar la magnitud de las diferencias encontradas mediante medidas de tamaño del efecto apropiadas según el tipo de prueba utilizada (d de Cohen, r o eta cuadrado), con el propósito de complementar la significancia estadística con una medida de relevancia práctica.
+
 ```{r include=FALSE}
 # automatically create a bib database for R packages
 knitr::write_bib(c(
