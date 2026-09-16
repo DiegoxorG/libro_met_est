@@ -1,4 +1,4 @@
-# EDA {#intro}
+# Análisis exploratorio de datos {#intro}
 
 
 ```{r libreria, message=FALSE, warning=FALSE}
@@ -54,12 +54,12 @@ cat("Después de la limpieza:", n_negativos,
 
 Los 12 registros con `test_time` negativo son grabaciones fechadas antes del día de reclutamiento, así que se descartan. Seguimos con 5.863 registros.
 
-## Análisis exploratorio de `motor_UPDRS`
-(Variable respuesta)
+## Análisis exploratorio de `motor_UPDRS` (variable respuesta)
 
 ### Resumen estadístico
 
-Realicemos el resumen estadístico de la variable respuesta motor UPDRS
+Realicemos el resumen estadístico de la variable respuesta `motor_UPDRS`.
+
 ```{r resumen-motor-updrs}
 data %>% 
   summarise(
@@ -81,7 +81,7 @@ El 50 % central de las observaciones se encuentra entre 15 y 27.59 puntos, con u
 
 La amplitud de la escala observada abarca desde un estado de afectación motora mínima de 5.04 puntos hasta un deterioro severo alcanzando los 39.51 puntos. Esta brecha confirma que la muestra integra tanto a pacientes en estadios iniciales o altamente controlados de la enfermedad como a individuos con una alteración motora considerablemente avanzada.
 
-La asimetría es cercana a cero (0.077), lo que indica una distribución aproximadamente simétrica, con una ligera asimetría positiva. La curtosis de 2.06, es inferior a la correspondiente a una distribución normal (3). Esto implica una menor concentración de datos alrededor del centro y colas más ligeras, lo que nuevamente refleja que las puntuaciones del motor UPDRS están dispersas de manera más uniforme a lo largo del rango medio en lugar de agruparse de forma pronunciada en un único punto.
+La asimetría es cercana a cero (0.077), lo que indica una distribución aproximadamente simétrica, con una ligera asimetría positiva. La curtosis de 2.06 es inferior a la correspondiente a una distribución normal (3). Esto implica una menor concentración de datos alrededor del centro y colas más ligeras, lo que nuevamente refleja que las puntuaciones del motor UPDRS están dispersas de manera más uniforme a lo largo del rango medio en lugar de agruparse de forma pronunciada en un único punto.
 
 
 ### Histograma
@@ -150,6 +150,10 @@ El diagrama de caja confirma una distribución simétrica en la severidad motora
 
 Aquí se describen las variables independientes numéricas. Dejamos fuera `total_UPDRS`: es la otra puntuación clínica del estudio e incluye la parte motora (su correlación con `motor_UPDRS` es 0.95), así que no puede tratarse como variable explicativa.
 
+```{r correlacion-total-updrs}
+cor(data$motor_UPDRS, data$total_UPDRS)
+```
+
 ### Resumen estadístico por variable
 
 ```{r resumen-variables-numericas}
@@ -201,9 +205,9 @@ La diferencia entre la media (0.00616) y el valor central (0.0049) es consistent
 
 La curtosis de 70.39 refuerza este comportamiento, indicando una concentración importante de observaciones en valores bajos y presencia de valores extremos en la cola superior.
 
-**`Jitter.Abs.`:** Presenta una media de 4.4 × 10^(-5) y una desviación estándar de 3.6 × 10^(-5), evidenciando una variabilidad importante en relación con su magnitud promedio.
+**`Jitter.Abs.`:** Presenta una media de 4.4 × 10^-5^ y una desviación estándar de 3.6 × 10^-5^, evidenciando una variabilidad importante en relación con su magnitud promedio.
 
-El 50 % central de los registros se encuentra entre 2.24 × 10^(-5) y 5.33 × 10^(-5), con un rango intercuartílico de 3.09 × 10^(-5). Los valores observados oscilan entre 2.25 × 10^(-6) y 4.46 × 10^(-4), mostrando una amplitud considerable respecto al nivel habitual de la variable.
+El 50 % central de los registros se encuentra entre 2.24 × 10^-5^ y 5.33 × 10^-5^, con un rango intercuartílico de 3.09 × 10^-5^. Los valores observados oscilan entre 2.25 × 10^-6^ y 4.46 × 10^-4^, mostrando una amplitud considerable respecto al nivel habitual de la variable.
 
 El coeficiente de asimetría de 3.28 indica una asimetría positiva marcada, por lo que existen observaciones considerablemente superiores a la concentración principal de los datos.
 
@@ -229,7 +233,7 @@ El 50 % central de los registros se encuentra entre 0.00473 y 0.00988, con un ra
 
 La asimetría de 6.94 evidencia una asimetría positiva extremadamente pronunciada, indicando que la distribución presenta una cola derecha extensa.
 
-La curtosis de 81.4, muy superior al valor de referencia de una distribución normal. Por tanto, Jitter.DDP presenta una fuerte concentración de registros en valores bajos y un conjunto reducido de valores elevados.
+La curtosis de 81.4 es muy superior al valor de referencia de una distribución normal, por lo que Jitter.DDP presenta una fuerte concentración de registros en valores bajos y un conjunto reducido de valores elevados.
 
 **`Shimmer`:** Presenta una media de 0.034 y una desviación estándar de 0.0258, evidenciando una dispersión importante respecto a su valor promedio.
 
@@ -265,7 +269,7 @@ La curtosis de 22.11, muy superior a 3, indica una alta concentración de observ
 
 **`Shimmer.DDA`:** Presenta una media de 0.05147 y una desviación estándar de 0.03971, evidenciando una dispersión elevada en relación con su valor promedio.
 
-El 50 % central de las observaciones se encuentra entre 0.02783 y 0.0618, con un rango intercuartílico de 0.03397. El rango completo se extiende desde 0.00484 hasta 0.48802, mostrando una amplitud considerable frente al intervalo central de los datos.
+El 50 % central de las observaciones se encuentra entre 0.02783 y 0.0618, con un rango intercuartílico de 0.03398. El rango completo se extiende desde 0.00484 hasta 0.48802, mostrando una amplitud considerable frente al intervalo central de los datos.
 
 El coeficiente de asimetría de 3.1 indica una asimetría positiva marcada, por lo que existe una extensión de los valores hacia el extremo superior y algunas observaciones alcanzan niveles considerablemente mayores que los habituales.
 
@@ -350,7 +354,7 @@ for (variable in variables_numericas) {
 
 **`Jitter...`:** La medida porcentual de variación en la frecuencia de la voz (Jitter(...)) se concentra en valores bajos, casi todos menores al 0.01 (1 %). La gráfica tiene una cola larga hacia la derecha que llega a valores superiores a 0.05, donde se ubican las tomas de voz con inestabilidades graves. En la práctica, esto significa que las alteraciones fuertes en el tono no son lo habitual en todas las pruebas, sino eventos específicos que destacan sobre el resto.
 
-**`Jitter.Abs.`:** La variación absoluta de la frecuencia en microsegundos (Jitter.Abs.) concentra casi todos sus datos en la zona baja, entre 0.2(10^(-4)) y 0.6(10^(-4)) segundos. La cola extendida hacia la derecha muestra que existen pocas mediciones con una alteración de voz severa. La forma de esta gráfica es idéntica a la de Jitter(...), lo que confirma que ambas variables miden prácticamente lo mismo y que será necesario combinarlas o seleccionar solo una durante la ingeniería de características para no duplicar información.
+**`Jitter.Abs.`:** La variación absoluta de la frecuencia en microsegundos (Jitter.Abs.) concentra casi todos sus datos en la zona baja, entre 2 × 10^-5^ y 6 × 10^-5^ segundos. La cola extendida hacia la derecha muestra que existen pocas mediciones con una alteración de voz severa. La forma de esta gráfica es idéntica a la de Jitter(...), lo que confirma que ambas variables miden prácticamente lo mismo y que será necesario combinarlas o seleccionar solo una durante la ingeniería de características para no duplicar información.
 
 **`Jitter.RAP`:** Esta variable repite el mismo patrón de acumulación en valores bajos, situando su punto más alto muy cerca de cero (entre 0.001 y 0.005) y cayendo rápidamente hacia la derecha. Como esta métrica evalúa los cambios de frecuencia entre ciclos de voz cercanos, la falta de valores altos demuestra que solo un grupo reducido de pruebas presenta inestabilidad frecuente. Su parecido con los otros indicadores de frecuencia confirma que todas las variables de la familia Jitter están midiendo el mismo problema de trasfondo.
 
@@ -382,7 +386,7 @@ for (variable in variables_numericas) {
 
 ### Dispersión frente a `motor_UPDRS`
 
-```{r dispersion-vs-motor-updrs}
+```{r dispersion-vs-motor-updrs, message=FALSE}
 variables_numericas <- data %>%
   select(where(is.numeric), -motor_UPDRS, -total_UPDRS) %>%
   names()
@@ -411,11 +415,11 @@ for (variable in variables_numericas) {
 ```
 **`age` vs `motor_UPDRS`:** Muestra una pendiente ascendente directa, donde la puntuación motora pasa de promediar unos 14 puntos a los 36 años, hasta superar los 25 puntos cerca de los 85 años. Se aprecian franjas verticales de datos debido a que la edad es una variable fija por paciente, confirmando que las personas mayores tienden a presentar una severidad clínica más alta.
 
-**`test_time` vs `motor_UPDRS`:** La línea de tendencia se mantiene casi horizontal a lo largo de los 200 días de seguimiento, subiendo levemente de los 20 a los 22 puntos. La dispersión homogénea de los puntos a lo largo de todo el eje horizontal indica que el tiempo transcurrido en el estudio, por si solo, no altera drásticamente el nivel de afectación motora global de los pacientes.
+**`test_time` vs `motor_UPDRS`:** La línea de tendencia se mantiene casi horizontal a lo largo de los 200 días de seguimiento, subiendo levemente de los 20 a los 22 puntos. La dispersión homogénea de los puntos a lo largo de todo el eje horizontal indica que el tiempo transcurrido en el estudio, por sí solo, no altera drásticamente el nivel de afectación motora global de los pacientes.
 
 **`Jitter...` vs `motor_UPDRS`:** La tendencia es positiva pero suave, subiendo desde los 20 puntos en valores de Jitter cercanos a cero hasta aproximadamente los 32 en valores cercanos a 0.1. La gran concentración de puntos en el extremo izquierdo confirma que la mayoría de los registros tienen variaciones de frecuencia bajas, mientras que los valores extremos aumentan la incertidumbre del modelo.
 
-**`Jitter.Abs.` vs `motor_UPDRS`:** Muestra un comportamiento prácticamente idéntico al de Jitter porcentual, con una pendiente positiva muy leve. La acumulación masiva de mediciones se da por debajo de 1e-04 segundos, mientras que la franja gris alrededor de la línea se ensancha en la derecha debido a la escasez de datos en niveles altos de alteración absoluta.
+**`Jitter.Abs.` vs `motor_UPDRS`:** Muestra un comportamiento prácticamente idéntico al de Jitter porcentual, con una pendiente positiva muy leve. La acumulación masiva de mediciones se da por debajo de 0.0001 segundos, mientras que la franja gris alrededor de la línea se ensancha en la derecha debido a la escasez de datos en niveles altos de alteración absoluta.
 
 **`Jitter.RAP` vs `motor_UPDRS`:** La línea de ajuste asciende de forma constante con una pendiente moderada hacia la derecha. Al evaluar los cambios de frecuencia entre ciclos inmediatos, el gráfico demuestra que niveles más altos de inestabilidad rápida en la voz se relacionan con evaluaciones motoras más severas, manteniendo la mayor parte de las observaciones amontonadas cerca del origen.
 
@@ -609,7 +613,7 @@ La conclusión es que usar las once medidas de Jitter y Shimmer a la vez sería 
 
 ### Pares más correlacionados
 
-```{r dispersion-pares-correlacionados, fig.width=12, fig.height=8}
+```{r dispersion-pares-correlacionados, fig.width=12, fig.height=8, message=FALSE}
 grafico_dispersion <- function(x, y, titulo) {
   ggplot(data, aes(x = .data[[x]], y = .data[[y]])) +
     geom_point(alpha = 0.4, color = "#C77D98") +
@@ -735,6 +739,23 @@ p_box_caracteristicas <- datos_caracteristicas %>%
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 
 p_hist_caracteristicas + p_box_caracteristicas
+```
+
+Para cuantificar lo que muestran los boxplots, contamos los atípicos con la regla de 1.5 veces el rango intercuartílico y calculamos los percentiles 90 y 99 de cada índice:
+
+```{r atipicos-caracteristicas}
+datos_caracteristicas %>%
+  group_by(variable) %>%
+  summarise(
+    limite_superior = quantile(valor, 0.75) + 1.5 * IQR(valor),
+    atipicos_superiores = sum(valor > limite_superior),
+    porcentaje = round(100 * mean(valor > limite_superior), 1),
+    atipicos_inferiores = sum(valor < quantile(valor, 0.25) - 1.5 * IQR(valor)),
+    p90 = quantile(valor, 0.90),
+    p99 = quantile(valor, 0.99)
+  ) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 2))) %>%
+  as.data.frame()
 ```
 
 **Índice de jitter.** Por construcción la media es 0 (desviación estándar 0.96). La mediana es -0.23 y la mitad central de las grabaciones cabe entre -0.46 y 0.12, un intervalo de apenas media desviación estándar. Pero mientras el mínimo es -0.92, el máximo llega a 13.35: la cola derecha es larguísima, y eso se refleja en una asimetría de 5.61 y una curtosis de 52. El índice hereda la forma de las medidas de Jitter originales, que ya eran muy asimétricas.

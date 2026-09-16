@@ -165,10 +165,10 @@ div.csl-indent {
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Contexto del problema</a></li>
 <li class="chapter" data-level="" data-path="objetivo-general.html"><a href="objetivo-general.html"><i class="fa fa-check"></i>Objetivo general</a></li>
-<li class="chapter" data-level="" data-path="objetivos-específicos.html"><a href="objetivos-específicos.html"><i class="fa fa-check"></i>Objetivos específicos</a></li>
-<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> EDA</a>
+<li class="chapter" data-level="" data-path="objetivos-especificos.html"><a href="objetivos-especificos.html"><i class="fa fa-check"></i>Objetivos específicos</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Análisis exploratorio de datos</a>
 <ul>
-<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#an%C3%A1lisis-exploratorio-de-motor_updrs"><i class="fa fa-check"></i><b>1.1</b> Análisis exploratorio de <code>motor_UPDRS</code></a>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#an%C3%A1lisis-exploratorio-de-motor_updrs-variable-respuesta"><i class="fa fa-check"></i><b>1.1</b> Análisis exploratorio de <code>motor_UPDRS</code> (variable respuesta)</a>
 <ul>
 <li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#resumen-estad%C3%ADstico"><i class="fa fa-check"></i><b>1.1.1</b> Resumen estadístico</a></li>
 <li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#histograma"><i class="fa fa-check"></i><b>1.1.2</b> Histograma</a></li>
@@ -238,7 +238,15 @@ div.csl-indent {
 <li class="chapter" data-level="2.5.4" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-3"><i class="fa fa-check"></i><b>2.5.4</b> Tamaño del efecto</a></li>
 <li class="chapter" data-level="2.5.5" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-3"><i class="fa fa-check"></i><b>2.5.5</b> Conclusión</a></li>
 </ul></li>
-<li class="chapter" data-level="2.6" data-path="inferencial.html"><a href="inferencial.html#s%C3%ADntesis-de-resultados"><i class="fa fa-check"></i><b>2.6</b> Síntesis de resultados</a></li>
+<li class="chapter" data-level="2.6" data-path="inferencial.html"><a href="inferencial.html#objetivo-5-correlaci%C3%B3n-entre-las-caracter%C3%ADsticas-y-la-severidad-motora"><i class="fa fa-check"></i><b>2.6</b> Objetivo 5: correlación entre las características y la severidad motora</a>
+<ul>
+<li class="chapter" data-level="2.6.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio-4"><i class="fa fa-check"></i><b>2.6.1</b> Análisis exploratorio</a></li>
+<li class="chapter" data-level="2.6.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad-3"><i class="fa fa-check"></i><b>2.6.2</b> Supuesto de normalidad</a></li>
+<li class="chapter" data-level="2.6.3" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-correlaci%C3%B3n-de-pearson-y-de-spearman"><i class="fa fa-check"></i><b>2.6.3</b> Prueba de hipótesis: correlación de Pearson y de Spearman</a></li>
+<li class="chapter" data-level="2.6.4" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-4"><i class="fa fa-check"></i><b>2.6.4</b> Tamaño del efecto</a></li>
+<li class="chapter" data-level="2.6.5" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-4"><i class="fa fa-check"></i><b>2.6.5</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.7" data-path="inferencial.html"><a href="inferencial.html#s%C3%ADntesis-de-resultados"><i class="fa fa-check"></i><b>2.7</b> Síntesis de resultados</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="conclusiones.html"><a href="conclusiones.html"><i class="fa fa-check"></i><b>3</b> Conclusiones</a></li>
 <li class="chapter" data-level="" data-path="referencias.html"><a href="referencias.html"><i class="fa fa-check"></i>Referencias</a></li>
@@ -271,17 +279,8 @@ div.csl-indent {
 <div id="contexto-del-problema" class="section level1 unnumbered hasAnchor">
 <h1>Contexto del problema<a href="index.html#contexto-del-problema" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>La enfermedad de Parkinson es un trastorno neurodegenerativo que puede afectar diferentes aspectos del movimiento y del habla. La evaluación estándar de la severidad del síntoma se realiza mediante la escala unificada de calificación de la enfermedad de Parkinson (UPDRS). El monitoreo de la progresión de sus síntomas requiere evaluaciones periódicas, por lo que las técnicas de telemonitorización pueden constituir una alternativa para obtener información de manera remota y no invasiva.</p>
-<p>El conjunto de datos a analizar, Parkinsons Telemonitoring <span class="citation">(<a href="#ref-tsanas2010">Tsanas et al. 2010</a>)</span>, contiene mediciones biomédicas de la voz obtenidas de 42 personas con enfermedad de Parkinson en etapa temprana, quienes participaron en una prueba de seis meses de un dispositivo de telemonitorización. Las grabaciones fueron realizadas automáticamente en los domicilios de los pacientes. El conjunto contiene 5.875 registros de voz, correspondientes a múltiples grabaciones realizadas a estos participantes (alrededor de 140 por paciente).</p>
-<p>Para cada registro se dispone de información demográfica y temporal, como la edad, el sexo y el tiempo transcurrido desde el reclutamiento, además de 16 medidas biomédicas relacionadas con características de la voz <span class="citation">(<a href="#ref-little2009">Little et al. 2009</a>)</span>. También se registran las puntuaciones motor_UPDRS y total_UPDRS, correspondientes a medidas clínicas de la sintomatología de la enfermedad. En este trabajo la variable respuesta es motor_UPDRS, la puntuación de la parte motora de la escala. Como las grabaciones de un mismo paciente se parecen mucho entre sí, el análisis exploratorio se hace sobre los registros y las pruebas de hipótesis sobre un valor resumen por paciente.</p>
-</div>
-<h3>Referencias<a href="referencias.html#referencias" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-little2009" class="csl-entry">
-Little, Max A., Patrick E. McSharry, Eric J. Hunter, Jennifer Spielman, y Lorraine O. Ramig. 2009. <span>«Suitability of dysphonia measurements for telemonitoring of <span>P</span>arkinson’s disease»</span>. <em>IEEE Transactions on Biomedical Engineering</em> 56 (4): 1015-22. <a href="https://doi.org/10.1109/TBME.2008.2005954">https://doi.org/10.1109/TBME.2008.2005954</a>.
-</div>
-<div id="ref-tsanas2010" class="csl-entry">
-Tsanas, Athanasios, Max A. Little, Patrick E. McSharry, y Lorraine O. Ramig. 2010. <span>«Accurate telemonitoring of <span>P</span>arkinson’s disease progression by noninvasive speech tests»</span>. <em>IEEE Transactions on Biomedical Engineering</em> 57 (4): 884-93. <a href="https://doi.org/10.1109/TBME.2009.2036000">https://doi.org/10.1109/TBME.2009.2036000</a>.
-</div>
+<p>El conjunto de datos a analizar, Parkinsons Telemonitoring <span class="citation">(<a href="referencias.html#ref-tsanas2010">Tsanas et al. 2010</a>)</span>, contiene mediciones biomédicas de la voz obtenidas de 42 personas con enfermedad de Parkinson en etapa temprana, quienes participaron en una prueba de seis meses de un dispositivo de telemonitorización. Las grabaciones fueron realizadas automáticamente en los domicilios de los pacientes. El conjunto contiene 5.875 registros de voz, correspondientes a múltiples grabaciones realizadas a estos participantes (alrededor de 140 por paciente).</p>
+<p>Para cada registro se dispone de información demográfica y temporal, como la edad, el sexo y el tiempo transcurrido desde el reclutamiento, además de 16 medidas biomédicas relacionadas con características de la voz <span class="citation">(<a href="referencias.html#ref-little2009">Little et al. 2009</a>)</span>. También se registran las puntuaciones motor_UPDRS y total_UPDRS, correspondientes a medidas clínicas de la sintomatología de la enfermedad. En este trabajo la variable respuesta es motor_UPDRS, la puntuación de la parte motora de la escala. Como las grabaciones de un mismo paciente se parecen mucho entre sí, el análisis exploratorio se hace sobre los registros y las pruebas de hipótesis sobre un valor resumen por paciente.</p>
 </div>
             </section>
 
