@@ -386,7 +386,7 @@ for (variable in variables_numericas) {
 
 ### Dispersión frente a `motor_UPDRS`
 
-```{r dispersion-vs-motor-updrs, message=FALSE}
+```{r dispersion-vs-motor-updrs}
 variables_numericas <- data %>%
   select(where(is.numeric), -motor_UPDRS, -total_UPDRS) %>%
   names()
@@ -398,11 +398,6 @@ for (variable in variables_numericas) {
       alpha = 0.5,
       color = "#C77D98"
     ) +
-    geom_smooth(
-      method = "lm",
-      se = TRUE,
-      color = "#8F4A68"
-    ) +
     labs(
       title = paste(variable, "vs motor_UPDRS"),
       x = variable,
@@ -413,41 +408,41 @@ for (variable in variables_numericas) {
   print(grafico)
 }
 ```
-**`age` vs `motor_UPDRS`:** Muestra una pendiente ascendente directa, donde la puntuación motora pasa de promediar unos 14 puntos a los 36 años, hasta superar los 25 puntos cerca de los 85 años. Se aprecian franjas verticales de datos debido a que la edad es una variable fija por paciente, confirmando que las personas mayores tienden a presentar una severidad clínica más alta.
+**`age` vs `motor_UPDRS`:** Se observa una relación positiva: a mayor edad, mayor tiende a ser la severidad motora. Los puntos forman franjas verticales porque la edad es fija para cada paciente.
 
-**`test_time` vs `motor_UPDRS`:** La línea de tendencia se mantiene casi horizontal a lo largo de los 200 días de seguimiento, subiendo levemente de los 20 a los 22 puntos. La dispersión homogénea de los puntos a lo largo de todo el eje horizontal indica que el tiempo transcurrido en el estudio, por sí solo, no altera drásticamente el nivel de afectación motora global de los pacientes.
+**`test_time` vs `motor_UPDRS`:** No se observa relación: la severidad se distribuye igual a lo largo de todo el seguimiento.
 
-**`Jitter...` vs `motor_UPDRS`:** La tendencia es positiva pero suave, subiendo desde los 20 puntos en valores de Jitter cercanos a cero hasta aproximadamente los 32 en valores cercanos a 0.1. La gran concentración de puntos en el extremo izquierdo confirma que la mayoría de los registros tienen variaciones de frecuencia bajas, mientras que los valores extremos aumentan la incertidumbre del modelo.
+**`Jitter...` vs `motor_UPDRS`:** No se observa una relación clara: casi todos los registros tienen jitter bajo y cubren toda la escala motora.
 
-**`Jitter.Abs.` vs `motor_UPDRS`:** Muestra un comportamiento prácticamente idéntico al de Jitter porcentual, con una pendiente positiva muy leve. La acumulación masiva de mediciones se da por debajo de 0.0001 segundos, mientras que la franja gris alrededor de la línea se ensancha en la derecha debido a la escasez de datos en niveles altos de alteración absoluta.
+**`Jitter.Abs.` vs `motor_UPDRS`:** No se observa una relación clara; el patrón es el mismo que el de Jitter porcentual.
 
-**`Jitter.RAP` vs `motor_UPDRS`:** La línea de ajuste asciende de forma constante con una pendiente moderada hacia la derecha. Al evaluar los cambios de frecuencia entre ciclos inmediatos, el gráfico demuestra que niveles más altos de inestabilidad rápida en la voz se relacionan con evaluaciones motoras más severas, manteniendo la mayor parte de las observaciones amontonadas cerca del origen.
+**`Jitter.RAP` vs `motor_UPDRS`:** No se observa una relación clara: la nube es casi vertical, concentrada en valores bajos.
 
-**`Jitter.PPQ5` vs `motor_UPDRS`:** Presenta la misma tendencia ascendente que las otras variables de la familia Jitter. El promedio del tono en bloques de 5 periodos suaviza pequeñas variaciones, pero conserva la relación directa: a mayor alteración vocal acumulada, mayor es el puntaje de afectación motora registrado en el paciente.
+**`Jitter.PPQ5` vs `motor_UPDRS`:** No se observa una relación clara, igual que en las demás variables de la familia Jitter.
 
-**`Jitter.DDP` vs `motor_UPDRS`:** La gráfica es visualmente idéntica a la de Jitter.RAP, solo que con el eje horizontal extendido hasta 0.15 debido a la escala multiplicativa. Muestra exactamente la misma inclinación positiva, reforzando que no aporta información nueva frente a RAP para predecir el estado motor.
+**`Jitter.DDP` vs `motor_UPDRS`:** No se observa una relación clara; la gráfica es idéntica a la de Jitter.RAP, pues DDP es el triple de RAP.
 
-**`Shimmer` vs `motor_UPDRS`:** Presenta una línea de tendencia con pendiente positiva moderada, subiendo de 20 a casi 30 puntos en la escala motora. La gran masa de puntos se ubica en variaciones de amplitud menores a 0.05, mientras que los casos con cambios drásticos de volumen coinciden con puntuaciones de deterioro más elevadas.
+**`Shimmer` vs `motor_UPDRS`:** Se observa una relación positiva débil: cuando el shimmer aumenta, la severidad motora tiende a aumentar ligeramente.
 
-**`Shimmer.dB.` vs `motor_UPDRS`:** Muestra una tendencia positiva constante pero moderada, donde la línea de ajuste sube de los 20 a cerca de los 28 puntos en la escala motora. La gran masa de mediciones se acumula en valores menores a 0.5 dB, mientras que los pocos registros con alta variación de volumen hacia 2 dB presentan una mayor dispersión e incertidumbre en el ajuste.
+**`Shimmer.dB.` vs `motor_UPDRS`:** Se observa una relación positiva débil, la misma que la de Shimmer en escala de decibelios.
 
-**`Shimmer.APQ3` vs `motor_UPDRS`:** La tendencia es levemente positiva, subiendo de los 20 a cerca de los 28 puntos en la escala motora a medida que aumenta el valor. La enorme mayoría de las mediciones se agrupan por debajo de 0.05, lo que hace que la incertidumbre del modelo crezca progresivamente hacia el extremo derecho por la falta de observaciones altas.
+**`Shimmer.APQ3` vs `motor_UPDRS`:** No se observa una relación clara: la nube se concentra en valores bajos y cubre toda la escala.
 
-**`Shimmer.APQ5` vs `motor_UPDRS`:** Presenta un comportamiento casi idéntico al de APQ3, con una pendiente ascendente constante pero moderada. Mide la perturbación de amplitud promediada en 5 periodos, mostrando que valores más altos de inestabilidad vocal coinciden levemente con mayores puntajes de severidad motora, manteniendo la concentración masiva de puntos cerca de cero.
+**`Shimmer.APQ5` vs `motor_UPDRS`:** No se observa una relación clara; el patrón es casi idéntico al de APQ3.
 
-**`Shimmer.APQ11` vs `motor_UPDRS`:** Muestra una inclinación positiva más marcada que las anteriores, subiendo desde los 20 hasta aproximadamente los 35 puntos. Al promediar la amplitud en 11 periodos, la relación con el deterioro motor se vuelve un poco más clara, aunque persiste la alta densidad de datos en valores bajos menores a 0.05 y un intervalo de confianza más ancho en los extremos.
+**`Shimmer.APQ11` vs `motor_UPDRS`:** Se observa una relación positiva débil: los registros con APQ11 más alto tienden a tener puntuaciones motoras mayores.
 
-**`Shimmer.DDA` vs `motor_UPDRS`:** La línea de tendencia asciende de forma suave y constante desde los 20 hasta aproximadamente los 28 puntos. Muestra una distribución idéntica a la de APQ3 por su definición matemática, manteniendo casi todas las observaciones amontonadas cerca del origen por debajo de 0.1 y un ensanchamiento de la franja gris hacia los valores más altos.
+**`Shimmer.DDA` vs `motor_UPDRS`:** No se observa una relación clara; la gráfica es idéntica a la de APQ3, pues DDA es el triple de APQ3.
 
-**`NHR` vs `motor_UPDRS`:** Presenta una pendiente ascendente moderada que va desde los 21 puntos hasta rozar los 29 puntos en la escala motora. La inmensa mayoría de los datos se agrupa de forma masiva en valores de NHR cercanos a 0, mientras que la presencia de pocos casos con mayor nivel de ruido hacia 0.7 eleva progresivamente la franja de incertidumbre.
+**`NHR` vs `motor_UPDRS`:** No se observa una relación clara: casi todos los registros tienen NHR cercano a 0.
 
-**`HNR` vs `motor_UPDRS`:** Muestra una clara relación lineal negativa, donde la línea de ajuste desciende de casi 28 puntos hasta aproximadamente 16 a medida que HNR aumenta. A diferencia de otras variables, los datos se distribuyen de forma amplia entre 15 y 30 dB, confirmando que una mayor proporción de señal limpia respecto al ruido se vincula con un menor deterioro motor.
+**`HNR` vs `motor_UPDRS`:** Se observa una relación negativa débil: cuando HNR aumenta, la severidad motora tiende a disminuir.
 
-**`RPDE` vs `motor_UPDRS`:** La línea de ajuste asciende de manera constante con una pendiente positiva suave, subiendo de 17 a 26 puntos en la escala motora. Los datos muestran una cobertura amplia y dispersa a lo largo del eje entre 0.25 y 0.75, reflejando que el incremento en la entropía o complejidad de la voz se asocia gradualmente con puntajes motores más altos.
+**`RPDE` vs `motor_UPDRS`:** Se observa una relación positiva débil: cuando RPDE aumenta, la severidad motora tiende a aumentar.
 
-**`DFA` vs `motor_UPDRS`:** Presenta una pendiente levemente descendente que baja desde los 23 hasta los 19 puntos a lo largo de la escala. Los puntos se encuentran distribuidos de manera uniforme en la franja central de 0.55 a 0.75, indicando que el exponente de escalado fractal mantiene una relación ligeramente inversa pero bastante estable con el nivel de afectación motora.
+**`DFA` vs `motor_UPDRS`:** Se observa una relación negativa débil: cuando DFA aumenta, la severidad motora tiende a disminuir.
 
-**`PPE` vs `motor_UPDRS`:** La relación muestra una tendencia positiva clara, con la línea de tendencia subiendo desde los 18 hasta casi los 30 puntos de la escala motora. Aunque la mayoría de los datos se agrupan en valores de PPE menores a 0.3, las mediciones con mayor alteración en la frecuencia del tono coinciden consistentemente con un mayor deterioro motor.
+**`PPE` vs `motor_UPDRS`:** Se observa una relación positiva débil: cuando PPE aumenta, la severidad motora tiende a aumentar.
 
 
 ## Caracterización de la variable categórica `sex`
@@ -565,17 +560,17 @@ for (comparacion in comparaciones) {
   print(grafico)
 }
 ```
-**`age` vs `test_time`:** Muestra una distribución de datos organizada en columnas verticales definidas por la edad de cada paciente, extendiéndose de manera uniforme a lo largo del eje del tiempo de prueba entre los 0 y casi 200 días. Esta estructura confirma que los participantes de distintas edades ingresaron y completaron el estudio bajo esquemas de seguimiento similares, sin evidenciar una relación lineal o sesgo entre la edad de la persona y la duración o frecuencia de sus mediciones.
+**`age` vs `test_time`:** No se observa relación: los pacientes de todas las edades tienen grabaciones a lo largo de todo el seguimiento.
 
-**`Jitter...` vs `Jitter.PPQ5`:** Presenta una relación positiva clara y directa entre ambas métricas de variación de frecuencia. La masa de datos se concentra de forma densa cerca del origen (valores menores a 0.02), mientras que a medida que aumentan los niveles de inestabilidad vocal se observa una leve dispersión progresiva de los puntos. Esto demuestra una alta correlación entre el indicador general y la evaluación en bloques de 5 periodos.
+**`Jitter...` vs `Jitter.PPQ5`:** Se observa una relación positiva fuerte: cuando una aumenta, la otra aumenta.
 
-**`Jitter.RAP` vs `Jitter.DDP`:** Muestra una relación lineal perfecta, donde todos los datos se alinean sin desviación alguna sobre una única trayectoria recta. Jitter.RAP mide la inestabilidad rápida en la frecuencia de la voz y Jitter.DDP representa esa misma variación pero multiplicada por tres. Esto confirma que ambas variables entregan la misma información sobre el temblor vocal, por lo que existe una redundancia total y basta con conservar solo una de ellas para el modelo.
+**`Jitter.RAP` vs `Jitter.DDP`:** Se observa una relación positiva perfecta: los puntos forman una línea porque DDP es exactamente el triple de RAP.
 
-**`Shimmer.APQ3` vs `Shimmer.DDA`:** Al igual que el par anterior, presenta una relación lineal perfecta sin ninguna dispersión de los puntos fuera de la línea trazada. La variable DDA es exactamente el triple de APQ3, por lo que esta gráfica ratifica una colinealidad entre ambas métricas de amplitud y la conveniencia de descartar una de ellas en la fase de ingeniería de características.
+**`Shimmer.APQ3` vs `Shimmer.DDA`:** Se observa una relación positiva perfecta: DDA es exactamente el triple de APQ3.
 
-**`Shimmer` vs `HNR`:** Muestra una fuerte relación curvilínea e inversa entre la variación de la amplitud de la voz y la relación armónico-ruido. A medida que Shimmer aumenta desde 0.02 hacia valores superiores a 0.15, la variable HNR cae de manera drástica desde niveles superiores a 30 dB hasta valores inferiores a 10 dB. La mayor concentración de observaciones se ubica en zonas de baja alteración de amplitud y alto nivel armónico, reflejando que la pérdida de estabilidad en el volumen degrada de forma directa la pureza de la señal vocal.
+**`Shimmer` vs `HNR`:** Se observa una relación negativa: cuando el shimmer aumenta, HNR disminuye.
 
-**`RPDE` vs `PPE`:** Presenta una tendencia positiva moderada con una dispersión considerable de los datos en forma de nube ascendente. A medida que la entropía de la señal (RPDE) aumenta de 0.25 a 0.75, la entropía del periodo de tono (PPE) muestra un incremento gradual en sus valores promedio, pasando de rangos cercanos a 0.1 a valores sobre 0.4. Esto demuestra que ambos problemas avanzan juntos: conforme empeora el timbre vocal, se incrementa el descontrol en la frecuencia de la voz, reflejando el deterioro del paciente desde dos ángulos distintos.
+**`RPDE` vs `PPE`:** Se observa una relación positiva moderada: cuando RPDE aumenta, PPE tiende a aumentar.
 
 ### Matriz de correlaciones
 
@@ -613,11 +608,10 @@ La conclusión es que usar las once medidas de Jitter y Shimmer a la vez sería 
 
 ### Pares más correlacionados
 
-```{r dispersion-pares-correlacionados, fig.width=12, fig.height=8, message=FALSE}
+```{r dispersion-pares-correlacionados, fig.width=12, fig.height=8}
 grafico_dispersion <- function(x, y, titulo) {
   ggplot(data, aes(x = .data[[x]], y = .data[[y]])) +
     geom_point(alpha = 0.4, color = "#C77D98") +
-    geom_smooth(method = "lm", se = FALSE, color = "#8F4A68") +
     labs(title = titulo, x = x, y = y) +
     theme_bw()
 }
@@ -632,17 +626,17 @@ p_cor6 <- grafico_dispersion("Jitter.PPQ5", "NHR", "Jitter:PPQ5 y NHR")
 (p_cor1 + p_cor2 + p_cor3) / (p_cor4 + p_cor5 + p_cor6)
 ```
 
-**`Jitter...` vs `Jitter.RAP`:** Los puntos caen casi sobre la recta (r = 0.98) y solo se abren un poco por encima de 0.03, donde hay pocos datos. Las dos miden la misma perturbación de la frecuencia entre ciclos, así que crecen casi en proporción.
+**`Jitter...` vs `Jitter.RAP`:** Relación positiva muy fuerte (r = 0.98): cuando una aumenta, la otra aumenta casi en la misma proporción.
 
-**`Jitter...` vs `Jitter.Abs.`:** La relación es fuerte (r = 0.87), pero la nube se abre en forma de cono porque la medida absoluta depende del tono de cada voz: un mismo porcentaje de variación son más microsegundos en una voz grave que en una aguda. Dos registros (pacientes 14 y 30) con Jitter cercano a 0.1 y variación absoluta baja se salen claramente del patrón.
+**`Jitter...` vs `Jitter.Abs.`:** Relación positiva fuerte (r = 0.87), aunque más dispersa: cuando el jitter porcentual aumenta, el absoluto también.
 
-**`Shimmer` vs `Shimmer.dB.`:** Es la correlación más alta entre variables que no son múltiplos exactos (r = 0.99). La línea se curva apenas en los valores altos por la escala logarítmica de los decibelios; en la práctica, las dos dicen lo mismo.
+**`Shimmer` vs `Shimmer.dB.`:** Relación positiva casi perfecta (r = 0.99): las dos miden lo mismo en escalas distintas.
 
-**`Shimmer` vs `Shimmer.APQ5`:** Relación casi lineal (r = 0.98), con la mayoría de los registros por debajo de 0.05. Solo por encima de 0.1 se nota dispersión, porque el promedio en bloques de cinco periodos suaviza los cambios más bruscos.
+**`Shimmer` vs `Shimmer.APQ5`:** Relación positiva muy fuerte (r = 0.98): cuando una aumenta, la otra aumenta.
 
-**`Shimmer.APQ5` vs `Shimmer.APQ11`:** Es el par más disperso de la familia (r = 0.94). En las grabaciones más inestables `Shimmer.APQ11` tiende a quedar por encima de `Shimmer.APQ5`, y la nube se abre hacia arriba en la parte derecha.
+**`Shimmer.APQ5` vs `Shimmer.APQ11`:** Relación positiva fuerte (r = 0.94), con más dispersión en los valores altos.
 
-**`Jitter.PPQ5` vs `NHR`:** Es la relación más fuerte entre una medida de perturbación y una de ruido (r = 0.86). En la gran mayoría de registros, con `Jitter.PPQ5` por debajo de 0.01, el NHR se queda casi siempre bajo 0.1; en los pocos con Jitter alto el ruido se dispara hasta 0.75. Más inestabilidad suele venir con más ruido, aunque no tan de la mano como dentro de cada familia.
+**`Jitter.PPQ5` vs `NHR`:** Relación positiva fuerte (r = 0.86): cuando el jitter aumenta, el ruido también aumenta.
 
 ## Ingeniería de características
 
@@ -784,5 +778,5 @@ data %>%
   arrange(desc(abs(correlacion)))
 ```
 
-Las 16 medidas acústicas quedaron en 7 (los dos índices más `NHR`, `HNR`, `RPDE`, `DFA` y `PPE`) sin perder información apreciable. Ninguna se asocia con fuerza a `motor_UPDRS`: la mayor correlación es la de `age` (0.27), seguida de `PPE` (0.16), `HNR` (-0.16), `RPDE` (0.13) y `DFA` (-0.12); los índices de shimmer (0.11) y jitter (0.07) quedan aún más abajo. Es lo mismo que mostraban las pendientes suaves de los gráficos de dispersión: registro a registro, la relación lineal entre la voz y la severidad motora es débil. Por eso en la parte inferencial tiene más sentido comparar la severidad entre grupos de pacientes (sexo, edad, nivel de inestabilidad vocal) que apoyarse en estas correlaciones.
+Las 16 medidas acústicas quedaron en 7 (los dos índices más `NHR`, `HNR`, `RPDE`, `DFA` y `PPE`) sin perder información apreciable. Ninguna se asocia con fuerza a `motor_UPDRS`: la mayor correlación es la de `age` (0.27), seguida de `PPE` (0.16), `HNR` (-0.16), `RPDE` (0.13) y `DFA` (-0.12); los índices de shimmer (0.11) y jitter (0.07) quedan aún más abajo. Es lo mismo que mostraban los gráficos de dispersión: registro a registro, la relación entre la voz y la severidad motora es débil. Por eso en la parte inferencial tiene más sentido comparar la severidad entre grupos de pacientes (sexo, edad, nivel de inestabilidad vocal) que apoyarse en estas correlaciones.
 

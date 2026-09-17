@@ -738,14 +738,13 @@ pacientes <- pacientes %>%
 variables_cor <- c("age", "jitter", "shimmer", "NHR", "HNR", "RPDE", "DFA", "PPE")
 ```
 
-```{r inf-cor-dispersion, fig.width=10, fig.height=6, message=FALSE}
+```{r inf-cor-dispersion, fig.width=10, fig.height=6}
 pacientes %>%
   select(motor, all_of(variables_cor)) %>%
   pivot_longer(-motor, names_to = "variable", values_to = "valor") %>%
   mutate(variable = factor(variable, levels = variables_cor)) %>%
   ggplot(aes(x = valor, y = motor)) +
   geom_point(color = "#C77D98", alpha = 0.7) +
-  geom_smooth(method = "lm", se = FALSE, color = "#8F4A68") +
   facet_wrap(~ variable, scales = "free_x", ncol = 4) +
   labs(title = "Severidad motora promedio frente a cada característica (un punto por paciente)",
        x = NULL,
@@ -753,7 +752,7 @@ pacientes %>%
   theme_minimal()
 ```
 
-Con un punto por paciente las nubes son dispersas y las rectas tienen pendientes suaves. Se ven tendencias positivas con la edad, `PPE`, `RPDE` y, más leves, con los índices de inestabilidad y `NHR`; negativas con `HNR` y `DFA`. En `NHR`, `jitter` y `shimmer` unos pocos pacientes con valores muy altos tiran de la recta.
+Con un punto por paciente se observan relaciones positivas débiles con la edad, `PPE` y `RPDE` (cuando aumentan, la severidad tiende a aumentar) y negativas débiles con `HNR` y `DFA` (cuando aumentan, la severidad tiende a disminuir). Con los índices de inestabilidad y `NHR` no se aprecia una relación clara.
 
 ### Supuesto de normalidad
 
