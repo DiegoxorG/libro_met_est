@@ -39,7 +39,7 @@ Analizar exploratoria e inferencialmente las características demográficas, tem
 
 5. Evaluar, a nivel de paciente, los supuestos de normalidad, homocedasticidad y frecuencias esperadas mínimas necesarios para la aplicación de las pruebas de hipótesis seleccionadas, mediante procedimientos gráficos y pruebas formales, determinando la pertinencia de utilizar métodos paramétricos o no paramétricos.
 
-6. Determinar, mediante pruebas de hipótesis, si existen diferencias estadísticamente significativas en la severidad motora (motor_UPDRS) según el sexo, el grupo de edad y el nivel de inestabilidad vocal de los pacientes, así como entre el inicio y el final del periodo de seguimiento, si la correlación entre cada característica demográfica o acústica y la severidad motora es estadísticamente significativa, y si el nivel de severidad motora (alto o bajo) está asociado con el grupo de edad y el sexo de los pacientes.
+6. Determinar, mediante pruebas de hipótesis, si existen diferencias estadísticamente significativas en la severidad motora (motor_UPDRS) según el sexo, el grupo de edad y el nivel de inestabilidad vocal de los pacientes, y entre el inicio y el final del periodo de seguimiento; si cada característica demográfica o acústica se correlaciona significativamente con la severidad motora; y si el nivel de severidad motora (alto o bajo) está asociado con el grupo de edad y el sexo.
 
 7. Cuantificar la magnitud de las diferencias y correlaciones encontradas mediante medidas de tamaño del efecto apropiadas según el tipo de prueba utilizada (d de Cohen, eta cuadrado, el coeficiente de correlación o la V de Cramer), con el propósito de complementar la significancia estadística con una medida de relevancia práctica.
 
