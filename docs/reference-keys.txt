@@ -55,5 +55,12 @@ supuesto-de-normalidad-3
 prueba-de-hipótesis-correlación-de-pearson-y-de-spearman
 tamaño-del-efecto-4
 conclusión-4
+objetivo-6-asociación-entre-el-nivel-de-severidad-motora-y-las-características-categóricas
+tabla-de-contingencia
+supuesto-frecuencias-esperadas
+prueba-de-hipótesis-chi-cuadrado-de-independencia
+tamaño-del-efecto-v-de-cramer
+segunda-tabla-sexo-y-nivel-de-severidad
+conclusión-5
 síntesis-de-resultados
 conclusiones

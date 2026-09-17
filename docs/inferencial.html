@@ -246,7 +246,16 @@ div.csl-indent {
 <li class="chapter" data-level="2.6.4" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-4"><i class="fa fa-check"></i><b>2.6.4</b> Tamaño del efecto</a></li>
 <li class="chapter" data-level="2.6.5" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-4"><i class="fa fa-check"></i><b>2.6.5</b> Conclusión</a></li>
 </ul></li>
-<li class="chapter" data-level="2.7" data-path="inferencial.html"><a href="inferencial.html#s%C3%ADntesis-de-resultados"><i class="fa fa-check"></i><b>2.7</b> Síntesis de resultados</a></li>
+<li class="chapter" data-level="2.7" data-path="inferencial.html"><a href="inferencial.html#objetivo-6-asociaci%C3%B3n-entre-el-nivel-de-severidad-motora-y-las-caracter%C3%ADsticas-categ%C3%B3ricas"><i class="fa fa-check"></i><b>2.7</b> Objetivo 6: asociación entre el nivel de severidad motora y las características categóricas</a>
+<ul>
+<li class="chapter" data-level="2.7.1" data-path="inferencial.html"><a href="inferencial.html#tabla-de-contingencia"><i class="fa fa-check"></i><b>2.7.1</b> Tabla de contingencia</a></li>
+<li class="chapter" data-level="2.7.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-frecuencias-esperadas"><i class="fa fa-check"></i><b>2.7.2</b> Supuesto: frecuencias esperadas</a></li>
+<li class="chapter" data-level="2.7.3" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-chi-cuadrado-de-independencia"><i class="fa fa-check"></i><b>2.7.3</b> Prueba de hipótesis: chi-cuadrado de independencia</a></li>
+<li class="chapter" data-level="2.7.4" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-v-de-cramer"><i class="fa fa-check"></i><b>2.7.4</b> Tamaño del efecto: V de Cramer</a></li>
+<li class="chapter" data-level="2.7.5" data-path="inferencial.html"><a href="inferencial.html#segunda-tabla-sexo-y-nivel-de-severidad"><i class="fa fa-check"></i><b>2.7.5</b> Segunda tabla: sexo y nivel de severidad</a></li>
+<li class="chapter" data-level="2.7.6" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-5"><i class="fa fa-check"></i><b>2.7.6</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.8" data-path="inferencial.html"><a href="inferencial.html#s%C3%ADntesis-de-resultados"><i class="fa fa-check"></i><b>2.8</b> Síntesis de resultados</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="conclusiones.html"><a href="conclusiones.html"><i class="fa fa-check"></i><b>3</b> Conclusiones</a></li>
 <li class="chapter" data-level="" data-path="referencias.html"><a href="referencias.html"><i class="fa fa-check"></i>Referencias</a></li>
@@ -273,7 +282,7 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="inferencial" class="section level1 hasAnchor" number="2">
 <h1><span class="header-section-number">Capítulo 2</span> Estadística inferencial<a href="inferencial.html#inferencial" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>Este capítulo cubre los objetivos 5, 6 y 7: revisamos los supuestos de normalidad y homocedasticidad, contrastamos si la severidad motora cambia según el sexo, la edad, la inestabilidad vocal y el momento del seguimiento, probamos la correlación de cada característica con la severidad, y medimos el tamaño de cada efecto. En todas las pruebas usamos <span class="math inline">\(\alpha = 0.05\)</span>.</p>
+<p>Este capítulo cubre los objetivos 5, 6 y 7: revisamos los supuestos de normalidad y homocedasticidad, contrastamos si la severidad motora cambia según el sexo, la edad, la inestabilidad vocal y el momento del seguimiento, probamos la correlación de cada característica con la severidad y la asociación entre el nivel de severidad y las variables categóricas, y medimos el tamaño de cada efecto. En todas las pruebas usamos <span class="math inline">\(\alpha = 0.05\)</span>.</p>
 <div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="inferencial.html#cb54-1" tabindex="-1"></a><span class="fu">library</span>(effsize)</span>
 <span id="cb54-2"><a href="inferencial.html#cb54-2" tabindex="-1"></a><span class="fu">library</span>(nortest)</span>
 <span id="cb54-3"><a href="inferencial.html#cb54-3" tabindex="-1"></a><span class="fu">library</span>(car)</span>
@@ -1302,46 +1311,179 @@ div.csl-indent {
 <p>Con una confianza del 95 %, solo la edad muestra una correlación con la severidad motora que puede considerarse significativa, y de forma marginal: Pearson queda justo por encima del umbral (p = 0.054) y Spearman por debajo (p = 0.026), con un efecto en la frontera entre pequeño y medio. Las características acústicas de la voz tienen correlaciones pequeñas, entre 0.12 y 0.26 en valor absoluto, que con 42 pacientes no alcanzan la significancia y que desaparecen al corregir por comparaciones múltiples. Es el mismo mensaje que dejaron el EDA y las comparaciones entre grupos: la edad pesa más que la voz, y para detectar los efectos pequeños de la voz haría falta una muestra mayor de pacientes.</p>
 </div>
 </div>
-<div id="síntesis-de-resultados" class="section level2 hasAnchor" number="2.7">
-<h2><span class="header-section-number">2.7</span> Síntesis de resultados<a href="inferencial.html#s%C3%ADntesis-de-resultados" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="inferencial.html#cb176-1" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb176-2"><a href="inferencial.html#cb176-2" tabindex="-1"></a>  <span class="at">objetivo =</span> <span class="fu">c</span>(<span class="st">&quot;Sexo (hombres vs. mujeres)&quot;</span>,</span>
-<span id="cb176-3"><a href="inferencial.html#cb176-3" tabindex="-1"></a>               <span class="st">&quot;Grupo de edad (3 grupos)&quot;</span>,</span>
-<span id="cb176-4"><a href="inferencial.html#cb176-4" tabindex="-1"></a>               <span class="st">&quot;Inestabilidad de la frecuencia (jitter alto vs. bajo)&quot;</span>,</span>
-<span id="cb176-5"><a href="inferencial.html#cb176-5" tabindex="-1"></a>               <span class="st">&quot;Inestabilidad de la amplitud (shimmer alto vs. bajo)&quot;</span>,</span>
-<span id="cb176-6"><a href="inferencial.html#cb176-6" tabindex="-1"></a>               <span class="st">&quot;Seguimiento (última vs. primera grabación)&quot;</span>),</span>
-<span id="cb176-7"><a href="inferencial.html#cb176-7" tabindex="-1"></a>  <span class="at">prueba =</span> <span class="fu">c</span>(<span class="st">&quot;t de Student&quot;</span>, <span class="st">&quot;ANOVA de un factor&quot;</span>, <span class="st">&quot;t de Student&quot;</span>,</span>
-<span id="cb176-8"><a href="inferencial.html#cb176-8" tabindex="-1"></a>             <span class="st">&quot;t de Student&quot;</span>, <span class="st">&quot;t pareada&quot;</span>),</span>
-<span id="cb176-9"><a href="inferencial.html#cb176-9" tabindex="-1"></a>  <span class="at">estadistico =</span> <span class="fu">c</span>(prueba_t_sexo<span class="sc">$</span>statistic,</span>
-<span id="cb176-10"><a href="inferencial.html#cb176-10" tabindex="-1"></a>                  <span class="fu">summary</span>(modelo_anova)[[<span class="dv">1</span>]]<span class="sc">$</span><span class="st">`</span><span class="at">F value</span><span class="st">`</span>[<span class="dv">1</span>],</span>
-<span id="cb176-11"><a href="inferencial.html#cb176-11" tabindex="-1"></a>                  prueba_t_jitter<span class="sc">$</span>statistic,</span>
-<span id="cb176-12"><a href="inferencial.html#cb176-12" tabindex="-1"></a>                  prueba_t_shimmer<span class="sc">$</span>statistic,</span>
-<span id="cb176-13"><a href="inferencial.html#cb176-13" tabindex="-1"></a>                  prueba_t_pareada<span class="sc">$</span>statistic),</span>
-<span id="cb176-14"><a href="inferencial.html#cb176-14" tabindex="-1"></a>  <span class="at">p_valor =</span> <span class="fu">c</span>(prueba_t_sexo<span class="sc">$</span>p.value,</span>
-<span id="cb176-15"><a href="inferencial.html#cb176-15" tabindex="-1"></a>              <span class="fu">summary</span>(modelo_anova)[[<span class="dv">1</span>]]<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;F)</span><span class="st">`</span>[<span class="dv">1</span>],</span>
-<span id="cb176-16"><a href="inferencial.html#cb176-16" tabindex="-1"></a>              prueba_t_jitter<span class="sc">$</span>p.value,</span>
-<span id="cb176-17"><a href="inferencial.html#cb176-17" tabindex="-1"></a>              prueba_t_shimmer<span class="sc">$</span>p.value,</span>
-<span id="cb176-18"><a href="inferencial.html#cb176-18" tabindex="-1"></a>              prueba_t_pareada<span class="sc">$</span>p.value),</span>
-<span id="cb176-19"><a href="inferencial.html#cb176-19" tabindex="-1"></a>  <span class="at">tamano_efecto =</span> <span class="fu">c</span>(d_sexo<span class="sc">$</span>estimate, eta_cuadrado_manual, d_jitter<span class="sc">$</span>estimate,</span>
-<span id="cb176-20"><a href="inferencial.html#cb176-20" tabindex="-1"></a>                    d_shimmer<span class="sc">$</span>estimate, d_pareado<span class="sc">$</span>estimate),</span>
-<span id="cb176-21"><a href="inferencial.html#cb176-21" tabindex="-1"></a>  <span class="at">medida =</span> <span class="fu">c</span>(<span class="st">&quot;d de Cohen&quot;</span>, <span class="st">&quot;eta cuadrado&quot;</span>, <span class="st">&quot;d de Cohen&quot;</span>, <span class="st">&quot;d de Cohen&quot;</span>, <span class="st">&quot;d de Cohen&quot;</span>)</span>
-<span id="cb176-22"><a href="inferencial.html#cb176-22" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb176-23"><a href="inferencial.html#cb176-23" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">decision =</span> <span class="fu">if_else</span>(p_valor <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">&quot;Se rechaza H0&quot;</span>, <span class="st">&quot;No se rechaza H0&quot;</span>),</span>
-<span id="cb176-24"><a href="inferencial.html#cb176-24" tabindex="-1"></a>         <span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">3</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb176-25"><a href="inferencial.html#cb176-25" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span></code></pre></div>
-<pre><code>##                                                objetivo             prueba
-## 1                            Sexo (hombres vs. mujeres)       t de Student
-## 2                              Grupo de edad (3 grupos) ANOVA de un factor
-## 3 Inestabilidad de la frecuencia (jitter alto vs. bajo)       t de Student
-## 4  Inestabilidad de la amplitud (shimmer alto vs. bajo)       t de Student
-## 5            Seguimiento (última vs. primera grabación)          t pareada
-##   estadistico p_valor tamano_efecto       medida         decision
-## 1       0.360   0.721         0.118   d de Cohen No se rechaza H0
-## 2       2.940   0.065         0.131 eta cuadrado No se rechaza H0
-## 3       1.423   0.163         0.439   d de Cohen No se rechaza H0
-## 4       0.617   0.541         0.191   d de Cohen No se rechaza H0
-## 5       2.159   0.037         0.246   d de Cohen    Se rechaza H0</code></pre>
-<p>Solo la comparación entre el inicio y el final del seguimiento resulta significativa: la severidad motora sube en promedio 2.08 puntos en seis meses, con un efecto pequeño. El sexo y el shimmer no se asocian con la severidad ni estadística ni prácticamente. Los otros dos resultados muestran la diferencia entre significancia y relevancia: el grupo de edad (eta cuadrado = 0.13, casi 7 puntos entre extremos) y el jitter (d = 0.44, 3.4 puntos) tienen efectos apreciables que con 42 pacientes no cruzan el umbral del 5 % en las pruebas paramétricas, aunque en el caso de la edad la no paramétrica sí lo hace por poco. Las pruebas de correlación apuntan en la misma dirección: solo la edad alcanza una correlación cercana al tamaño medio con la severidad (r = 0.3, significativa con Spearman y marginal con Pearson), mientras que las medidas acústicas no pasan de correlaciones pequeñas. En conjunto, la edad y el paso del tiempo son lo que más claramente se vincula con la severidad motora; la voz, tal como la analizamos aquí, guarda con ella una relación débil.</p>
+<div id="objetivo-6-asociación-entre-el-nivel-de-severidad-motora-y-las-características-categóricas" class="section level2 hasAnchor" number="2.7">
+<h2><span class="header-section-number">2.7</span> Objetivo 6: asociación entre el nivel de severidad motora y las características categóricas<a href="inferencial.html#objetivo-6-asociaci%C3%B3n-entre-el-nivel-de-severidad-motora-y-las-caracter%C3%ADsticas-categ%C3%B3ricas" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Las pruebas anteriores comparan promedios o miden correlaciones. La prueba chi-cuadrado de independencia responde otra pregunta: si <strong>dos variables categóricas</strong> están asociadas. Como <code>sex</code> es la única categórica del conjunto de datos, seguimos el procedimiento visto en clase y construimos las demás categorizando variables numéricas: el grupo de edad ya está definido, y la severidad motora se clasifica en alta o baja según el promedio de <code>motor_UPDRS</code> de cada paciente esté por encima o por debajo de la mediana. La pregunta principal es si el nivel de severidad está asociado con el grupo de edad; como segunda tabla, se cruza con el sexo.</p>
+<p><span class="math display">\[H_0: \text{el nivel de severidad es independiente del grupo de edad} \qquad H_1: \text{están asociados}\]</span></p>
+<div id="tabla-de-contingencia" class="section level3 hasAnchor" number="2.7.1">
+<h3><span class="header-section-number">2.7.1</span> Tabla de contingencia<a href="inferencial.html#tabla-de-contingencia" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="inferencial.html#cb176-1" tabindex="-1"></a>pacientes <span class="ot">&lt;-</span> pacientes <span class="sc">%&gt;%</span></span>
+<span id="cb176-2"><a href="inferencial.html#cb176-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">severidad =</span> <span class="fu">factor</span>(<span class="fu">if_else</span>(motor <span class="sc">&gt;</span> <span class="fu">median</span>(motor), <span class="st">&quot;Alta&quot;</span>, <span class="st">&quot;Baja&quot;</span>),</span>
+<span id="cb176-3"><a href="inferencial.html#cb176-3" tabindex="-1"></a>                            <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Baja&quot;</span>, <span class="st">&quot;Alta&quot;</span>)))</span>
+<span id="cb176-4"><a href="inferencial.html#cb176-4" tabindex="-1"></a></span>
+<span id="cb176-5"><a href="inferencial.html#cb176-5" tabindex="-1"></a>tabla_edad_severidad <span class="ot">&lt;-</span> <span class="fu">table</span>(pacientes<span class="sc">$</span>grupo_edad, pacientes<span class="sc">$</span>severidad)</span>
+<span id="cb176-6"><a href="inferencial.html#cb176-6" tabindex="-1"></a>tabla_edad_severidad</span></code></pre></div>
+<pre><code>##              
+##               Baja Alta
+##   Menor de 60    9    5
+##   60 a 70        8    7
+##   Mayor de 70    4    9</code></pre>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="inferencial.html#cb178-1" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">prop.table</span>(tabla_edad_severidad, <span class="at">margin =</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span></code></pre></div>
+<pre><code>##              
+##               Baja Alta
+##   Menor de 60 64.3 35.7
+##   60 a 70     53.3 46.7
+##   Mayor de 70 30.8 69.2</code></pre>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="inferencial.html#cb180-1" tabindex="-1"></a>pacientes <span class="sc">%&gt;%</span></span>
+<span id="cb180-2"><a href="inferencial.html#cb180-2" tabindex="-1"></a>  <span class="fu">count</span>(grupo_edad, severidad) <span class="sc">%&gt;%</span></span>
+<span id="cb180-3"><a href="inferencial.html#cb180-3" tabindex="-1"></a>  <span class="fu">group_by</span>(grupo_edad) <span class="sc">%&gt;%</span></span>
+<span id="cb180-4"><a href="inferencial.html#cb180-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">porcentaje =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb180-5"><a href="inferencial.html#cb180-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> grupo_edad, <span class="at">y =</span> porcentaje, <span class="at">fill =</span> severidad)) <span class="sc">+</span></span>
+<span id="cb180-6"><a href="inferencial.html#cb180-6" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.6</span>, <span class="at">color =</span> <span class="st">&quot;white&quot;</span>) <span class="sc">+</span></span>
+<span id="cb180-7"><a href="inferencial.html#cb180-7" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(n, <span class="st">&quot; (&quot;</span>, <span class="fu">round</span>(porcentaje), <span class="st">&quot; %)&quot;</span>)),</span>
+<span id="cb180-8"><a href="inferencial.html#cb180-8" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>), <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb180-9"><a href="inferencial.html#cb180-9" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">Baja =</span> <span class="st">&quot;#FAD0C4&quot;</span>, <span class="at">Alta =</span> <span class="st">&quot;#E8A598&quot;</span>), <span class="at">name =</span> <span class="st">&quot;Severidad&quot;</span>) <span class="sc">+</span></span>
+<span id="cb180-10"><a href="inferencial.html#cb180-10" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Nivel de severidad motora según el grupo de edad&quot;</span>,</span>
+<span id="cb180-11"><a href="inferencial.html#cb180-11" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Grupo de edad (años)&quot;</span>,</span>
+<span id="cb180-12"><a href="inferencial.html#cb180-12" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Porcentaje de pacientes&quot;</span>) <span class="sc">+</span></span>
+<span id="cb180-13"><a href="inferencial.html#cb180-13" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<p><img src="parkinson-updrs_files/figure-html/inf-chi-grafico-1.png" alt="" width="672" /></p>
+<p>La proporción de pacientes con severidad alta sube con la edad: 5 de 14 (36 %) en los menores de 60, 7 de 15 (47 %) entre 60 y 70 y 9 de 13 (69 %) en los mayores de 70. La tabla apunta en la misma dirección que el ANOVA del objetivo 2; falta ver si la diferencia es mayor de lo que produciría el azar.</p>
+</div>
+<div id="supuesto-frecuencias-esperadas" class="section level3 hasAnchor" number="2.7.2">
+<h3><span class="header-section-number">2.7.2</span> Supuesto: frecuencias esperadas<a href="inferencial.html#supuesto-frecuencias-esperadas" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Bajo <span class="math inline">\(H_0\)</span>, la frecuencia esperada de cada celda es (total de la fila × total de la columna) / N. La prueba requiere que todas sean al menos 5.</p>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="inferencial.html#cb181-1" tabindex="-1"></a>esperados <span class="ot">&lt;-</span> <span class="fu">outer</span>(<span class="fu">rowSums</span>(tabla_edad_severidad), <span class="fu">colSums</span>(tabla_edad_severidad),</span>
+<span id="cb181-2"><a href="inferencial.html#cb181-2" tabindex="-1"></a>                   <span class="at">FUN =</span> <span class="cf">function</span>(f, c) f <span class="sc">*</span> c <span class="sc">/</span> <span class="fu">sum</span>(tabla_edad_severidad))</span>
+<span id="cb181-3"><a href="inferencial.html#cb181-3" tabindex="-1"></a><span class="fu">round</span>(esperados, <span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##             Baja Alta
+## Menor de 60  7.0  7.0
+## 60 a 70      7.5  7.5
+## Mayor de 70  6.5  6.5</code></pre>
+<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="inferencial.html#cb183-1" tabindex="-1"></a><span class="fu">min</span>(esperados)</span></code></pre></div>
+<pre><code>## [1] 6.5</code></pre>
+<p>La menor frecuencia esperada es 6.5, así que el supuesto se cumple y la prueba es válida.</p>
+</div>
+<div id="prueba-de-hipótesis-chi-cuadrado-de-independencia" class="section level3 hasAnchor" number="2.7.3">
+<h3><span class="header-section-number">2.7.3</span> Prueba de hipótesis: chi-cuadrado de independencia<a href="inferencial.html#prueba-de-hip%C3%B3tesis-chi-cuadrado-de-independencia" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Cálculo manual como en clase, comparado con <code>chisq.test</code>:</p>
+<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="inferencial.html#cb185-1" tabindex="-1"></a>chi_manual <span class="ot">&lt;-</span> <span class="fu">sum</span>((tabla_edad_severidad <span class="sc">-</span> esperados)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> esperados)</span>
+<span id="cb185-2"><a href="inferencial.html#cb185-2" tabindex="-1"></a>gl_chi <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(tabla_edad_severidad) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> (<span class="fu">ncol</span>(tabla_edad_severidad) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb185-3"><a href="inferencial.html#cb185-3" tabindex="-1"></a>chi_critico <span class="ot">&lt;-</span> <span class="fu">qchisq</span>(<span class="dv">1</span> <span class="sc">-</span> alpha, <span class="at">df =</span> gl_chi)</span>
+<span id="cb185-4"><a href="inferencial.html#cb185-4" tabindex="-1"></a>p_chi_manual <span class="ot">&lt;-</span> <span class="fu">pchisq</span>(chi_manual, <span class="at">df =</span> gl_chi, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb185-5"><a href="inferencial.html#cb185-5" tabindex="-1"></a></span>
+<span id="cb185-6"><a href="inferencial.html#cb185-6" tabindex="-1"></a>prueba_chi_edad <span class="ot">&lt;-</span> <span class="fu">chisq.test</span>(tabla_edad_severidad, <span class="at">correct =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb185-7"><a href="inferencial.html#cb185-7" tabindex="-1"></a></span>
+<span id="cb185-8"><a href="inferencial.html#cb185-8" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb185-9"><a href="inferencial.html#cb185-9" tabindex="-1"></a>  <span class="at">chi_cuadrado_manual =</span> chi_manual,</span>
+<span id="cb185-10"><a href="inferencial.html#cb185-10" tabindex="-1"></a>  <span class="at">chi_cuadrado_chisq_test =</span> <span class="fu">unname</span>(prueba_chi_edad<span class="sc">$</span>statistic),</span>
+<span id="cb185-11"><a href="inferencial.html#cb185-11" tabindex="-1"></a>  <span class="at">grados_libertad =</span> gl_chi,</span>
+<span id="cb185-12"><a href="inferencial.html#cb185-12" tabindex="-1"></a>  <span class="at">chi_critico =</span> chi_critico,</span>
+<span id="cb185-13"><a href="inferencial.html#cb185-13" tabindex="-1"></a>  <span class="at">p_valor_manual =</span> p_chi_manual,</span>
+<span id="cb185-14"><a href="inferencial.html#cb185-14" tabindex="-1"></a>  <span class="at">p_valor_chisq_test =</span> prueba_chi_edad<span class="sc">$</span>p.value</span>
+<span id="cb185-15"><a href="inferencial.html#cb185-15" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb185-16"><a href="inferencial.html#cb185-16" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb185-17"><a href="inferencial.html#cb185-17" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span></code></pre></div>
+<pre><code>##   chi_cuadrado_manual chi_cuadrado_chisq_test grados_libertad chi_critico
+## 1              3.1326                  3.1326               2      5.9915
+##   p_valor_manual p_valor_chisq_test
+## 1         0.2088             0.2088</code></pre>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="inferencial.html#cb187-1" tabindex="-1"></a><span class="fu">fisher.test</span>(tabla_edad_severidad)</span></code></pre></div>
+<pre><code>## 
+##  Fisher&#39;s Exact Test for Count Data
+## 
+## data:  tabla_edad_severidad
+## p-value = 0.2187
+## alternative hypothesis: two.sided</code></pre>
+<p>El estadístico es χ² = 3.13 con 2 grados de libertad, por debajo del valor crítico de 5.99, y el p-valor es 0.209; el cálculo manual coincide con <code>chisq.test</code>. La prueba exacta de Fisher da p = 0.219. No se rechaza <span class="math inline">\(H_0\)</span>: con 42 pacientes, la distribución de severidad alta y baja no difiere significativamente entre grupos de edad.</p>
+</div>
+<div id="tamaño-del-efecto-v-de-cramer" class="section level3 hasAnchor" number="2.7.4">
+<h3><span class="header-section-number">2.7.4</span> Tamaño del efecto: V de Cramer<a href="inferencial.html#tama%C3%B1o-del-efecto-v-de-cramer" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>La V de Cramer corrige el chi-cuadrado por el tamaño de muestra, <span class="math inline">\(V = \sqrt{\chi^2 / (N \cdot \min(r - 1, c - 1))}\)</span>, y va de 0 (independencia) a 1 (asociación perfecta); las referencias habituales son 0.1 pequeño, 0.3 medio y 0.5 grande.</p>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="inferencial.html#cb189-1" tabindex="-1"></a>n_chi <span class="ot">&lt;-</span> <span class="fu">sum</span>(tabla_edad_severidad)</span>
+<span id="cb189-2"><a href="inferencial.html#cb189-2" tabindex="-1"></a>v_manual <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(chi_manual <span class="sc">/</span> (n_chi <span class="sc">*</span> <span class="fu">min</span>(<span class="fu">dim</span>(tabla_edad_severidad) <span class="sc">-</span> <span class="dv">1</span>)))</span>
+<span id="cb189-3"><a href="inferencial.html#cb189-3" tabindex="-1"></a>v_manual</span></code></pre></div>
+<pre><code>## [1] 0.2731039</code></pre>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="inferencial.html#cb191-1" tabindex="-1"></a><span class="fu">cramer_v</span>(tabla_edad_severidad, <span class="at">correct =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>## [1] 0.2731039</code></pre>
+<p>V = 0.27, un efecto entre pequeño y medio, coherente con el eta cuadrado de 0.13 del ANOVA: la asociación entre edad y severidad existe en los datos, pero la muestra es pequeña para que resulte significativa.</p>
+</div>
+<div id="segunda-tabla-sexo-y-nivel-de-severidad" class="section level3 hasAnchor" number="2.7.5">
+<h3><span class="header-section-number">2.7.5</span> Segunda tabla: sexo y nivel de severidad<a href="inferencial.html#segunda-tabla-sexo-y-nivel-de-severidad" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="inferencial.html#cb193-1" tabindex="-1"></a>tabla_sexo_severidad <span class="ot">&lt;-</span> <span class="fu">table</span>(pacientes<span class="sc">$</span>sex, pacientes<span class="sc">$</span>severidad)</span>
+<span id="cb193-2"><a href="inferencial.html#cb193-2" tabindex="-1"></a>tabla_sexo_severidad</span></code></pre></div>
+<pre><code>##            
+##             Baja Alta
+##   Masculino   14   14
+##   Femenino     7    7</code></pre>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="inferencial.html#cb195-1" tabindex="-1"></a><span class="fu">chisq.test</span>(tabla_sexo_severidad, <span class="at">correct =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>## 
+##  Pearson&#39;s Chi-squared test
+## 
+## data:  tabla_sexo_severidad
+## X-squared = 0, df = 1, p-value = 1</code></pre>
+<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="inferencial.html#cb197-1" tabindex="-1"></a><span class="fu">cramer_v</span>(tabla_sexo_severidad, <span class="at">correct =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>## [1] 0</code></pre>
+<p>La tabla queda exactamente balanceada: 14 hombres y 7 mujeres en cada nivel, es decir, la mitad de cada sexo con severidad alta. El chi-cuadrado es 0 (p = 1) y la V de Cramer es 0: el sexo y el nivel de severidad son independientes, lo mismo que mostró la prueba t del objetivo 1.</p>
+</div>
+<div id="conclusión-5" class="section level3 hasAnchor" number="2.7.6">
+<h3><span class="header-section-number">2.7.6</span> Conclusión<a href="inferencial.html#conclusi%C3%B3n-5" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Con una confianza del 95 %, no hay evidencia de asociación entre el nivel de severidad motora y el grupo de edad (χ² = 3.13, p = 0.209) ni entre el nivel de severidad y el sexo (χ² = 0, p = 1). La V de Cramer distingue los dos casos: para la edad el efecto es pequeño-medio (V = 0.27), con una proporción de severidad alta que casi se duplica entre los menores de 60 y los mayores de 70; para el sexo es nulo (V = 0).</p>
+</div>
+</div>
+<div id="síntesis-de-resultados" class="section level2 hasAnchor" number="2.8">
+<h2><span class="header-section-number">2.8</span> Síntesis de resultados<a href="inferencial.html#s%C3%ADntesis-de-resultados" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb199-1"><a href="inferencial.html#cb199-1" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb199-2"><a href="inferencial.html#cb199-2" tabindex="-1"></a>  <span class="at">objetivo =</span> <span class="fu">c</span>(<span class="st">&quot;Sexo (hombres vs. mujeres)&quot;</span>,</span>
+<span id="cb199-3"><a href="inferencial.html#cb199-3" tabindex="-1"></a>               <span class="st">&quot;Grupo de edad (3 grupos)&quot;</span>,</span>
+<span id="cb199-4"><a href="inferencial.html#cb199-4" tabindex="-1"></a>               <span class="st">&quot;Inestabilidad de la frecuencia (jitter alto vs. bajo)&quot;</span>,</span>
+<span id="cb199-5"><a href="inferencial.html#cb199-5" tabindex="-1"></a>               <span class="st">&quot;Inestabilidad de la amplitud (shimmer alto vs. bajo)&quot;</span>,</span>
+<span id="cb199-6"><a href="inferencial.html#cb199-6" tabindex="-1"></a>               <span class="st">&quot;Seguimiento (última vs. primera grabación)&quot;</span>,</span>
+<span id="cb199-7"><a href="inferencial.html#cb199-7" tabindex="-1"></a>               <span class="st">&quot;Grupo de edad x nivel de severidad&quot;</span>),</span>
+<span id="cb199-8"><a href="inferencial.html#cb199-8" tabindex="-1"></a>  <span class="at">prueba =</span> <span class="fu">c</span>(<span class="st">&quot;t de Student&quot;</span>, <span class="st">&quot;ANOVA de un factor&quot;</span>, <span class="st">&quot;t de Student&quot;</span>,</span>
+<span id="cb199-9"><a href="inferencial.html#cb199-9" tabindex="-1"></a>             <span class="st">&quot;t de Student&quot;</span>, <span class="st">&quot;t pareada&quot;</span>, <span class="st">&quot;Chi-cuadrado de independencia&quot;</span>),</span>
+<span id="cb199-10"><a href="inferencial.html#cb199-10" tabindex="-1"></a>  <span class="at">estadistico =</span> <span class="fu">c</span>(prueba_t_sexo<span class="sc">$</span>statistic,</span>
+<span id="cb199-11"><a href="inferencial.html#cb199-11" tabindex="-1"></a>                  <span class="fu">summary</span>(modelo_anova)[[<span class="dv">1</span>]]<span class="sc">$</span><span class="st">`</span><span class="at">F value</span><span class="st">`</span>[<span class="dv">1</span>],</span>
+<span id="cb199-12"><a href="inferencial.html#cb199-12" tabindex="-1"></a>                  prueba_t_jitter<span class="sc">$</span>statistic,</span>
+<span id="cb199-13"><a href="inferencial.html#cb199-13" tabindex="-1"></a>                  prueba_t_shimmer<span class="sc">$</span>statistic,</span>
+<span id="cb199-14"><a href="inferencial.html#cb199-14" tabindex="-1"></a>                  prueba_t_pareada<span class="sc">$</span>statistic,</span>
+<span id="cb199-15"><a href="inferencial.html#cb199-15" tabindex="-1"></a>                  prueba_chi_edad<span class="sc">$</span>statistic),</span>
+<span id="cb199-16"><a href="inferencial.html#cb199-16" tabindex="-1"></a>  <span class="at">p_valor =</span> <span class="fu">c</span>(prueba_t_sexo<span class="sc">$</span>p.value,</span>
+<span id="cb199-17"><a href="inferencial.html#cb199-17" tabindex="-1"></a>              <span class="fu">summary</span>(modelo_anova)[[<span class="dv">1</span>]]<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;F)</span><span class="st">`</span>[<span class="dv">1</span>],</span>
+<span id="cb199-18"><a href="inferencial.html#cb199-18" tabindex="-1"></a>              prueba_t_jitter<span class="sc">$</span>p.value,</span>
+<span id="cb199-19"><a href="inferencial.html#cb199-19" tabindex="-1"></a>              prueba_t_shimmer<span class="sc">$</span>p.value,</span>
+<span id="cb199-20"><a href="inferencial.html#cb199-20" tabindex="-1"></a>              prueba_t_pareada<span class="sc">$</span>p.value,</span>
+<span id="cb199-21"><a href="inferencial.html#cb199-21" tabindex="-1"></a>              prueba_chi_edad<span class="sc">$</span>p.value),</span>
+<span id="cb199-22"><a href="inferencial.html#cb199-22" tabindex="-1"></a>  <span class="at">tamano_efecto =</span> <span class="fu">c</span>(d_sexo<span class="sc">$</span>estimate, eta_cuadrado_manual, d_jitter<span class="sc">$</span>estimate,</span>
+<span id="cb199-23"><a href="inferencial.html#cb199-23" tabindex="-1"></a>                    d_shimmer<span class="sc">$</span>estimate, d_pareado<span class="sc">$</span>estimate, v_manual),</span>
+<span id="cb199-24"><a href="inferencial.html#cb199-24" tabindex="-1"></a>  <span class="at">medida =</span> <span class="fu">c</span>(<span class="st">&quot;d de Cohen&quot;</span>, <span class="st">&quot;eta cuadrado&quot;</span>, <span class="st">&quot;d de Cohen&quot;</span>, <span class="st">&quot;d de Cohen&quot;</span>, <span class="st">&quot;d de Cohen&quot;</span>,</span>
+<span id="cb199-25"><a href="inferencial.html#cb199-25" tabindex="-1"></a>             <span class="st">&quot;V de Cramer&quot;</span>)</span>
+<span id="cb199-26"><a href="inferencial.html#cb199-26" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb199-27"><a href="inferencial.html#cb199-27" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">decision =</span> <span class="fu">if_else</span>(p_valor <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">&quot;Se rechaza H0&quot;</span>, <span class="st">&quot;No se rechaza H0&quot;</span>),</span>
+<span id="cb199-28"><a href="inferencial.html#cb199-28" tabindex="-1"></a>         <span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">3</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb199-29"><a href="inferencial.html#cb199-29" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span></code></pre></div>
+<pre><code>##                                                objetivo
+## 1                            Sexo (hombres vs. mujeres)
+## 2                              Grupo de edad (3 grupos)
+## 3 Inestabilidad de la frecuencia (jitter alto vs. bajo)
+## 4  Inestabilidad de la amplitud (shimmer alto vs. bajo)
+## 5            Seguimiento (última vs. primera grabación)
+## 6                    Grupo de edad x nivel de severidad
+##                          prueba estadistico p_valor tamano_efecto       medida
+## 1                  t de Student       0.360   0.721         0.118   d de Cohen
+## 2            ANOVA de un factor       2.940   0.065         0.131 eta cuadrado
+## 3                  t de Student       1.423   0.163         0.439   d de Cohen
+## 4                  t de Student       0.617   0.541         0.191   d de Cohen
+## 5                     t pareada       2.159   0.037         0.246   d de Cohen
+## 6 Chi-cuadrado de independencia       3.133   0.209         0.273  V de Cramer
+##           decision
+## 1 No se rechaza H0
+## 2 No se rechaza H0
+## 3 No se rechaza H0
+## 4 No se rechaza H0
+## 5    Se rechaza H0
+## 6 No se rechaza H0</code></pre>
+<p>Solo la comparación entre el inicio y el final del seguimiento resulta significativa: la severidad motora sube en promedio 2.08 puntos en seis meses, con un efecto pequeño. El sexo y el shimmer no se asocian con la severidad ni estadística ni prácticamente. Los otros dos resultados muestran la diferencia entre significancia y relevancia: el grupo de edad (eta cuadrado = 0.13, casi 7 puntos entre extremos) y el jitter (d = 0.44, 3.4 puntos) tienen efectos apreciables que con 42 pacientes no cruzan el umbral del 5 % en las pruebas paramétricas, aunque en el caso de la edad la no paramétrica sí lo hace por poco. Las pruebas de correlación apuntan en la misma dirección: solo la edad alcanza una correlación cercana al tamaño medio con la severidad (r = 0.3, significativa con Spearman y marginal con Pearson), mientras que las medidas acústicas no pasan de correlaciones pequeñas. El chi-cuadrado cuenta la misma historia en versión categórica: la proporción de pacientes con severidad alta casi se duplica entre los menores de 60 y los mayores de 70 (V de Cramer = 0.27), sin alcanzar la significancia (p = 0.209), y el sexo no se asocia con el nivel de severidad (V = 0). En conjunto, la edad y el paso del tiempo son lo que más claramente se vincula con la severidad motora; la voz, tal como la analizamos aquí, guarda con ella una relación débil.</p>
 
 </div>
 </div>
