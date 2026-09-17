@@ -23,7 +23,7 @@
 <meta name="author" content="Diego Payares &amp; Salma Romero" />
 
 
-<meta name="date" content="2026-09-16" />
+<meta name="date" content="2026-09-17" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -376,7 +376,7 @@ div.csl-indent {
 ## 1 Registro (n = 5863)     0.019   0.066
 ## 2   Paciente (n = 42)     0.721   0.118</code></pre>
 <p>A nivel de registro sale p = 0.019 con un efecto despreciable (d = 0.07): la “significancia” viene solo de contar a cada paciente unas 140 veces. Por paciente, con una diferencia parecida, p = 0.72. Todo lo que sigue usa la tabla <code>pacientes</code>.</p>
-<p>Para no repetir código, definimos dos funciones: el resumen descriptivo por grupo y las pruebas de normalidad vistas en clase (Shapiro-Wilk, Kolmogorov-Smirnov sobre datos estandarizados y Lilliefors).</p>
+<p>Para no repetir código, definimos dos funciones: el resumen descriptivo por grupo y las tres pruebas de normalidad (Shapiro-Wilk, Kolmogorov-Smirnov sobre datos estandarizados y Lilliefors).</p>
 <div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="inferencial.html#cb67-1" tabindex="-1"></a>resumen_grupo <span class="ot">&lt;-</span> <span class="cf">function</span>(datos, grupo, <span class="at">variable =</span> <span class="st">&quot;motor&quot;</span>) {</span>
 <span id="cb67-2"><a href="inferencial.html#cb67-2" tabindex="-1"></a>  datos <span class="sc">%&gt;%</span></span>
 <span id="cb67-3"><a href="inferencial.html#cb67-3" tabindex="-1"></a>    <span class="fu">group_by</span>(.data[[grupo]]) <span class="sc">%&gt;%</span></span>
@@ -1313,7 +1313,7 @@ div.csl-indent {
 </div>
 <div id="objetivo-6-asociación-entre-el-nivel-de-severidad-motora-y-las-características-categóricas" class="section level2 hasAnchor" number="2.7">
 <h2><span class="header-section-number">2.7</span> Objetivo 6: asociación entre el nivel de severidad motora y las características categóricas<a href="inferencial.html#objetivo-6-asociaci%C3%B3n-entre-el-nivel-de-severidad-motora-y-las-caracter%C3%ADsticas-categ%C3%B3ricas" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Las pruebas anteriores comparan promedios o miden correlaciones. La prueba chi-cuadrado de independencia responde otra pregunta: si <strong>dos variables categóricas</strong> están asociadas. Como <code>sex</code> es la única categórica del conjunto de datos, seguimos el procedimiento visto en clase y construimos las demás categorizando variables numéricas: el grupo de edad ya está definido, y la severidad motora se clasifica en alta o baja según el promedio de <code>motor_UPDRS</code> de cada paciente esté por encima o por debajo de la mediana. La pregunta principal es si el nivel de severidad está asociado con el grupo de edad; como segunda tabla, se cruza con el sexo.</p>
+<p>Las pruebas anteriores comparan promedios o miden correlaciones. La prueba chi-cuadrado de independencia responde otra pregunta: si <strong>dos variables categóricas</strong> están asociadas. Como <code>sex</code> es la única categórica del conjunto de datos, construimos las demás categorizando variables numéricas: el grupo de edad ya está definido, y la severidad motora se clasifica en alta o baja según el promedio de <code>motor_UPDRS</code> de cada paciente esté por encima o por debajo de la mediana. La pregunta principal es si el nivel de severidad está asociado con el grupo de edad; como segunda tabla, se cruza con el sexo.</p>
 <p><span class="math display">\[H_0: \text{el nivel de severidad es independiente del grupo de edad} \qquad H_1: \text{están asociados}\]</span></p>
 <div id="tabla-de-contingencia" class="section level3 hasAnchor" number="2.7.1">
 <h3><span class="header-section-number">2.7.1</span> Tabla de contingencia<a href="inferencial.html#tabla-de-contingencia" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -1366,7 +1366,7 @@ div.csl-indent {
 </div>
 <div id="prueba-de-hipótesis-chi-cuadrado-de-independencia" class="section level3 hasAnchor" number="2.7.3">
 <h3><span class="header-section-number">2.7.3</span> Prueba de hipótesis: chi-cuadrado de independencia<a href="inferencial.html#prueba-de-hip%C3%B3tesis-chi-cuadrado-de-independencia" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Cálculo manual como en clase, comparado con <code>chisq.test</code>:</p>
+<p>Cálculo manual paso a paso, comparado con <code>chisq.test</code>:</p>
 <div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="inferencial.html#cb185-1" tabindex="-1"></a>chi_manual <span class="ot">&lt;-</span> <span class="fu">sum</span>((tabla_edad_severidad <span class="sc">-</span> esperados)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> esperados)</span>
 <span id="cb185-2"><a href="inferencial.html#cb185-2" tabindex="-1"></a>gl_chi <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(tabla_edad_severidad) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> (<span class="fu">ncol</span>(tabla_edad_severidad) <span class="sc">-</span> <span class="dv">1</span>)</span>
 <span id="cb185-3"><a href="inferencial.html#cb185-3" tabindex="-1"></a>chi_critico <span class="ot">&lt;-</span> <span class="fu">qchisq</span>(<span class="dv">1</span> <span class="sc">-</span> alpha, <span class="at">df =</span> gl_chi)</span>

@@ -84,7 +84,7 @@ tibble(
 
 A nivel de registro sale p = 0.019 con un efecto despreciable (d = 0.07): la "significancia" viene solo de contar a cada paciente unas 140 veces. Por paciente, con una diferencia parecida, p = 0.72. Todo lo que sigue usa la tabla `pacientes`.
 
-Para no repetir código, definimos dos funciones: el resumen descriptivo por grupo y las pruebas de normalidad vistas en clase (Shapiro-Wilk, Kolmogorov-Smirnov sobre datos estandarizados y Lilliefors).
+Para no repetir código, definimos dos funciones: el resumen descriptivo por grupo y las tres pruebas de normalidad (Shapiro-Wilk, Kolmogorov-Smirnov sobre datos estandarizados y Lilliefors).
 
 ```{r inf-funciones}
 resumen_grupo <- function(datos, grupo, variable = "motor") {
@@ -848,7 +848,7 @@ Con una confianza del 95 %, solo la edad muestra una correlación con la severid
 
 ## Objetivo 6: asociación entre el nivel de severidad motora y las características categóricas
 
-Las pruebas anteriores comparan promedios o miden correlaciones. La prueba chi-cuadrado de independencia responde otra pregunta: si **dos variables categóricas** están asociadas. Como `sex` es la única categórica del conjunto de datos, seguimos el procedimiento visto en clase y construimos las demás categorizando variables numéricas: el grupo de edad ya está definido, y la severidad motora se clasifica en alta o baja según el promedio de `motor_UPDRS` de cada paciente esté por encima o por debajo de la mediana. La pregunta principal es si el nivel de severidad está asociado con el grupo de edad; como segunda tabla, se cruza con el sexo.
+Las pruebas anteriores comparan promedios o miden correlaciones. La prueba chi-cuadrado de independencia responde otra pregunta: si **dos variables categóricas** están asociadas. Como `sex` es la única categórica del conjunto de datos, construimos las demás categorizando variables numéricas: el grupo de edad ya está definido, y la severidad motora se clasifica en alta o baja según el promedio de `motor_UPDRS` de cada paciente esté por encima o por debajo de la mediana. La pregunta principal es si el nivel de severidad está asociado con el grupo de edad; como segunda tabla, se cruza con el sexo.
 
 $$H_0: \text{el nivel de severidad es independiente del grupo de edad} \qquad H_1: \text{están asociados}$$
 
@@ -898,7 +898,7 @@ La menor frecuencia esperada es 6.5, así que el supuesto se cumple y la prueba 
 
 ### Prueba de hipótesis: chi-cuadrado de independencia
 
-Cálculo manual como en clase, comparado con `chisq.test`:
+Cálculo manual paso a paso, comparado con `chisq.test`:
 
 ```{r inf-chi-prueba}
 chi_manual <- sum((tabla_edad_severidad - esperados)^2 / esperados)
