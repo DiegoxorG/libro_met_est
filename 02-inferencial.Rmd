@@ -752,7 +752,7 @@ pacientes %>%
   theme_minimal()
 ```
 
-Con un punto por paciente las nubes son dispersas y ninguna muestra un patrón marcado. Se insinúan tendencias positivas con la edad, `PPE` y `RPDE` y, más leves, con los índices de inestabilidad y `NHR`; negativas con `HNR` y `DFA`. En `NHR`, `jitter` y `shimmer` unos pocos pacientes con valores muy altos quedan aislados a la derecha y pesan mucho en cualquier medida de asociación.
+Con un punto por paciente se observan relaciones positivas débiles con la edad, `PPE` y `RPDE` (cuando aumentan, la severidad tiende a aumentar) y negativas débiles con `HNR` y `DFA` (cuando aumentan, la severidad tiende a disminuir). Con los índices de inestabilidad y `NHR` no se aprecia una relación clara.
 
 ### Supuesto de normalidad
 
