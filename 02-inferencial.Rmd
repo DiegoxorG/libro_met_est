@@ -169,47 +169,12 @@ prueba_f_sexo <- var.test(motor_hombres, motor_mujeres)
 prueba_f_sexo
 ```
 
-Verificamos `var.test` con el teorema de la razón de varianzas:
-
-```{r inf-sexo-varianzas-manual}
-n1 <- length(motor_hombres)
-n2 <- length(motor_mujeres)
-s1 <- sum((motor_hombres - mean(motor_hombres))^2) / (n1 - 1)
-s2 <- sum((motor_mujeres - mean(motor_mujeres))^2) / (n2 - 1)
-
-F0 <- s1 / s2
-df1 <- n1 - 1
-df2 <- n2 - 1
-pvalor_F <- 2 * min(pf(F0, df1, df2), pf(F0, df1, df2, lower.tail = FALSE))
-
-alpha <- 0.05
-int_inf_F <- (s1 / s2) * (1 / qf(1 - alpha / 2, df1, df2))
-int_sup_F <- (s1 / s2) * (1 / qf(alpha / 2, df1, df2))
-
-tibble(
-  varianza_hombres = s1,
-  varianza_mujeres = s2,
-  estadistico_F_manual = F0,
-  estadistico_F_var_test = unname(prueba_f_sexo$statistic),
-  gl_numerador = df1,
-  gl_denominador = df2,
-  p_valor_manual = pvalor_F,
-  p_valor_var_test = prueba_f_sexo$p.value,
-  IC_inferior_manual = int_inf_F,
-  IC_superior_manual = int_sup_F,
-  IC_inferior_var_test = prueba_f_sexo$conf.int[1],
-  IC_superior_var_test = prueba_f_sexo$conf.int[2]
-) %>%
-  mutate(across(everything(), ~ round(.x, 4))) %>%
-  as.data.frame()
-```
-
 ```{r inf-sexo-levene}
 leveneTest(motor ~ sex, data = pacientes, center = median)
 bartlett.test(motor ~ sex, data = pacientes)
 ```
 
-Las varianzas son 59.98 y 70.61. La prueba F da F = 0.849 (27 y 13 g.l., p = 0.692) y su intervalo para la razón de varianzas, de 0.3 a 2.06, contiene al 1; el cálculo manual coincide exactamente con `var.test`. Levene (p = 0.786) y Bartlett (p = 0.734) dicen lo mismo. No se rechaza la igualdad de varianzas, así que usamos la t de Student con varianzas iguales.
+La prueba F da F = 0.849 (27 y 13 g.l., p = 0.692) y su intervalo para la razón de varianzas, de 0.3 a 2.06, contiene al 1. Levene (p = 0.786) y Bartlett (p = 0.734) dicen lo mismo. No se rechaza la igualdad de varianzas, así que usamos la t de Student con varianzas iguales.
 
 ### Prueba de hipótesis: t de Student
 
@@ -219,47 +184,13 @@ prueba_t_sexo <- t.test(x = motor_hombres, y = motor_mujeres,
 prueba_t_sexo
 ```
 
-Verificación con el teorema de la diferencia de medias:
-
-```{r inf-sexo-t-manual}
-m1 <- mean(motor_hombres)
-m2 <- mean(motor_mujeres)
-s1_cuad <- var(motor_hombres)
-s2_cuad <- var(motor_mujeres)
-
-sp_cuad <- ((n1 - 1) * s1_cuad + (n2 - 1) * s2_cuad) / (n1 + n2 - 2)
-error_estandar <- sqrt(sp_cuad * (1 / n1 + 1 / n2))
-t0 <- (m1 - m2) / error_estandar
-df_t <- n1 + n2 - 2
-pvalor_t <- 2 * pt(abs(t0), df = df_t, lower.tail = FALSE)
-
-t_critico <- qt(1 - alpha / 2, df = df_t)
-int_inf_t <- (m1 - m2) - t_critico * error_estandar
-int_sup_t <- (m1 - m2) + t_critico * error_estandar
-
-tibble(
-  estadistico_t_manual = t0,
-  estadistico_t_t_test = unname(prueba_t_sexo$statistic),
-  grados_libertad_manual = df_t,
-  grados_libertad_t_test = unname(prueba_t_sexo$parameter),
-  p_valor_manual = pvalor_t,
-  p_valor_t_test = prueba_t_sexo$p.value,
-  IC_inferior_manual = int_inf_t,
-  IC_superior_manual = int_sup_t,
-  IC_inferior_t_test = prueba_t_sexo$conf.int[1],
-  IC_superior_t_test = prueba_t_sexo$conf.int[2]
-) %>%
-  mutate(across(everything(), ~ round(.x, 4))) %>%
-  as.data.frame()
-```
-
 Como el grupo de mujeres es pequeño (n = 14), añadimos Mann-Whitney como análisis de sensibilidad:
 
 ```{r inf-sexo-wilcox}
 wilcox.test(x = motor_hombres, y = motor_mujeres, paired = FALSE)
 ```
 
-La prueba t da t = 0.36 con 40 g.l. y p = 0.721; la diferencia estimada es de 0.94 puntos, con un intervalo de -4.33 a 6.21 que incluye al 0. El cálculo manual reproduce todos los valores de `t.test`, y Mann-Whitney (W = 212, p = 0.683) lleva a la misma decisión.
+La prueba t da t = 0.36 con 40 g.l. y p = 0.721; la diferencia estimada es de 0.94 puntos, con un intervalo de -4.33 a 6.21 que incluye al 0. Mann-Whitney (W = 212, p = 0.683) lleva a la misma decisión.
 
 ### Tamaño del efecto
 
@@ -324,56 +255,7 @@ modelo_anova <- aov(motor ~ grupo_edad, data = pacientes)
 summary(modelo_anova)
 ```
 
-Verificación del ANOVA con la descomposición de la suma de cuadrados:
-
-```{r inf-edad-anova-manual}
-menores_60 <- pacientes %>% filter(grupo_edad == "Menor de 60") %>% pull(motor)
-de_60_a_70 <- pacientes %>% filter(grupo_edad == "60 a 70") %>% pull(motor)
-mayores_70 <- pacientes %>% filter(grupo_edad == "Mayor de 70") %>% pull(motor)
-
-n1 <- length(menores_60)
-n2 <- length(de_60_a_70)
-n3 <- length(mayores_70)
-N <- n1 + n2 + n3
-k <- 3
-
-xbar_1 <- mean(menores_60)
-xbar_2 <- mean(de_60_a_70)
-xbar_3 <- mean(mayores_70)
-xbar_total <- (sum(menores_60) + sum(de_60_a_70) + sum(mayores_70)) / N
-
-SST <- sum((menores_60 - xbar_total)^2) + sum((de_60_a_70 - xbar_total)^2) +
-  sum((mayores_70 - xbar_total)^2)
-SSA <- n1 * (xbar_1 - xbar_total)^2 + n2 * (xbar_2 - xbar_total)^2 +
-  n3 * (xbar_3 - xbar_total)^2
-SSE <- SST - SSA
-
-MSA <- SSA / (k - 1)
-MSE <- SSE / (N - k)
-F0 <- MSA / MSE
-
-v1 <- k - 1
-v2 <- N - k
-F_critico <- qf(1 - alpha, v1, v2)
-p_valor_F <- 1 - pf(F0, v1, v2)
-
-tibble(
-  SST = SST,
-  SSA = SSA,
-  SSE = SSE,
-  MSA = MSA,
-  MSE = MSE,
-  estadistico_F_manual = F0,
-  estadistico_F_aov = summary(modelo_anova)[[1]]$`F value`[1],
-  F_critico = F_critico,
-  p_valor_manual = p_valor_F,
-  p_valor_aov = summary(modelo_anova)[[1]]$`Pr(>F)`[1]
-) %>%
-  mutate(across(everything(), ~ round(.x, 4))) %>%
-  as.data.frame()
-```
-
-La suma de cuadrados total (2545.71) se reparte en 333.49 entre grupos y 2212.21 dentro de ellos, lo que da F = 2.94 con 2 y 39 g.l., por debajo del valor crítico de 3.24, y p = 0.065, igual al de `aov`. Con $\alpha = 0.05$ no se rechaza $H_0$, aunque por poco.
+La suma de cuadrados se reparte en 333.5 entre grupos y 2212.2 dentro de ellos, lo que da F = 2.94 con 2 y 39 g.l. y p = 0.065. Con $\alpha = 0.05$ no se rechaza $H_0$, aunque por poco.
 
 Como el ANOVA no rechaza, la prueba de Tukey se muestra solo con fines exploratorios, para ver dónde está la diferencia:
 
@@ -397,16 +279,14 @@ Kruskal-Wallis da $\chi^2$ = 6.02 (2 g.l., p = 0.049), justo por debajo de 0.05,
 ### Tamaño del efecto
 
 ```{r inf-edad-eta}
-eta_cuadrado_manual <- SSA / SST
-eta_cuadrado_manual
-
-eta_squared(modelo_anova)
+eta_cuadrado_edad <- unname(eta_squared(modelo_anova))
+eta_cuadrado_edad
 
 pacientes %>%
   kruskal_effsize(motor ~ grupo_edad)
 ```
 
-El eta cuadrado, SSA / SST, es 0.131 (igual al de `rstatix`): el grupo de edad explica el 13 % de la variabilidad de la severidad entre pacientes, un efecto medio-grande (referencias: 0.01 pequeño, 0.06 medio, 0.14 grande). El basado en el H de Kruskal-Wallis es 0.103, también moderado.
+El eta cuadrado es 0.131: el grupo de edad explica el 13 % de la variabilidad de la severidad entre pacientes, un efecto medio-grande (referencias: 0.01 pequeño, 0.06 medio, 0.14 grande). El basado en el H de Kruskal-Wallis es 0.103, también moderado.
 
 ### Conclusión
 
@@ -479,7 +359,7 @@ Para el jitter la razón de varianzas es 0.92 (p = 0.862; Levene p = 0.82) y par
 
 ### Prueba de hipótesis: t de Student
 
-La verificación manual es idéntica a la del objetivo 1, así que aquí mostramos directamente `t.test` junto con Mann-Whitney como análisis de sensibilidad.
+Aplicamos `t.test` con varianzas iguales y, como análisis de sensibilidad, Mann-Whitney.
 
 ```{r inf-voz-t}
 prueba_t_jitter <- t.test(x = motor_jitter_alto, y = motor_jitter_bajo,
@@ -610,45 +490,13 @@ prueba_t_pareada <- t.test(x = pacientes$motor_final, y = pacientes$motor_inicio
 prueba_t_pareada
 ```
 
-Verificación con el teorema de la diferencia de medias para datos pareados:
-
-```{r inf-pareado-t-manual}
-n_pareado <- nrow(pacientes)
-media_diff <- mean(pacientes$diferencia)
-sd_diff <- sd(pacientes$diferencia)
-se_diff <- sd_diff / sqrt(n_pareado)
-
-t0 <- media_diff / se_diff
-df_pareado <- n_pareado - 1
-pvalor_pareado <- 2 * pt(abs(t0), df = df_pareado, lower.tail = FALSE)
-
-t_critico <- qt(1 - alpha / 2, df = df_pareado)
-int_inf_pareado <- media_diff - t_critico * se_diff
-int_sup_pareado <- media_diff + t_critico * se_diff
-
-tibble(
-  estadistico_t_manual = t0,
-  estadistico_t_t_test = unname(prueba_t_pareada$statistic),
-  grados_libertad_manual = df_pareado,
-  grados_libertad_t_test = unname(prueba_t_pareada$parameter),
-  p_valor_manual = pvalor_pareado,
-  p_valor_t_test = prueba_t_pareada$p.value,
-  IC_inferior_manual = int_inf_pareado,
-  IC_superior_manual = int_sup_pareado,
-  IC_inferior_t_test = prueba_t_pareada$conf.int[1],
-  IC_superior_t_test = prueba_t_pareada$conf.int[2]
-) %>%
-  mutate(across(everything(), ~ round(.x, 4))) %>%
-  as.data.frame()
-```
-
 Como análisis de sensibilidad, la prueba de rangos con signo de Wilcoxon:
 
 ```{r inf-pareado-wilcox}
 wilcox.test(x = pacientes$motor_final, y = pacientes$motor_inicio, paired = TRUE)
 ```
 
-La t pareada da t = 2.159 (41 g.l., p = 0.037); el aumento medio de 2.08 puntos tiene un intervalo de 0.13 a 4.02 que no incluye al 0. El cálculo manual coincide con `t.test` y Wilcoxon confirma (V = 630, p = 0.025).
+La t pareada da t = 2.159 (41 g.l., p = 0.037); el aumento medio de 2.08 puntos tiene un intervalo de 0.13 a 4.02 que no incluye al 0. Wilcoxon confirma (V = 630, p = 0.025).
 
 ### Tamaño del efecto
 
@@ -743,33 +591,13 @@ resultados_cor <- map_dfr(variables_cor, function(v) {
 resultados_cor
 ```
 
-Verificamos `cor.test` para la edad con el estadístico $t = r\sqrt{n-2} / \sqrt{1-r^2}$, y calculamos el valor de $r$ a partir del cual la correlación sería significativa con 42 pacientes:
+Como la edad es la que más se acerca a la significancia, mostramos su `cor.test` completo:
 
-```{r inf-cor-manual}
-prueba_cor_edad <- cor.test(pacientes$age, pacientes$motor)
-
-r_edad <- cor(pacientes$age, pacientes$motor)
-n_cor <- nrow(pacientes)
-df_cor <- n_cor - 2
-t0 <- r_edad * sqrt(df_cor) / sqrt(1 - r_edad^2)
-pvalor_cor <- 2 * pt(abs(t0), df = df_cor, lower.tail = FALSE)
-t_critico <- qt(1 - alpha / 2, df = df_cor)
-r_critico <- t_critico / sqrt(df_cor + t_critico^2)
-
-tibble(
-  r = r_edad,
-  estadistico_t_manual = t0,
-  estadistico_t_cor_test = unname(prueba_cor_edad$statistic),
-  grados_libertad = df_cor,
-  p_valor_manual = pvalor_cor,
-  p_valor_cor_test = prueba_cor_edad$p.value,
-  r_critico = r_critico
-) %>%
-  mutate(across(everything(), ~ round(.x, 4))) %>%
-  as.data.frame()
+```{r inf-cor-edad}
+cor.test(pacientes$age, pacientes$motor, method = "pearson")
 ```
 
-La edad es la única característica que se acerca al umbral: r = 0.299 (intervalo de -0.005 a 0.553), apenas por debajo del r crítico de 0.304, con t = 1.98 y p = 0.054; con Spearman, que no depende de la normalidad ni de los valores extremos, la asociación sí resulta significativa (ρ = 0.343, p = 0.026). El cálculo manual coincide con `cor.test`. Las demás no alcanzan la significancia con ninguno de los dos métodos: `PPE` (r = 0.26, p = 0.095), `HNR` (r = -0.25, p = 0.109) y `RPDE` (r = 0.24, p = 0.129) quedan cerca, mientras que los índices de jitter y shimmer, `NHR` y `DFA` tienen correlaciones de Pearson entre 0.12 y 0.18 en valor absoluto. `NHR` es un caso aparte: su Pearson es 0.13 pero su Spearman 0.32 (p = 0.038), porque los pocos pacientes con ruido muy alto distorsionan la correlación lineal. Como son ocho pruebas sobre la misma respuesta, la última columna ajusta los p-valores de Pearson por el método de Holm: ninguno se mantiene por debajo de 0.05.
+La edad es la única característica que se acerca al umbral: r = 0.299 (intervalo de -0.005 a 0.553), t = 1.98 y p = 0.054; con Spearman, que no depende de la normalidad ni de los valores extremos, la asociación sí resulta significativa (ρ = 0.343, p = 0.026). Las demás no alcanzan la significancia con ninguno de los dos métodos: `PPE` (r = 0.26, p = 0.095), `HNR` (r = -0.25, p = 0.109) y `RPDE` (r = 0.24, p = 0.129) quedan cerca, mientras que los índices de jitter y shimmer, `NHR` y `DFA` tienen correlaciones de Pearson entre 0.12 y 0.18 en valor absoluto. `NHR` es un caso aparte: su Pearson es 0.13 pero su Spearman 0.32 (p = 0.038), porque los pocos pacientes con ruido muy alto distorsionan la correlación lineal. Como son ocho pruebas sobre la misma respuesta, la última columna ajusta los p-valores de Pearson por el método de Holm: ninguno se mantiene por debajo de 0.05.
 
 ### Tamaño del efecto
 
@@ -836,52 +664,29 @@ La proporción de pacientes con severidad alta sube con la edad: 5 de 14 (36 %) 
 Bajo $H_0$, la frecuencia esperada de cada celda es (total de la fila × total de la columna) / N. La prueba requiere que todas sean al menos 5.
 
 ```{r inf-chi-esperados}
-esperados <- outer(rowSums(tabla_edad_severidad), colSums(tabla_edad_severidad),
-                   FUN = function(f, c) f * c / sum(tabla_edad_severidad))
-round(esperados, 2)
-min(esperados)
+prueba_chi_edad <- chisq.test(tabla_edad_severidad, correct = FALSE)
+round(prueba_chi_edad$expected, 2)
+min(prueba_chi_edad$expected)
 ```
 
 La menor frecuencia esperada es 6.5, así que el supuesto se cumple y la prueba es válida.
 
 ### Prueba de hipótesis: chi-cuadrado de independencia
 
-Cálculo manual paso a paso, comparado con `chisq.test`:
-
 ```{r inf-chi-prueba}
-chi_manual <- sum((tabla_edad_severidad - esperados)^2 / esperados)
-gl_chi <- (nrow(tabla_edad_severidad) - 1) * (ncol(tabla_edad_severidad) - 1)
-chi_critico <- qchisq(1 - alpha, df = gl_chi)
-p_chi_manual <- pchisq(chi_manual, df = gl_chi, lower.tail = FALSE)
-
-prueba_chi_edad <- chisq.test(tabla_edad_severidad, correct = FALSE)
-
-tibble(
-  chi_cuadrado_manual = chi_manual,
-  chi_cuadrado_chisq_test = unname(prueba_chi_edad$statistic),
-  grados_libertad = gl_chi,
-  chi_critico = chi_critico,
-  p_valor_manual = p_chi_manual,
-  p_valor_chisq_test = prueba_chi_edad$p.value
-) %>%
-  mutate(across(everything(), ~ round(.x, 4))) %>%
-  as.data.frame()
-
+prueba_chi_edad
 fisher.test(tabla_edad_severidad)
 ```
 
-El estadístico es χ² = 3.13 con 2 grados de libertad, por debajo del valor crítico de 5.99, y el p-valor es 0.209; el cálculo manual coincide con `chisq.test`. La prueba exacta de Fisher da p = 0.219. No se rechaza $H_0$: con 42 pacientes, la distribución de severidad alta y baja no difiere significativamente entre grupos de edad.
+El estadístico es χ² = 3.13 con 2 grados de libertad y el p-valor es 0.209. La prueba exacta de Fisher da p = 0.219. No se rechaza $H_0$: con 42 pacientes, la distribución de severidad alta y baja no difiere significativamente entre grupos de edad.
 
 ### Tamaño del efecto: V de Cramer
 
 La V de Cramer corrige el chi-cuadrado por el tamaño de muestra, $V = \sqrt{\chi^2 / (N \cdot \min(r - 1, c - 1))}$, y va de 0 (independencia) a 1 (asociación perfecta); las referencias habituales son 0.1 pequeño, 0.3 medio y 0.5 grande.
 
 ```{r inf-chi-cramer}
-n_chi <- sum(tabla_edad_severidad)
-v_manual <- sqrt(chi_manual / (n_chi * min(dim(tabla_edad_severidad) - 1)))
-v_manual
-
-cramer_v(tabla_edad_severidad, correct = FALSE)
+v_cramer_edad <- cramer_v(tabla_edad_severidad, correct = FALSE)
+v_cramer_edad
 ```
 
 V = 0.27, un efecto entre pequeño y medio, coherente con el eta cuadrado de 0.13 del ANOVA: la asociación entre edad y severidad existe en los datos, pero la muestra es pequeña para que resulte significativa.
@@ -926,8 +731,8 @@ tibble(
               prueba_t_shimmer$p.value,
               prueba_t_pareada$p.value,
               prueba_chi_edad$p.value),
-  tamano_efecto = c(d_sexo$estimate, eta_cuadrado_manual, d_jitter$estimate,
-                    d_shimmer$estimate, d_pareado$estimate, v_manual),
+  tamano_efecto = c(d_sexo$estimate, eta_cuadrado_edad, d_jitter$estimate,
+                    d_shimmer$estimate, d_pareado$estimate, v_cramer_edad),
   medida = c("d de Cohen", "eta cuadrado", "d de Cohen", "d de Cohen", "d de Cohen",
              "V de Cramer")
 ) %>%
