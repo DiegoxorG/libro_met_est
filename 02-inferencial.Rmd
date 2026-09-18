@@ -14,7 +14,7 @@ library(dunn.test)
 
 Las pruebas de hipótesis suponen observaciones independientes, y los 5.863 registros no lo son: vienen de 42 pacientes con entre 101 y 168 grabaciones cada uno, que comparten edad y sexo y cuyas puntuaciones `motor_UPDRS` están interpoladas entre visitas, así que casi no varían dentro de una misma persona. Tratarlos como independientes inflaría el tamaño de muestra y daría p-valores engañosamente pequeños (pseudorreplicación).
 
-Por eso armamos una tabla con **un registro por paciente**: la severidad motora es el promedio de todas sus grabaciones, y de ahí salen las variables de agrupación: sexo, grupo de edad (menor de 60, 60 a 70 y mayor de 70 años) y nivel de inestabilidad vocal, alto o bajo según el promedio de cada índice esté por encima o por debajo de la mediana. Para comparar el inicio y el final del seguimiento guardamos la primera y la última grabación de cada paciente.
+Por eso armamos una tabla con **un registro por paciente**: la severidad motora es el promedio de todas sus grabaciones, y de ahí salen las variables de agrupación: sexo, grupo de edad (menor de 60, 60 a 70 y mayor de 70 años) y nivel de inestabilidad vocal, alto o bajo según el promedio de cada índice quede en la mitad superior o en la mitad inferior de los pacientes. Para comparar el inicio y el final del seguimiento guardamos la primera y la última grabación de cada paciente.
 
 ```{r inf-pacientes}
 pacientes <- data %>%
@@ -66,7 +66,7 @@ table(pacientes$grupo_edad)
 table(jitter = pacientes$nivel_jitter, shimmer = pacientes$nivel_shimmer)
 ```
 
-Quedan 42 pacientes: 28 hombres y 14 mujeres; 14, 15 y 13 por grupo de edad; y 21 con nivel alto y 21 con nivel bajo en cada índice (las dos clasificaciones coinciden en 32 pacientes, reflejo de la correlación de 0.71 entre los índices). La severidad promedio por paciente tiene media 20.95, mediana 19.83 y desviación estándar 7.88, entre 5.82 y 35.99; es simétrica (asimetría 0.02) y algo plana (curtosis 1.92), sin las dos modas del nivel de registro, porque ahora cada paciente cuenta una sola vez.
+Quedan 42 pacientes: 28 hombres y 14 mujeres; 14, 15 y 13 por grupo de edad; y 21 con nivel alto y 21 con nivel bajo en cada índice (las dos clasificaciones coinciden en 32 pacientes, reflejo de la correlación de 0.71 entre los índices). La severidad promedio por paciente tiene media 20.95 y desviación estándar 7.88, la mitad de los pacientes está por debajo de 19.83 puntos, y los valores van de 5.82 a 35.99; es simétrica (asimetría 0.02) y algo plana (curtosis 1.92), sin las dos modas del nivel de registro, porque ahora cada paciente cuenta una sola vez.
 
 Para ver el problema en concreto, comparamos `motor_UPDRS` por sexo en los dos niveles:
 
@@ -144,7 +144,7 @@ pacientes %>%
   theme_minimal()
 ```
 
-Los 28 hombres promedian 21.27 puntos (mediana 21.37, desviación 7.74) y las 14 mujeres 20.33 (mediana 19.7, desviación 8.4). La diferencia no llega a un punto, las cajas se solapan casi por completo y no hay atípicos.
+Los 28 hombres promedian 21.27 puntos (desviación 7.74) y las 14 mujeres 20.33 (desviación 8.4); la mitad de los hombres supera los 21.37 puntos y la mitad de las mujeres los 19.7. La diferencia no llega a un punto, las cajas se solapan casi por completo y no hay atípicos.
 
 ### Supuesto de normalidad
 
@@ -310,7 +310,7 @@ pacientes %>%
   theme_minimal()
 ```
 
-La severidad sube con la edad: 18.24 puntos en los menores de 60 (mediana 15.71), 19.96 entre 60 y 70 (mediana 19.77) y 25.02 en los mayores de 70 (mediana 26.4), casi 7 puntos entre los extremos. Las desviaciones estándar son parecidas (7.33, 8.27 y 6.81), el grupo mayor es el más homogéneo y no hay atípicos.
+La severidad sube con la edad: 18.24 puntos en los menores de 60, 19.96 entre 60 y 70 y 25.02 en los mayores de 70, casi 7 puntos entre los extremos. Lo mismo se ve en los valores que parten cada grupo por la mitad: el 50 % de los menores de 60 está por debajo de 15.71 puntos, el 50 % del grupo intermedio por debajo de 19.77 y el 50 % de los mayores de 70 por debajo de 26.4. Las desviaciones estándar son parecidas (7.33, 8.27 y 6.81), el grupo mayor es el más homogéneo y no hay atípicos.
 
 ### Supuesto de normalidad
 
@@ -473,7 +473,7 @@ p_shimmer <- pacientes %>%
 p_jitter + p_shimmer
 ```
 
-Con jitter alto la severidad promedio es 22.66 (mediana 24.5) frente a 19.24 (mediana 18.99) con jitter bajo: 3.4 puntos de diferencia en las medias y 5.5 en las medianas, con dispersiones casi iguales. Con el shimmer la brecha es menor: 21.71 frente a 20.2. En los cuatro grupos el rango es amplio, no hay atípicos y las cajas se solapan bastante.
+Con jitter alto la severidad promedio es 22.66 frente a 19.24 con jitter bajo, 3.4 puntos de diferencia, con dispersiones casi iguales. La diferencia es mayor en el centro de cada grupo: la mitad de los pacientes con jitter alto supera los 24.5 puntos, mientras que la mitad de los de jitter bajo no llega a 18.99. Con el shimmer la brecha es menor: 21.71 frente a 20.2. En los cuatro grupos el rango es amplio, no hay atípicos y las cajas se solapan bastante.
 
 ### Supuesto de normalidad
 
@@ -554,7 +554,7 @@ Con una confianza del 95 %, no hay evidencia de que la severidad motora difiera 
 
 ## Objetivo 4: evolución de la severidad motora durante el seguimiento
 
-¿Cambia la severidad motora entre la primera y la última grabación de cada paciente? Las separan entre 153 y 204 días (mediana 170, unos seis meses). Como son dos medidas del mismo paciente, los datos son pareados y la hipótesis se plantea sobre la media de las diferencias:
+¿Cambia la severidad motora entre la primera y la última grabación de cada paciente? Las separan entre 153 y 204 días; en la mitad de los pacientes, 170 días o más, es decir, unos seis meses. Como son dos medidas del mismo paciente, los datos son pareados y la hipótesis se plantea sobre la media de las diferencias:
 
 $$H_0: \mu_{\text{final} - \text{inicio}} = 0 \qquad H_1: \mu_{\text{final} - \text{inicio}} \neq 0$$
 
@@ -631,7 +631,7 @@ p_diferencias <- pacientes %>%
 p_trayectorias + p_diferencias
 ```
 
-La severidad promedio pasa de 19.58 puntos en la primera grabación a 21.65 en la última: un aumento medio de 2.08 puntos (mediana 2.05, desviación 6.23). No es parejo: 27 de los 42 pacientes (64 %) empeoran y 15 mejoran, con cambios individuales entre -13.12 y 14.7 puntos, como se ve en las trayectorias.
+La severidad promedio pasa de 19.58 puntos en la primera grabación a 21.65 en la última: un aumento medio de 2.08 puntos (desviación 6.23); en la mitad de los pacientes el cambio supera los 2.05 puntos. No es parejo: 27 de los 42 pacientes (64 %) empeoran y 15 mejoran, con cambios individuales entre -13.12 y 14.7 puntos, como se ve en las trayectorias.
 
 ### Supuesto de normalidad de las diferencias
 
@@ -848,7 +848,7 @@ Con una confianza del 95 %, solo la edad muestra una correlación con la severid
 
 ## Objetivo 6: asociación entre el nivel de severidad motora y las características categóricas
 
-Las pruebas anteriores comparan promedios o miden correlaciones. La prueba chi-cuadrado de independencia responde otra pregunta: si **dos variables categóricas** están asociadas. Como `sex` es la única categórica del conjunto de datos, construimos las demás categorizando variables numéricas: el grupo de edad ya está definido, y la severidad motora se clasifica en alta o baja según el promedio de `motor_UPDRS` de cada paciente esté por encima o por debajo de la mediana. La pregunta principal es si el nivel de severidad está asociado con el grupo de edad; como segunda tabla, se cruza con el sexo.
+Las pruebas anteriores comparan promedios o miden correlaciones. La prueba chi-cuadrado de independencia responde otra pregunta: si **dos variables categóricas** están asociadas. Como `sex` es la única categórica del conjunto de datos, construimos las demás categorizando variables numéricas: el grupo de edad ya está definido, y la severidad motora se clasifica en alta o baja según el promedio de `motor_UPDRS` de cada paciente quede en la mitad superior o en la mitad inferior de los 42 pacientes. La pregunta principal es si el nivel de severidad está asociado con el grupo de edad; como segunda tabla, se cruza con el sexo.
 
 $$H_0: \text{el nivel de severidad es independiente del grupo de edad} \qquad H_1: \text{están asociados}$$
 

@@ -1,6 +1,6 @@
 intro
 análisis-exploratorio-de-motor_updrs-variable-respuesta
-resumen-estadístico
+resumen-estadístico-de-motor_updrs
 histograma
 diagrama-de-caja
 caracterización-de-las-variables-numéricas

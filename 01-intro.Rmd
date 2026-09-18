@@ -39,7 +39,7 @@ table(data$sex)
 nlevels(data$subject.)
 ```
 
-Convertimos `subject.` en factor, porque es un identificador y no una cantidad, y le ponemos etiquetas a `sex`. Vale la pena notar desde ya que cada uno de los 42 pacientes aporta entre 101 y 168 grabaciones, así que los registros de una misma persona comparten edad, sexo y niveles de severidad muy parecidos. El exploratorio se hace sobre los registros; en la parte inferencial esta estructura sí se tendrá en cuenta.
+Convertimos `subject.` en factor, porque es un identificador y no una cantidad, y le ponemos etiquetas a `sex`.  Cada uno de los 42 pacientes aporta entre 101 y 168 grabaciones, así que los registros de una misma persona comparten edad, sexo y niveles de severidad muy parecidos. El exploratorio se hace sobre los registros; en la parte inferencial esta estructura sí se tendrá en cuenta.
 
 ```{r limpieza-test-time}
 n_negativos <- sum(data$test_time < 0)
@@ -47,18 +47,13 @@ cat("Existen", n_negativos, "registros con test_time < 0.\n")
 
 data <- data %>%
   filter(test_time >= 0)
-
-cat("Después de la limpieza:", n_negativos,
-    "registros fueron excluidos del análisis.\n")
 ```
 
 Los 12 registros con `test_time` negativo son grabaciones fechadas antes del día de reclutamiento, así que se descartan. Seguimos con 5.863 registros.
 
 ## Análisis exploratorio de `motor_UPDRS` (variable respuesta)
 
-### Resumen estadístico
-
-Realicemos el resumen estadístico de la variable respuesta `motor_UPDRS`.
+### Resumen estadístico de motor_UPDRS
 
 ```{r resumen-motor-updrs}
 data %>% 
@@ -75,7 +70,7 @@ data %>%
     asimetria = skewness(motor_UPDRS),
     curtosis = kurtosis(motor_UPDRS))
 ```
-`motor_UPDRS` tiene 5.863 registros con una media de 21.29 puntos y una desviación estándar de 8.13, es decir, bastante variabilidad entre evaluaciones. La mediana es 20.87, muy cerca de la media, y la asimetría es casi nula (0.077): las puntuaciones se reparten de forma equilibrada alrededor del centro. La mitad central de los registros está entre 15 y 27.59 puntos (rango intercuartílico de 12.59); el 25 % más leve queda por debajo de 15 y el 25 % más afectado por encima de 27.59.
+`motor_UPDRS` tiene 5.863 registros con una media de 21.29 puntos y una desviación estándar de 8.13, es decir, bastante variabilidad entre evaluaciones. El 50 % de los registros está por debajo de 20.87 puntos y el otro 50 % por encima, un valor muy cercano a la media, y la asimetría es casi nula (0.077): las puntuaciones se reparten de forma equilibrada alrededor del centro. La mitad central de los registros está entre 15 y 27.59 puntos (rango intercuartílico de 12.59); el 25 % más leve queda por debajo de 15 y el 25 % más afectado por encima de 27.59.
 
 La escala observada va de 5.04 a 39.51 puntos, así que la muestra incluye desde pacientes con afectación motora mínima hasta casos avanzados. La curtosis de 2.06, por debajo de la de una distribución normal (3), indica menos concentración en el centro y colas más ligeras: las puntuaciones están repartidas de manera bastante uniforme a lo largo del rango medio en lugar de agruparse en un solo punto.
 
@@ -140,7 +135,7 @@ data %>%
     panel.grid.major.y = element_line(color = "gray92")
   )
 ```
-El boxplot confirma la simetría: la mediana (20.87) casi coincide con la media (21.3), la caja va de 15 a 27.6 puntos (rango intercuartílico de 12.6) y los bigotes cubren toda la escala, de 5.04 a 39.51. No hay ningún valor atípico, así que la dispersión no viene de mediciones raras sino de la variabilidad propia de la enfermedad entre pacientes.
+El boxplot confirma la simetría: el valor que parte la muestra por la mitad (20.87) casi coincide con la media (21.3), la caja va de 15 a 27.6 puntos (rango intercuartílico de 12.6) y los bigotes cubren toda la escala, de 5.04 a 39.51. No hay ningún valor atípico, así que la dispersión no viene de mediciones raras sino de la variabilidad propia de la enfermedad entre pacientes.
 
 ## Caracterización de las variables numéricas
 
@@ -179,15 +174,15 @@ data %>%
 ```
 
 
-**`age`:** La edad tiene 5.863 registros, con media de 64.81 años y desviación estándar de 8.83. La mitad central de los registros está entre 58 y 72 años (rango intercuartílico de 14) y el rango completo va de 36 a 85. La media queda un poco por debajo de la mediana (65) y la asimetría es -0.382: hay una ligera cola hacia las edades más jóvenes, sin que llegue a ser un sesgo marcado. La curtosis de 3.67, algo mayor que la de una normal, indica una concentración un poco más fuerte alrededor del centro y colas algo más pesadas.
+**`age`:** La edad tiene 5.863 registros, con media de 64.81 años y desviación estándar de 8.83. La mitad central de los registros está entre 58 y 72 años (rango intercuartílico de 14) y el rango completo va de 36 a 85. La mitad de los registros tiene 65 años o más, un poco por encima de la media, y la asimetría es -0.382: hay una ligera cola hacia las edades más jóvenes, sin que llegue a ser un sesgo marcado. La curtosis de 3.67, algo mayor que la de una normal, indica una concentración un poco más fuerte alrededor del centro y colas algo más pesadas.
 
 **`test_time`:** El tiempo desde el reclutamiento promedia 93.06 días, con desviación estándar de 53.32. La mitad central está entre 47.34 y 138.46 días (rango intercuartílico de 91.12) y los valores van de 0.39583 a 215.49 días, todos positivos tras la limpieza. La asimetría (0.0795) es prácticamente cero y la curtosis (1.8504) está por debajo de 3: la distribución es simétrica y más bien plana, lo que refleja que las grabaciones se reparten de forma pareja a lo largo de los seis meses de seguimiento.
 
-**`Jitter...`:** El jitter porcentual tiene media 0.00616 y desviación estándar 0.00563, casi tan grande como la media. La mitad central está entre 0.00358 y 0.0068 (rango intercuartílico de 0.00322), pero el máximo llega a 0.09999 frente a un mínimo de 0.00083. La media supera a la mediana (0.0049) y la asimetría es 6.45: la mayoría de las grabaciones tiene valores bajos y unas pocas se van muy lejos por la derecha. La curtosis de 70.39 confirma esa cola extrema.
+**`Jitter...`:** El jitter porcentual tiene media 0.00616 y desviación estándar 0.00563, casi tan grande como la media. La mitad central está entre 0.00358 y 0.0068 (rango intercuartílico de 0.00322), pero el máximo llega a 0.09999 frente a un mínimo de 0.00083. El 50 % de los registros está por debajo de 0.0049, menos que la media, y la asimetría es 6.45: la mayoría de las grabaciones tiene valores bajos y unas pocas se van muy lejos por la derecha. La curtosis de 70.39 confirma esa cola extrema.
 
 **`Jitter.Abs.`:** El jitter absoluto promedia 4.4 × 10^-5^ segundos, con desviación estándar de 3.6 × 10^-5^. La mitad central va de 2.24 × 10^-5^ a 5.33 × 10^-5^ (rango intercuartílico de 3.09 × 10^-5^) y los valores se extienden de 2.25 × 10^-6^ a 4.46 × 10^-4^. La asimetría de 3.28 y la curtosis de 21.14 describen lo mismo que en el jitter porcentual: concentración en valores bajos y una cola derecha pesada con unos pocos registros muy altos.
 
-**`Jitter.RAP`:** Jitter.RAP tiene media 0.00299 y desviación estándar 0.00313, algo mayor que la propia media. La mitad central está entre 0.00158 y 0.00329 (rango intercuartílico de 0.00171), con mínimo 0.00033 y máximo 0.05754. La media queda por encima de la mediana (0.00225) y la asimetría es 6.94, con una curtosis de 81.4: una cola derecha muy larga formada por pocos registros extremos.
+**`Jitter.RAP`:** Jitter.RAP tiene media 0.00299 y desviación estándar 0.00313, algo mayor que la propia media. La mitad central está entre 0.00158 y 0.00329 (rango intercuartílico de 0.00171), con mínimo 0.00033 y máximo 0.05754. El 50 % de los registros está por debajo de 0.00225, otra vez menos que la media, y la asimetría es 6.94, con una curtosis de 81.4: una cola derecha muy larga formada por pocos registros extremos.
 
 **`Jitter.PPQ5`:** Jitter.PPQ5 promedia 0.00328 con desviación estándar de 0.00373. La mitad central va de 0.00182 a 0.00347 (rango intercuartílico de 0.00164) y el rango completo de 0.00043 a 0.06956. Con asimetría de 7.58 y curtosis de 84.39, es la variable más sesgada de la familia: casi todos los registros son bajos y un puñado alcanza valores muy superiores.
 
@@ -207,11 +202,11 @@ data %>%
 
 **`NHR`:** NHR promedia 0.0321, pero su desviación estándar (0.0597) casi duplica la media. La mitad central va de 0.01095 a 0.03146 (rango intercuartílico de 0.02051), mientras que el máximo llega a 0.74826 frente a un mínimo de 0.000286. La asimetría de 6.55 y la curtosis de 55.51 reflejan que casi todos los registros tienen poco ruido y unos pocos, muchísimo; esos pocos valores altos pesan mucho en la media y en la desviación.
 
-**`HNR`:** HNR tiene media 21.68 y desviación estándar 4.29, una dispersión moderada. La mitad central está entre 19.4 y 24.45 (rango intercuartílico de 5.04) y los valores van de 1.66 a 37.88. La media queda un poco por debajo de la mediana (21.92) y la asimetría es -0.811: aquí la cola está a la izquierda, en las grabaciones con peor relación armónico-ruido. La curtosis de 5.5 indica colas algo más pesadas que las de una normal.
+**`HNR`:** HNR tiene media 21.68 y desviación estándar 4.29, una dispersión moderada. La mitad central está entre 19.4 y 24.45 (rango intercuartílico de 5.04) y los valores van de 1.66 a 37.88. El 50 % de los registros supera los 21.92 dB, un poco más que la media, y la asimetría es -0.811: aquí la cola está a la izquierda, en las grabaciones con peor relación armónico-ruido. La curtosis de 5.5 indica colas algo más pesadas que las de una normal.
 
-**`RPDE`:** RPDE promedia 0.541 con desviación estándar de 0.101. La mitad central va de 0.47 a 0.614 (rango intercuartílico de 0.144) y los valores de 0.151 a 0.966. La media y la mediana (0.542) prácticamente coinciden, la asimetría es -0.037 y la curtosis 2.93: es la variable acústica con la distribución más parecida a una normal, aunque eso no basta para afirmar que lo sea.
+**`RPDE`:** RPDE promedia 0.541 con desviación estándar de 0.101. La mitad central va de 0.47 a 0.614 (rango intercuartílico de 0.144) y los valores de 0.151 a 0.966. El 50 % de los registros está por debajo de 0.542, prácticamente el mismo valor que la media; la asimetría es -0.037 y la curtosis 2.93: es la variable acústica con la distribución más parecida a una normal, aunque eso no basta para afirmar que lo sea.
 
-**`DFA`:** DFA tiene media 0.653 y desviación estándar 0.071. La mitad central está entre 0.596 y 0.711 (rango intercuartílico de 0.115) y los valores van de 0.514 a 0.866. La media supera ligeramente a la mediana (0.644) y la asimetría es 0.282, una leve cola hacia la derecha. La curtosis de 2.12 indica una distribución más plana que la normal, con los valores repartidos de forma bastante uniforme.
+**`DFA`:** DFA tiene media 0.653 y desviación estándar 0.071. La mitad central está entre 0.596 y 0.711 (rango intercuartílico de 0.115) y los valores van de 0.514 a 0.866. El 50 % de los registros está por debajo de 0.644, ligeramente menos que la media, y la asimetría es 0.282, una leve cola hacia la derecha. La curtosis de 2.12 indica una distribución más plana que la normal, con los valores repartidos de forma bastante uniforme.
 
 **`PPE`:** PPE promedia 0.22 con desviación estándar de 0.0915. La mitad central va de 0.156 a 0.265 (rango intercuartílico de 0.108) y el rango completo de 0.02198 a 0.73173. La asimetría de 1.09 y la curtosis de 4.95 muestran una cola derecha moderada: la mayoría de las grabaciones tiene valores estables y algunas se alejan hacia arriba.
 
@@ -644,11 +639,11 @@ datos_caracteristicas %>%
   as.data.frame()
 ```
 
-**Índice de jitter.** Por construcción la media es 0 (desviación estándar 0.96). La mediana es -0.23 y la mitad central de las grabaciones cabe entre -0.46 y 0.12, un intervalo de apenas media desviación estándar. Pero mientras el mínimo es -0.92, el máximo llega a 13.35: la cola derecha es larguísima, y eso se refleja en una asimetría de 5.61 y una curtosis de 52. El índice hereda la forma de las medidas de Jitter originales, que ya eran muy asimétricas.
+**Índice de jitter.** Por construcción la media es 0 (desviación estándar 0.96). El 50 % de las grabaciones está por debajo de -0.23, y la mitad central cabe entre -0.46 y 0.12, un intervalo de apenas media desviación estándar. Pero mientras el mínimo es -0.92, el máximo llega a 13.35: la cola derecha es larguísima, y eso se refleja en una asimetría de 5.61 y una curtosis de 52. El índice hereda la forma de las medidas de Jitter originales, que ya eran muy asimétricas.
 
 En el histograma casi todo se concentra entre -1 y 0.5 y luego sigue una cola delgada hasta 13. El boxplot lo confirma: caja compacta, ningún atípico por abajo y 416 registros (7.1 %) por encima del bigote superior de 0.99, en una cadena que llega a 13 desviaciones estándar. El 90 % de las grabaciones está por debajo de 0.67 y el 99 % por debajo de 4.41: la inestabilidad severa de la frecuencia es cosa de un grupo pequeño de grabaciones muy alejadas del resto.
 
-**Índice de shimmer.** También tiene media 0 (desviación estándar 0.98) y mediana -0.25. El 50 % central va de -0.58 a 0.24, un rango intercuartílico de 0.82, más amplio que el del jitter: la variación de amplitud es más heterogénea entre grabaciones que la de frecuencia. Los valores van de -1.19 a 8.64, y la asimetría (3.17) y la curtosis (17.13), aunque altas, son bastante menores que las del jitter.
+**Índice de shimmer.** También tiene media 0 (desviación estándar 0.98) y el 50 % de las grabaciones está por debajo de -0.25. El 50 % central va de -0.58 a 0.24, un rango intercuartílico de 0.82, más amplio que el del jitter: la variación de amplitud es más heterogénea entre grabaciones que la de frecuencia. Los valores van de -1.19 a 8.64, y la asimetría (3.17) y la curtosis (17.13), aunque altas, son bastante menores que las del jitter.
 
 El histograma tiene su pico entre -0.75 y 0, baja de forma gradual hasta 2.5 y deja una cola dispersa hasta 8.6. En el boxplot la caja es algo más ancha que la del jitter, sin atípicos por abajo y con 325 registros (5.5 %) por encima de 1.46. El 90 % de las grabaciones queda por debajo de 0.89 y el 99 % por debajo de 4.68: de nuevo, las alteraciones graves son pocas y están muy separadas del resto.
 

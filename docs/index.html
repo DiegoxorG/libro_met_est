@@ -20,7 +20,7 @@
   <meta name="twitter:description" content="Análisis exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI): relación entre características demográficas, temporales y acústicas de la voz y la severidad motora (motor_UPDRS). Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
   
 
-<meta name="author" content="Diego Payares &amp; Salma Romero" />
+<meta name="author" content="Diego Payares y Salma Romero" />
 
 
 <meta name="date" content="2026-09-17" />
@@ -170,7 +170,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#an%C3%A1lisis-exploratorio-de-motor_updrs-variable-respuesta"><i class="fa fa-check"></i><b>1.1</b> Análisis exploratorio de <code>motor_UPDRS</code> (variable respuesta)</a>
 <ul>
-<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#resumen-estad%C3%ADstico"><i class="fa fa-check"></i><b>1.1.1</b> Resumen estadístico</a></li>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#resumen-estad%C3%ADstico-de-motor_updrs"><i class="fa fa-check"></i><b>1.1.1</b> Resumen estadístico de motor_UPDRS</a></li>
 <li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#histograma"><i class="fa fa-check"></i><b>1.1.2</b> Histograma</a></li>
 <li class="chapter" data-level="1.1.3" data-path="intro.html"><a href="intro.html#diagrama-de-caja"><i class="fa fa-check"></i><b>1.1.3</b> Diagrama de caja</a></li>
 </ul></li>
@@ -282,13 +282,13 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="header">
 <h1 class="title">Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo</h1>
-<p class="author"><em>Diego Payares &amp; Salma Romero</em></p>
+<p class="author"><em>Diego Payares y Salma Romero</em></p>
 <p class="date"><em>2026-09-17</em></p>
 </div>
 <div id="contexto-del-problema" class="section level1 unnumbered hasAnchor">
 <h1>Contexto del problema<a href="index.html#contexto-del-problema" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>La enfermedad de Parkinson es un trastorno neurodegenerativo que puede afectar diferentes aspectos del movimiento y del habla. La evaluación estándar de la severidad del síntoma se realiza mediante la escala unificada de calificación de la enfermedad de Parkinson (UPDRS). El monitoreo de la progresión de sus síntomas requiere evaluaciones periódicas, por lo que las técnicas de telemonitorización pueden constituir una alternativa para obtener información de manera remota y no invasiva.</p>
-<p>El conjunto de datos a analizar, Parkinsons Telemonitoring <span class="citation">(<a href="referencias.html#ref-tsanas2010">Tsanas et al. 2010</a>)</span>, contiene mediciones biomédicas de la voz obtenidas de 42 personas con enfermedad de Parkinson en etapa temprana, quienes participaron en una prueba de seis meses de un dispositivo de telemonitorización. Las grabaciones fueron realizadas automáticamente en los domicilios de los pacientes. El conjunto contiene 5.875 registros de voz, correspondientes a múltiples grabaciones realizadas a estos participantes (alrededor de 140 por paciente).</p>
+<p>El conjunto de datos a analizar, Parkinsons Telemonitoring <span class="citation">(<a href="referencias.html#ref-tsanas2010">Tsanas et al. 2010</a>)</span>, contiene mediciones biomédicas de la voz obtenidas de 42 personas con enfermedad de Parkinson en etapa temprana, quienes participaron en una prueba de seis meses de un dispositivo de telemonitorización. Las grabaciones fueron realizadas en los domicilios de los pacientes. El conjunto contiene 5.875 registros de voz, correspondientes a múltiples grabaciones realizadas a estos participantes (alrededor de 140 por paciente).</p>
 <p>Para cada registro se dispone de información demográfica y temporal, como la edad, el sexo y el tiempo transcurrido desde el reclutamiento, además de 16 medidas biomédicas relacionadas con características de la voz <span class="citation">(<a href="referencias.html#ref-little2009">Little et al. 2009</a>)</span>. También se registran las puntuaciones motor_UPDRS y total_UPDRS, correspondientes a medidas clínicas de la sintomatología de la enfermedad. En este trabajo la variable respuesta es motor_UPDRS, la puntuación de la parte motora de la escala. Como las grabaciones de un mismo paciente se parecen mucho entre sí, el análisis exploratorio se hace sobre los registros y las pruebas de hipótesis sobre un valor resumen por paciente.</p>
 </div>
             </section>
