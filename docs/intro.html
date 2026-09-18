@@ -456,7 +456,12 @@ div.csl-indent {
 <span id="cb20-20"><a href="intro.html#cb20-20" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb20-21"><a href="intro.html#cb20-21" tabindex="-1"></a>    <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;gray92&quot;</span>)</span>
 <span id="cb20-22"><a href="intro.html#cb20-22" tabindex="-1"></a>  )</span></code></pre></div>
-<p><img src="parkinson-updrs_files/figure-html/histograma-motor-updrs-1.png" alt="" width="672" /></p>
+<div class="figure"><span style="display:block;" id="fig:histograma-motor-updrs"></span>
+<img src="parkinson-updrs_files/figure-html/histograma-motor-updrs-1.png" alt="Histograma y curva de densidad de la puntuación motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.1: Histograma y curva de densidad de la puntuación motor UPDRS.
+</p>
+</div>
 <p>El histograma muestra una distribución bimodal: un pico alrededor de los 17 puntos (afectación leve-moderada), otro cerca de los 26 (moderada-avanzada) y un valle entre ambos hacia los 21. Este comportamiento bimodal indica que la muestra global no sigue una distribución normal. Conviene recordar que cada paciente aporta unas 140 grabaciones con puntuaciones muy parecidas entre sí, así que las dos modas reflejan sobre todo la mezcla de pacientes con distintos niveles de severidad, posiblemente en distintas etapas de la enfermedad, más que dos subgrupos clínicos definidos.</p>
 </div>
 <div id="diagrama-de-caja" class="section level3 hasAnchor" number="1.1.3">
@@ -489,7 +494,12 @@ div.csl-indent {
 <span id="cb21-26"><a href="intro.html#cb21-26" tabindex="-1"></a>    <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb21-27"><a href="intro.html#cb21-27" tabindex="-1"></a>    <span class="at">panel.grid.major.y =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;gray92&quot;</span>)</span>
 <span id="cb21-28"><a href="intro.html#cb21-28" tabindex="-1"></a>  )</span></code></pre></div>
-<p><img src="parkinson-updrs_files/figure-html/boxplot-motor-updrs-1.png" alt="" width="672" /></p>
+<div class="figure"><span style="display:block;" id="fig:boxplot-motor-updrs"></span>
+<img src="parkinson-updrs_files/figure-html/boxplot-motor-updrs-1.png" alt="Diagrama de caja de la puntuación motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.2: Diagrama de caja de la puntuación motor UPDRS.
+</p>
+</div>
 <p>El diagrama de caja confirma una distribución simétrica en la severidad motora de los pacientes, reflejando un valor central de 20.87 puntos que coincide estrechamente con el promedio muestral de 21.3 puntos. El rango intercuartílico de 12.6 puntos sitúa al núcleo de la muestra entre un estado de deterioro leve (15 puntos) y una etapa de compromiso motor moderado-avanzado (27.6 puntos). Los datos cubren el intervalo completo (entre 5.04 y 39.51 puntos), demostrando que los pacientes abarcan todo el espectro funcional de la enfermedad. Además, la ausencia de outliers revela que la dispersión proviene de la variabilidad biológica esperada en el progreso del Parkinson y no de inconsistencias de medición.</p>
 </div>
 </div>
@@ -585,26 +595,132 @@ div.csl-indent {
 <h3><span class="header-section-number">1.2.2</span> Histogramas<a href="intro.html#histogramas" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="intro.html#cb26-1" tabindex="-1"></a>variables_numericas <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
 <span id="cb26-2"><a href="intro.html#cb26-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric), <span class="sc">-</span>motor_UPDRS, <span class="sc">-</span>total_UPDRS) <span class="sc">%&gt;%</span></span>
-<span id="cb26-3"><a href="intro.html#cb26-3" tabindex="-1"></a>  <span class="fu">names</span>()</span>
-<span id="cb26-4"><a href="intro.html#cb26-4" tabindex="-1"></a></span>
-<span id="cb26-5"><a href="intro.html#cb26-5" tabindex="-1"></a><span class="cf">for</span> (variable <span class="cf">in</span> variables_numericas) {</span>
-<span id="cb26-6"><a href="intro.html#cb26-6" tabindex="-1"></a>  </span>
-<span id="cb26-7"><a href="intro.html#cb26-7" tabindex="-1"></a>  grafico <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> .data[[variable]])) <span class="sc">+</span></span>
-<span id="cb26-8"><a href="intro.html#cb26-8" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(</span>
-<span id="cb26-9"><a href="intro.html#cb26-9" tabindex="-1"></a>      <span class="at">bins =</span> <span class="dv">30</span>,</span>
-<span id="cb26-10"><a href="intro.html#cb26-10" tabindex="-1"></a>      <span class="at">fill =</span> <span class="st">&quot;pink&quot;</span>,</span>
-<span id="cb26-11"><a href="intro.html#cb26-11" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;black&quot;</span></span>
-<span id="cb26-12"><a href="intro.html#cb26-12" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb26-13"><a href="intro.html#cb26-13" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb26-14"><a href="intro.html#cb26-14" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">paste</span>(<span class="st">&quot;Distribución de&quot;</span>, variable),</span>
-<span id="cb26-15"><a href="intro.html#cb26-15" tabindex="-1"></a>      <span class="at">x =</span> variable,</span>
-<span id="cb26-16"><a href="intro.html#cb26-16" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">&quot;Frecuencia&quot;</span></span>
-<span id="cb26-17"><a href="intro.html#cb26-17" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb26-18"><a href="intro.html#cb26-18" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span>
-<span id="cb26-19"><a href="intro.html#cb26-19" tabindex="-1"></a>  </span>
-<span id="cb26-20"><a href="intro.html#cb26-20" tabindex="-1"></a>  <span class="fu">print</span>(grafico)</span>
-<span id="cb26-21"><a href="intro.html#cb26-21" tabindex="-1"></a>}</span></code></pre></div>
-<p><img src="parkinson-updrs_files/figure-html/histogramas-independientes-1.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-2.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-3.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-4.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-5.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-6.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-7.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-8.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-9.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-10.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-11.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-12.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-13.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-14.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-15.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-16.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-17.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/histogramas-independientes-18.png" alt="" width="672" /></p>
+<span id="cb26-3"><a href="intro.html#cb26-3" tabindex="-1"></a>  <span class="fu">names</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="intro.html#cb27-1" tabindex="-1"></a><span class="cf">for</span> (variable <span class="cf">in</span> variables_numericas) {</span>
+<span id="cb27-2"><a href="intro.html#cb27-2" tabindex="-1"></a>  </span>
+<span id="cb27-3"><a href="intro.html#cb27-3" tabindex="-1"></a>  grafico <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> .data[[variable]])) <span class="sc">+</span></span>
+<span id="cb27-4"><a href="intro.html#cb27-4" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(</span>
+<span id="cb27-5"><a href="intro.html#cb27-5" tabindex="-1"></a>      <span class="at">bins =</span> <span class="dv">30</span>,</span>
+<span id="cb27-6"><a href="intro.html#cb27-6" tabindex="-1"></a>      <span class="at">fill =</span> <span class="st">&quot;pink&quot;</span>,</span>
+<span id="cb27-7"><a href="intro.html#cb27-7" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;black&quot;</span></span>
+<span id="cb27-8"><a href="intro.html#cb27-8" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb27-9"><a href="intro.html#cb27-9" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb27-10"><a href="intro.html#cb27-10" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">paste</span>(<span class="st">&quot;Distribución de&quot;</span>, variable),</span>
+<span id="cb27-11"><a href="intro.html#cb27-11" tabindex="-1"></a>      <span class="at">x =</span> variable,</span>
+<span id="cb27-12"><a href="intro.html#cb27-12" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">&quot;Frecuencia&quot;</span></span>
+<span id="cb27-13"><a href="intro.html#cb27-13" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb27-14"><a href="intro.html#cb27-14" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span>
+<span id="cb27-15"><a href="intro.html#cb27-15" tabindex="-1"></a>  </span>
+<span id="cb27-16"><a href="intro.html#cb27-16" tabindex="-1"></a>  <span class="fu">print</span>(grafico)</span>
+<span id="cb27-17"><a href="intro.html#cb27-17" tabindex="-1"></a>}</span></code></pre></div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-1"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-1.png" alt="Histograma de age." width="672" />
+<p class="caption">
+Figura 1.3: Histograma de age.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-2"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-2.png" alt="Histograma de test_time." width="672" />
+<p class="caption">
+Figura 1.4: Histograma de test_time.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-3"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-3.png" alt="Histograma de Jitter...." width="672" />
+<p class="caption">
+Figura 1.5: Histograma de Jitter….
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-4"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-4.png" alt="Histograma de Jitter.Abs.." width="672" />
+<p class="caption">
+Figura 1.6: Histograma de Jitter.Abs..
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-5"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-5.png" alt="Histograma de Jitter.RAP." width="672" />
+<p class="caption">
+Figura 1.7: Histograma de Jitter.RAP.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-6"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-6.png" alt="Histograma de Jitter.PPQ5." width="672" />
+<p class="caption">
+Figura 1.8: Histograma de Jitter.PPQ5.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-7"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-7.png" alt="Histograma de Jitter.DDP." width="672" />
+<p class="caption">
+Figura 1.9: Histograma de Jitter.DDP.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-8"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-8.png" alt="Histograma de Shimmer." width="672" />
+<p class="caption">
+Figura 1.10: Histograma de Shimmer.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-9"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-9.png" alt="Histograma de Shimmer.dB.." width="672" />
+<p class="caption">
+Figura 1.11: Histograma de Shimmer.dB..
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-10"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-10.png" alt="Histograma de Shimmer.APQ3." width="672" />
+<p class="caption">
+Figura 1.12: Histograma de Shimmer.APQ3.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-11"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-11.png" alt="Histograma de Shimmer.APQ5." width="672" />
+<p class="caption">
+Figura 1.13: Histograma de Shimmer.APQ5.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-12"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-12.png" alt="Histograma de Shimmer.APQ11." width="672" />
+<p class="caption">
+Figura 1.14: Histograma de Shimmer.APQ11.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-13"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-13.png" alt="Histograma de Shimmer.DDA." width="672" />
+<p class="caption">
+Figura 1.15: Histograma de Shimmer.DDA.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-14"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-14.png" alt="Histograma de NHR." width="672" />
+<p class="caption">
+Figura 1.16: Histograma de NHR.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-15"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-15.png" alt="Histograma de HNR." width="672" />
+<p class="caption">
+Figura 1.17: Histograma de HNR.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-16"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-16.png" alt="Histograma de RPDE." width="672" />
+<p class="caption">
+Figura 1.18: Histograma de RPDE.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-17"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-17.png" alt="Histograma de DFA." width="672" />
+<p class="caption">
+Figura 1.19: Histograma de DFA.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:histogramas-independientes-18"></span>
+<img src="parkinson-updrs_files/figure-html/histogramas-independientes-18.png" alt="Histograma de PPE." width="672" />
+<p class="caption">
+Figura 1.20: Histograma de PPE.
+</p>
+</div>
 <p><strong><code>age</code>:</strong> La distribución de la edad muestra que la mayoría de los pacientes son adultos mayores, con picos de frecuencia muy claros entre los 55 y 60 años, entre los 65 y 68 años, y entre los 72 y 74 años, además de un grupo pequeño aislado alrededor de los 36 años. Como la edad no cambia dentro de un paciente, cada barra refleja cuántos pacientes tienen esa edad y cuántas grabaciones aportó cada uno; el grupo de los 36 años, por ejemplo, es un solo paciente. Esta concentración en edades avanzadas coincide con el comportamiento real de la enfermedad de Parkinson, donde los diagnósticos aumentan considerablemente a partir de los 60 años. Tener pacientes con diferentes edades servirá para analizar si el empeoramiento en la voz y en el control motor se debe al avance de la enfermedad o simplemente al envejecimiento natural.</p>
 <p><strong><code>test_time</code>:</strong> El tiempo de prueba muestra un registro continuo y parejo durante los primeros 170 días del estudio, con una pequeña baja cerca del día 90 y una caída marcada después del día 180. Esto indica que a los pacientes se les realizó un seguimiento constante y organizado durante aproximadamente seis meses. La disminución a partir del día 180 ocurre porque varios pacientes completaron su tiempo en el estudio o dejaron de enviar mediciones, garantizando una base de datos sólida para evaluar cómo evolucionan los síntomas con el paso de los meses.</p>
 <p><strong><code>Jitter...</code>:</strong> La medida porcentual de variación en la frecuencia de la voz (Jitter(…)) se concentra en valores bajos, casi todos menores al 0.01 (1 %). La gráfica se extiende hacia la derecha con unos pocos registros que superan 0.05, donde se ubican las tomas de voz con inestabilidades graves. En la práctica, esto significa que las alteraciones fuertes en el tono no son lo habitual en todas las pruebas, sino eventos específicos que destacan sobre el resto.</p>
@@ -626,27 +742,130 @@ div.csl-indent {
 </div>
 <div id="dispersión-frente-a-motor_updrs" class="section level3 hasAnchor" number="1.2.3">
 <h3><span class="header-section-number">1.2.3</span> Dispersión frente a <code>motor_UPDRS</code><a href="intro.html#dispersi%C3%B3n-frente-a-motor_updrs" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="intro.html#cb27-1" tabindex="-1"></a>variables_numericas <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb27-2"><a href="intro.html#cb27-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric), <span class="sc">-</span>motor_UPDRS, <span class="sc">-</span>total_UPDRS) <span class="sc">%&gt;%</span></span>
-<span id="cb27-3"><a href="intro.html#cb27-3" tabindex="-1"></a>  <span class="fu">names</span>()</span>
-<span id="cb27-4"><a href="intro.html#cb27-4" tabindex="-1"></a></span>
-<span id="cb27-5"><a href="intro.html#cb27-5" tabindex="-1"></a><span class="cf">for</span> (variable <span class="cf">in</span> variables_numericas) {</span>
-<span id="cb27-6"><a href="intro.html#cb27-6" tabindex="-1"></a>  </span>
-<span id="cb27-7"><a href="intro.html#cb27-7" tabindex="-1"></a>  grafico <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> .data[[variable]], <span class="at">y =</span> motor_UPDRS)) <span class="sc">+</span></span>
-<span id="cb27-8"><a href="intro.html#cb27-8" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
-<span id="cb27-9"><a href="intro.html#cb27-9" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.5</span>,</span>
-<span id="cb27-10"><a href="intro.html#cb27-10" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;#C77D98&quot;</span></span>
-<span id="cb27-11"><a href="intro.html#cb27-11" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb27-12"><a href="intro.html#cb27-12" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb27-13"><a href="intro.html#cb27-13" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">paste</span>(variable, <span class="st">&quot;vs motor_UPDRS&quot;</span>),</span>
-<span id="cb27-14"><a href="intro.html#cb27-14" tabindex="-1"></a>      <span class="at">x =</span> variable,</span>
-<span id="cb27-15"><a href="intro.html#cb27-15" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">&quot;motor_UPDRS&quot;</span></span>
-<span id="cb27-16"><a href="intro.html#cb27-16" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb27-17"><a href="intro.html#cb27-17" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span>
-<span id="cb27-18"><a href="intro.html#cb27-18" tabindex="-1"></a>  </span>
-<span id="cb27-19"><a href="intro.html#cb27-19" tabindex="-1"></a>  <span class="fu">print</span>(grafico)</span>
-<span id="cb27-20"><a href="intro.html#cb27-20" tabindex="-1"></a>}</span></code></pre></div>
-<p><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-1.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-2.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-3.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-4.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-5.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-6.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-7.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-8.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-9.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-10.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-11.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-12.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-13.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-14.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-15.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-16.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-17.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-18.png" alt="" width="672" /></p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="intro.html#cb28-1" tabindex="-1"></a><span class="cf">for</span> (variable <span class="cf">in</span> variables_numericas) {</span>
+<span id="cb28-2"><a href="intro.html#cb28-2" tabindex="-1"></a>  </span>
+<span id="cb28-3"><a href="intro.html#cb28-3" tabindex="-1"></a>  grafico <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> .data[[variable]], <span class="at">y =</span> motor_UPDRS)) <span class="sc">+</span></span>
+<span id="cb28-4"><a href="intro.html#cb28-4" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
+<span id="cb28-5"><a href="intro.html#cb28-5" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.5</span>,</span>
+<span id="cb28-6"><a href="intro.html#cb28-6" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;#C77D98&quot;</span></span>
+<span id="cb28-7"><a href="intro.html#cb28-7" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb28-8"><a href="intro.html#cb28-8" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb28-9"><a href="intro.html#cb28-9" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">paste</span>(variable, <span class="st">&quot;vs motor_UPDRS&quot;</span>),</span>
+<span id="cb28-10"><a href="intro.html#cb28-10" tabindex="-1"></a>      <span class="at">x =</span> variable,</span>
+<span id="cb28-11"><a href="intro.html#cb28-11" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">&quot;motor_UPDRS&quot;</span></span>
+<span id="cb28-12"><a href="intro.html#cb28-12" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb28-13"><a href="intro.html#cb28-13" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span>
+<span id="cb28-14"><a href="intro.html#cb28-14" tabindex="-1"></a>  </span>
+<span id="cb28-15"><a href="intro.html#cb28-15" tabindex="-1"></a>  <span class="fu">print</span>(grafico)</span>
+<span id="cb28-16"><a href="intro.html#cb28-16" tabindex="-1"></a>}</span></code></pre></div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-1"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-1.png" alt="Dispersión de age frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.21: Dispersión de age frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-2"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-2.png" alt="Dispersión de test_time frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.22: Dispersión de test_time frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-3"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-3.png" alt="Dispersión de Jitter... frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.23: Dispersión de Jitter… frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-4"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-4.png" alt="Dispersión de Jitter.Abs. frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.24: Dispersión de Jitter.Abs. frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-5"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-5.png" alt="Dispersión de Jitter.RAP frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.25: Dispersión de Jitter.RAP frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-6"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-6.png" alt="Dispersión de Jitter.PPQ5 frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.26: Dispersión de Jitter.PPQ5 frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-7"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-7.png" alt="Dispersión de Jitter.DDP frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.27: Dispersión de Jitter.DDP frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-8"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-8.png" alt="Dispersión de Shimmer frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.28: Dispersión de Shimmer frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-9"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-9.png" alt="Dispersión de Shimmer.dB. frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.29: Dispersión de Shimmer.dB. frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-10"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-10.png" alt="Dispersión de Shimmer.APQ3 frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.30: Dispersión de Shimmer.APQ3 frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-11"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-11.png" alt="Dispersión de Shimmer.APQ5 frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.31: Dispersión de Shimmer.APQ5 frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-12"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-12.png" alt="Dispersión de Shimmer.APQ11 frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.32: Dispersión de Shimmer.APQ11 frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-13"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-13.png" alt="Dispersión de Shimmer.DDA frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.33: Dispersión de Shimmer.DDA frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-14"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-14.png" alt="Dispersión de NHR frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.34: Dispersión de NHR frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-15"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-15.png" alt="Dispersión de HNR frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.35: Dispersión de HNR frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-16"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-16.png" alt="Dispersión de RPDE frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.36: Dispersión de RPDE frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-17"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-17.png" alt="Dispersión de DFA frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.37: Dispersión de DFA frente a motor UPDRS.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-vs-motor-updrs-18"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-vs-motor-updrs-18.png" alt="Dispersión de PPE frente a motor UPDRS." width="672" />
+<p class="caption">
+Figura 1.38: Dispersión de PPE frente a motor UPDRS.
+</p>
+</div>
 <p><strong><code>age</code> vs <code>motor_UPDRS</code>:</strong> Se observa una relación positiva: a mayor edad, mayor tiende a ser la severidad motora. Los puntos forman franjas verticales porque la edad es fija para cada paciente.</p>
 <p><strong><code>test_time</code> vs <code>motor_UPDRS</code>:</strong> No se observa relación: la severidad se distribuye igual a lo largo de todo el seguimiento.</p>
 <p><strong><code>Jitter...</code> vs <code>motor_UPDRS</code>:</strong> No se observa una relación clara: casi todos los registros tienen jitter bajo y cubren toda la escala motora.</p>
@@ -673,70 +892,80 @@ div.csl-indent {
 <div id="distribución-por-registros-y-por-pacientes" class="section level3 hasAnchor" number="1.3.1">
 <h3><span class="header-section-number">1.3.1</span> Distribución por registros y por pacientes<a href="intro.html#distribuci%C3%B3n-por-registros-y-por-pacientes" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Distribución por registros (cada grabación cuenta una vez):</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="intro.html#cb28-1" tabindex="-1"></a>tabla_sexo <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb28-2"><a href="intro.html#cb28-2" tabindex="-1"></a>  <span class="fu">count</span>(sex, <span class="at">name =</span> <span class="st">&quot;registros&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb28-3"><a href="intro.html#cb28-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">porcentaje =</span> <span class="fu">round</span>(registros <span class="sc">/</span> <span class="fu">sum</span>(registros) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>))</span>
-<span id="cb28-4"><a href="intro.html#cb28-4" tabindex="-1"></a></span>
-<span id="cb28-5"><a href="intro.html#cb28-5" tabindex="-1"></a>tabla_sexo</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="intro.html#cb29-1" tabindex="-1"></a>tabla_sexo <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="intro.html#cb29-2" tabindex="-1"></a>  <span class="fu">count</span>(sex, <span class="at">name =</span> <span class="st">&quot;registros&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb29-3"><a href="intro.html#cb29-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">porcentaje =</span> <span class="fu">round</span>(registros <span class="sc">/</span> <span class="fu">sum</span>(registros) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>))</span>
+<span id="cb29-4"><a href="intro.html#cb29-4" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="intro.html#cb29-5" tabindex="-1"></a>tabla_sexo</span></code></pre></div>
 <pre><code>##         sex registros porcentaje
 ## 1 Masculino      3996       68.2
 ## 2  Femenino      1867       31.8</code></pre>
 <p>Distribución por pacientes (cada persona cuenta una vez):</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="intro.html#cb30-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
-<span id="cb30-2"><a href="intro.html#cb30-2" tabindex="-1"></a>  <span class="fu">distinct</span>(subject., sex) <span class="sc">%&gt;%</span></span>
-<span id="cb30-3"><a href="intro.html#cb30-3" tabindex="-1"></a>  <span class="fu">count</span>(sex, <span class="at">name =</span> <span class="st">&quot;pacientes&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb30-4"><a href="intro.html#cb30-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">porcentaje =</span> <span class="fu">round</span>(pacientes <span class="sc">/</span> <span class="fu">sum</span>(pacientes) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="intro.html#cb31-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
+<span id="cb31-2"><a href="intro.html#cb31-2" tabindex="-1"></a>  <span class="fu">distinct</span>(subject., sex) <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="intro.html#cb31-3" tabindex="-1"></a>  <span class="fu">count</span>(sex, <span class="at">name =</span> <span class="st">&quot;pacientes&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb31-4"><a href="intro.html#cb31-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">porcentaje =</span> <span class="fu">round</span>(pacientes <span class="sc">/</span> <span class="fu">sum</span>(pacientes) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##         sex pacientes porcentaje
 ## 1 Masculino        28       66.7
 ## 2  Femenino        14       33.3</code></pre>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="intro.html#cb32-1" tabindex="-1"></a>tabla_sexo <span class="sc">%&gt;%</span></span>
-<span id="cb32-2"><a href="intro.html#cb32-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">etiqueta =</span> <span class="fu">paste0</span>(registros, <span class="st">&quot; (&quot;</span>, porcentaje, <span class="st">&quot;%)&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb32-3"><a href="intro.html#cb32-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y =</span> registros)) <span class="sc">+</span></span>
-<span id="cb32-4"><a href="intro.html#cb32-4" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">&quot;#FAD0C4&quot;</span>, <span class="at">color =</span> <span class="st">&quot;#C2185B&quot;</span>, <span class="at">width =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb32-5"><a href="intro.html#cb32-5" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> etiqueta), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb32-6"><a href="intro.html#cb32-6" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.15</span>))) <span class="sc">+</span></span>
-<span id="cb32-7"><a href="intro.html#cb32-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribución de los registros según el sexo del paciente&quot;</span>,</span>
-<span id="cb32-8"><a href="intro.html#cb32-8" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>,</span>
-<span id="cb32-9"><a href="intro.html#cb32-9" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Número de registros&quot;</span>) <span class="sc">+</span></span>
-<span id="cb32-10"><a href="intro.html#cb32-10" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<p><img src="parkinson-updrs_files/figure-html/grafico-sexo-1.png" alt="" width="672" /></p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="intro.html#cb33-1" tabindex="-1"></a>tabla_sexo <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="intro.html#cb33-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">etiqueta =</span> <span class="fu">paste0</span>(registros, <span class="st">&quot; (&quot;</span>, porcentaje, <span class="st">&quot;%)&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="intro.html#cb33-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y =</span> registros)) <span class="sc">+</span></span>
+<span id="cb33-4"><a href="intro.html#cb33-4" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">&quot;#FAD0C4&quot;</span>, <span class="at">color =</span> <span class="st">&quot;#C2185B&quot;</span>, <span class="at">width =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb33-5"><a href="intro.html#cb33-5" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> etiqueta), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb33-6"><a href="intro.html#cb33-6" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.15</span>))) <span class="sc">+</span></span>
+<span id="cb33-7"><a href="intro.html#cb33-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribución de los registros según el sexo del paciente&quot;</span>,</span>
+<span id="cb33-8"><a href="intro.html#cb33-8" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb33-9"><a href="intro.html#cb33-9" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Número de registros&quot;</span>) <span class="sc">+</span></span>
+<span id="cb33-10"><a href="intro.html#cb33-10" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="figure"><span style="display:block;" id="fig:grafico-sexo"></span>
+<img src="parkinson-updrs_files/figure-html/grafico-sexo-1.png" alt="Distribución de los registros según el sexo del paciente." width="672" />
+<p class="caption">
+Figura 1.39: Distribución de los registros según el sexo del paciente.
+</p>
+</div>
 <p>Dos de cada tres registros son de hombres (3.996 frente a 1.867), y lo mismo pasa con los pacientes: 28 hombres y 14 mujeres. La proporción es coherente con la mayor frecuencia del Parkinson en hombres, pero deja un grupo de mujeres pequeño, algo a tener en cuenta cuando se comparen por paciente.</p>
 </div>
 <div id="severidad-motora-según-el-sexo" class="section level3 hasAnchor" number="1.3.2">
 <h3><span class="header-section-number">1.3.2</span> Severidad motora según el sexo<a href="intro.html#severidad-motora-seg%C3%BAn-el-sexo" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="intro.html#cb33-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
-<span id="cb33-2"><a href="intro.html#cb33-2" tabindex="-1"></a>  <span class="fu">group_by</span>(sex) <span class="sc">%&gt;%</span></span>
-<span id="cb33-3"><a href="intro.html#cb33-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb33-4"><a href="intro.html#cb33-4" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">length</span>(motor_UPDRS),</span>
-<span id="cb33-5"><a href="intro.html#cb33-5" tabindex="-1"></a>    <span class="at">media =</span> <span class="fu">mean</span>(motor_UPDRS),</span>
-<span id="cb33-6"><a href="intro.html#cb33-6" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">sd</span>(motor_UPDRS),</span>
-<span id="cb33-7"><a href="intro.html#cb33-7" tabindex="-1"></a>    <span class="at">mediana =</span> <span class="fu">median</span>(motor_UPDRS),</span>
-<span id="cb33-8"><a href="intro.html#cb33-8" tabindex="-1"></a>    <span class="at">RIC =</span> <span class="fu">IQR</span>(motor_UPDRS),</span>
-<span id="cb33-9"><a href="intro.html#cb33-9" tabindex="-1"></a>    <span class="at">Q1 =</span> <span class="fu">quantile</span>(motor_UPDRS, <span class="fl">0.25</span>),</span>
-<span id="cb33-10"><a href="intro.html#cb33-10" tabindex="-1"></a>    <span class="at">Q3 =</span> <span class="fu">quantile</span>(motor_UPDRS, <span class="fl">0.75</span>),</span>
-<span id="cb33-11"><a href="intro.html#cb33-11" tabindex="-1"></a>    <span class="at">minimo =</span> <span class="fu">min</span>(motor_UPDRS),</span>
-<span id="cb33-12"><a href="intro.html#cb33-12" tabindex="-1"></a>    <span class="at">maximo =</span> <span class="fu">max</span>(motor_UPDRS)</span>
-<span id="cb33-13"><a href="intro.html#cb33-13" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb33-14"><a href="intro.html#cb33-14" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="intro.html#cb34-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
+<span id="cb34-2"><a href="intro.html#cb34-2" tabindex="-1"></a>  <span class="fu">group_by</span>(sex) <span class="sc">%&gt;%</span></span>
+<span id="cb34-3"><a href="intro.html#cb34-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb34-4"><a href="intro.html#cb34-4" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">length</span>(motor_UPDRS),</span>
+<span id="cb34-5"><a href="intro.html#cb34-5" tabindex="-1"></a>    <span class="at">media =</span> <span class="fu">mean</span>(motor_UPDRS),</span>
+<span id="cb34-6"><a href="intro.html#cb34-6" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">sd</span>(motor_UPDRS),</span>
+<span id="cb34-7"><a href="intro.html#cb34-7" tabindex="-1"></a>    <span class="at">mediana =</span> <span class="fu">median</span>(motor_UPDRS),</span>
+<span id="cb34-8"><a href="intro.html#cb34-8" tabindex="-1"></a>    <span class="at">RIC =</span> <span class="fu">IQR</span>(motor_UPDRS),</span>
+<span id="cb34-9"><a href="intro.html#cb34-9" tabindex="-1"></a>    <span class="at">Q1 =</span> <span class="fu">quantile</span>(motor_UPDRS, <span class="fl">0.25</span>),</span>
+<span id="cb34-10"><a href="intro.html#cb34-10" tabindex="-1"></a>    <span class="at">Q3 =</span> <span class="fu">quantile</span>(motor_UPDRS, <span class="fl">0.75</span>),</span>
+<span id="cb34-11"><a href="intro.html#cb34-11" tabindex="-1"></a>    <span class="at">minimo =</span> <span class="fu">min</span>(motor_UPDRS),</span>
+<span id="cb34-12"><a href="intro.html#cb34-12" tabindex="-1"></a>    <span class="at">maximo =</span> <span class="fu">max</span>(motor_UPDRS)</span>
+<span id="cb34-13"><a href="intro.html#cb34-13" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb34-14"><a href="intro.html#cb34-14" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span></code></pre></div>
 <pre><code>##         sex    n    media       sd mediana    RIC     Q1     Q3 minimo maximo
 ## 1 Masculino 3996 21.46022 7.897393  21.208 12.514 15.000 27.514 5.0377 39.511
 ## 2  Femenino 1867 20.92458 8.607728  20.125 14.090 13.599 27.689 6.0102 37.957</code></pre>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="intro.html#cb35-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
-<span id="cb35-2"><a href="intro.html#cb35-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y =</span> motor_UPDRS)) <span class="sc">+</span></span>
-<span id="cb35-3"><a href="intro.html#cb35-3" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">&quot;#FAD0C4&quot;</span>,</span>
-<span id="cb35-4"><a href="intro.html#cb35-4" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">&quot;#C2185B&quot;</span>,</span>
-<span id="cb35-5"><a href="intro.html#cb35-5" tabindex="-1"></a>               <span class="at">width =</span> <span class="fl">0.4</span>,</span>
-<span id="cb35-6"><a href="intro.html#cb35-6" tabindex="-1"></a>               <span class="at">outlier.color =</span> <span class="st">&quot;#8E0038&quot;</span>) <span class="sc">+</span></span>
-<span id="cb35-7"><a href="intro.html#cb35-7" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> mean,</span>
-<span id="cb35-8"><a href="intro.html#cb35-8" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">&quot;point&quot;</span>,</span>
-<span id="cb35-9"><a href="intro.html#cb35-9" tabindex="-1"></a>               <span class="at">shape =</span> <span class="dv">18</span>,</span>
-<span id="cb35-10"><a href="intro.html#cb35-10" tabindex="-1"></a>               <span class="at">size =</span> <span class="fl">3.5</span>,</span>
-<span id="cb35-11"><a href="intro.html#cb35-11" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">&quot;#8E0038&quot;</span>) <span class="sc">+</span></span>
-<span id="cb35-12"><a href="intro.html#cb35-12" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Puntuación motor UPDRS según el sexo del paciente&quot;</span>,</span>
-<span id="cb35-13"><a href="intro.html#cb35-13" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>,</span>
-<span id="cb35-14"><a href="intro.html#cb35-14" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Motor UPDRS (Puntos)&quot;</span>) <span class="sc">+</span></span>
-<span id="cb35-15"><a href="intro.html#cb35-15" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-<p><img src="parkinson-updrs_files/figure-html/boxplot-motor-sexo-1.png" alt="" width="672" /></p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="intro.html#cb36-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href="intro.html#cb36-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y =</span> motor_UPDRS)) <span class="sc">+</span></span>
+<span id="cb36-3"><a href="intro.html#cb36-3" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">&quot;#FAD0C4&quot;</span>,</span>
+<span id="cb36-4"><a href="intro.html#cb36-4" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">&quot;#C2185B&quot;</span>,</span>
+<span id="cb36-5"><a href="intro.html#cb36-5" tabindex="-1"></a>               <span class="at">width =</span> <span class="fl">0.4</span>,</span>
+<span id="cb36-6"><a href="intro.html#cb36-6" tabindex="-1"></a>               <span class="at">outlier.color =</span> <span class="st">&quot;#8E0038&quot;</span>) <span class="sc">+</span></span>
+<span id="cb36-7"><a href="intro.html#cb36-7" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> mean,</span>
+<span id="cb36-8"><a href="intro.html#cb36-8" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">&quot;point&quot;</span>,</span>
+<span id="cb36-9"><a href="intro.html#cb36-9" tabindex="-1"></a>               <span class="at">shape =</span> <span class="dv">18</span>,</span>
+<span id="cb36-10"><a href="intro.html#cb36-10" tabindex="-1"></a>               <span class="at">size =</span> <span class="fl">3.5</span>,</span>
+<span id="cb36-11"><a href="intro.html#cb36-11" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">&quot;#8E0038&quot;</span>) <span class="sc">+</span></span>
+<span id="cb36-12"><a href="intro.html#cb36-12" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Puntuación motor UPDRS según el sexo del paciente&quot;</span>,</span>
+<span id="cb36-13"><a href="intro.html#cb36-13" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb36-14"><a href="intro.html#cb36-14" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Motor UPDRS (Puntos)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb36-15"><a href="intro.html#cb36-15" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="figure"><span style="display:block;" id="fig:boxplot-motor-sexo"></span>
+<img src="parkinson-updrs_files/figure-html/boxplot-motor-sexo-1.png" alt="Puntuación motor UPDRS según el sexo del paciente." width="672" />
+<p class="caption">
+Figura 1.40: Puntuación motor UPDRS según el sexo del paciente.
+</p>
+</div>
 <p>Las medias son casi iguales: 21.46 puntos en hombres y 20.92 en mujeres, medio punto de diferencia frente a desviaciones estándar cercanas a 8. Ambos grupos cubren casi toda la escala y no tienen atípicos; la caja de las mujeres es un poco más ancha y empieza más abajo (Q1 de 13.6 frente a 15), es decir, hay algo más de registros con afectación leve. A simple vista no hay una diferencia clara entre sexos.</p>
 </div>
 </div>
@@ -744,41 +973,75 @@ div.csl-indent {
 <h2><span class="header-section-number">1.4</span> Relaciones entre las variables independientes numéricas<a href="intro.html#relaciones-entre-las-variables-independientes-num%C3%A9ricas" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="pares-seleccionados" class="section level3 hasAnchor" number="1.4.1">
 <h3><span class="header-section-number">1.4.1</span> Pares seleccionados<a href="intro.html#pares-seleccionados" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="intro.html#cb36-1" tabindex="-1"></a>comparaciones <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb36-2"><a href="intro.html#cb36-2" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;age&quot;</span>, <span class="st">&quot;test_time&quot;</span>),</span>
-<span id="cb36-3"><a href="intro.html#cb36-3" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;Jitter...&quot;</span>, <span class="st">&quot;Jitter.PPQ5&quot;</span>),</span>
-<span id="cb36-4"><a href="intro.html#cb36-4" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;Jitter.RAP&quot;</span>, <span class="st">&quot;Jitter.DDP&quot;</span>),</span>
-<span id="cb36-5"><a href="intro.html#cb36-5" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;Shimmer.APQ3&quot;</span>, <span class="st">&quot;Shimmer.DDA&quot;</span>),</span>
-<span id="cb36-6"><a href="intro.html#cb36-6" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;Shimmer&quot;</span>, <span class="st">&quot;HNR&quot;</span>),</span>
-<span id="cb36-7"><a href="intro.html#cb36-7" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;RPDE&quot;</span>, <span class="st">&quot;PPE&quot;</span>)</span>
-<span id="cb36-8"><a href="intro.html#cb36-8" tabindex="-1"></a>)</span>
-<span id="cb36-9"><a href="intro.html#cb36-9" tabindex="-1"></a></span>
-<span id="cb36-10"><a href="intro.html#cb36-10" tabindex="-1"></a><span class="cf">for</span> (comparacion <span class="cf">in</span> comparaciones) {</span>
-<span id="cb36-11"><a href="intro.html#cb36-11" tabindex="-1"></a>  </span>
-<span id="cb36-12"><a href="intro.html#cb36-12" tabindex="-1"></a>  variable_x <span class="ot">&lt;-</span> comparacion[<span class="dv">1</span>]</span>
-<span id="cb36-13"><a href="intro.html#cb36-13" tabindex="-1"></a>  variable_y <span class="ot">&lt;-</span> comparacion[<span class="dv">2</span>]</span>
-<span id="cb36-14"><a href="intro.html#cb36-14" tabindex="-1"></a>  </span>
-<span id="cb36-15"><a href="intro.html#cb36-15" tabindex="-1"></a>  grafico <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
-<span id="cb36-16"><a href="intro.html#cb36-16" tabindex="-1"></a>    data,</span>
-<span id="cb36-17"><a href="intro.html#cb36-17" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
-<span id="cb36-18"><a href="intro.html#cb36-18" tabindex="-1"></a>      <span class="at">x =</span> .data[[variable_x]],</span>
-<span id="cb36-19"><a href="intro.html#cb36-19" tabindex="-1"></a>      <span class="at">y =</span> .data[[variable_y]]</span>
-<span id="cb36-20"><a href="intro.html#cb36-20" tabindex="-1"></a>    )</span>
-<span id="cb36-21"><a href="intro.html#cb36-21" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb36-22"><a href="intro.html#cb36-22" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
-<span id="cb36-23"><a href="intro.html#cb36-23" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.5</span>,</span>
-<span id="cb36-24"><a href="intro.html#cb36-24" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;#C77D98&quot;</span></span>
-<span id="cb36-25"><a href="intro.html#cb36-25" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb36-26"><a href="intro.html#cb36-26" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb36-27"><a href="intro.html#cb36-27" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">paste</span>(variable_x, <span class="st">&quot;vs&quot;</span>, variable_y),</span>
-<span id="cb36-28"><a href="intro.html#cb36-28" tabindex="-1"></a>      <span class="at">x =</span> variable_x,</span>
-<span id="cb36-29"><a href="intro.html#cb36-29" tabindex="-1"></a>      <span class="at">y =</span> variable_y</span>
-<span id="cb36-30"><a href="intro.html#cb36-30" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb36-31"><a href="intro.html#cb36-31" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span>
-<span id="cb36-32"><a href="intro.html#cb36-32" tabindex="-1"></a>  </span>
-<span id="cb36-33"><a href="intro.html#cb36-33" tabindex="-1"></a>  <span class="fu">print</span>(grafico)</span>
-<span id="cb36-34"><a href="intro.html#cb36-34" tabindex="-1"></a>}</span></code></pre></div>
-<p><img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-1.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-2.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-3.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-4.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-5.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-6.png" alt="" width="672" /></p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="intro.html#cb37-1" tabindex="-1"></a>comparaciones <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb37-2"><a href="intro.html#cb37-2" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;age&quot;</span>, <span class="st">&quot;test_time&quot;</span>),</span>
+<span id="cb37-3"><a href="intro.html#cb37-3" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;Jitter...&quot;</span>, <span class="st">&quot;Jitter.PPQ5&quot;</span>),</span>
+<span id="cb37-4"><a href="intro.html#cb37-4" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;Jitter.RAP&quot;</span>, <span class="st">&quot;Jitter.DDP&quot;</span>),</span>
+<span id="cb37-5"><a href="intro.html#cb37-5" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;Shimmer.APQ3&quot;</span>, <span class="st">&quot;Shimmer.DDA&quot;</span>),</span>
+<span id="cb37-6"><a href="intro.html#cb37-6" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;Shimmer&quot;</span>, <span class="st">&quot;HNR&quot;</span>),</span>
+<span id="cb37-7"><a href="intro.html#cb37-7" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;RPDE&quot;</span>, <span class="st">&quot;PPE&quot;</span>)</span>
+<span id="cb37-8"><a href="intro.html#cb37-8" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="intro.html#cb38-1" tabindex="-1"></a><span class="cf">for</span> (comparacion <span class="cf">in</span> comparaciones) {</span>
+<span id="cb38-2"><a href="intro.html#cb38-2" tabindex="-1"></a>  </span>
+<span id="cb38-3"><a href="intro.html#cb38-3" tabindex="-1"></a>  variable_x <span class="ot">&lt;-</span> comparacion[<span class="dv">1</span>]</span>
+<span id="cb38-4"><a href="intro.html#cb38-4" tabindex="-1"></a>  variable_y <span class="ot">&lt;-</span> comparacion[<span class="dv">2</span>]</span>
+<span id="cb38-5"><a href="intro.html#cb38-5" tabindex="-1"></a>  </span>
+<span id="cb38-6"><a href="intro.html#cb38-6" tabindex="-1"></a>  grafico <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
+<span id="cb38-7"><a href="intro.html#cb38-7" tabindex="-1"></a>    data,</span>
+<span id="cb38-8"><a href="intro.html#cb38-8" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb38-9"><a href="intro.html#cb38-9" tabindex="-1"></a>      <span class="at">x =</span> .data[[variable_x]],</span>
+<span id="cb38-10"><a href="intro.html#cb38-10" tabindex="-1"></a>      <span class="at">y =</span> .data[[variable_y]]</span>
+<span id="cb38-11"><a href="intro.html#cb38-11" tabindex="-1"></a>    )</span>
+<span id="cb38-12"><a href="intro.html#cb38-12" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb38-13"><a href="intro.html#cb38-13" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
+<span id="cb38-14"><a href="intro.html#cb38-14" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.5</span>,</span>
+<span id="cb38-15"><a href="intro.html#cb38-15" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;#C77D98&quot;</span></span>
+<span id="cb38-16"><a href="intro.html#cb38-16" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb38-17"><a href="intro.html#cb38-17" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb38-18"><a href="intro.html#cb38-18" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">paste</span>(variable_x, <span class="st">&quot;vs&quot;</span>, variable_y),</span>
+<span id="cb38-19"><a href="intro.html#cb38-19" tabindex="-1"></a>      <span class="at">x =</span> variable_x,</span>
+<span id="cb38-20"><a href="intro.html#cb38-20" tabindex="-1"></a>      <span class="at">y =</span> variable_y</span>
+<span id="cb38-21"><a href="intro.html#cb38-21" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb38-22"><a href="intro.html#cb38-22" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span>
+<span id="cb38-23"><a href="intro.html#cb38-23" tabindex="-1"></a>  </span>
+<span id="cb38-24"><a href="intro.html#cb38-24" tabindex="-1"></a>  <span class="fu">print</span>(grafico)</span>
+<span id="cb38-25"><a href="intro.html#cb38-25" tabindex="-1"></a>}</span></code></pre></div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-pares-seleccionados-1"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-1.png" alt="Dispersión de age frente a test_time." width="672" />
+<p class="caption">
+Figura 1.41: Dispersión de age frente a test_time.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-pares-seleccionados-2"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-2.png" alt="Dispersión de Jitter... frente a Jitter.PPQ5." width="672" />
+<p class="caption">
+Figura 1.42: Dispersión de Jitter… frente a Jitter.PPQ5.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-pares-seleccionados-3"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-3.png" alt="Dispersión de Jitter.RAP frente a Jitter.DDP." width="672" />
+<p class="caption">
+Figura 1.43: Dispersión de Jitter.RAP frente a Jitter.DDP.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-pares-seleccionados-4"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-4.png" alt="Dispersión de Shimmer.APQ3 frente a Shimmer.DDA." width="672" />
+<p class="caption">
+Figura 1.44: Dispersión de Shimmer.APQ3 frente a Shimmer.DDA.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-pares-seleccionados-5"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-5.png" alt="Dispersión de Shimmer frente a HNR." width="672" />
+<p class="caption">
+Figura 1.45: Dispersión de Shimmer frente a HNR.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-pares-seleccionados-6"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-6.png" alt="Dispersión de RPDE frente a PPE." width="672" />
+<p class="caption">
+Figura 1.46: Dispersión de RPDE frente a PPE.
+</p>
+</div>
 <p><strong><code>age</code> vs <code>test_time</code>:</strong> No se observa relación: los pacientes de todas las edades tienen grabaciones a lo largo de todo el seguimiento.</p>
 <p><strong><code>Jitter...</code> vs <code>Jitter.PPQ5</code>:</strong> Se observa una relación positiva muy fuerte: cuando una aumenta, la otra aumenta.</p>
 <p><strong><code>Jitter.RAP</code> vs <code>Jitter.DDP</code>:</strong> Se observa una relación positiva perfecta: los puntos forman una línea porque DDP es exactamente el triple de RAP.</p>
@@ -789,50 +1052,60 @@ div.csl-indent {
 <div id="matriz-de-correlaciones" class="section level3 hasAnchor" number="1.4.2">
 <h3><span class="header-section-number">1.4.2</span> Matriz de correlaciones<a href="intro.html#matriz-de-correlaciones" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Para ver de forma sistemática qué variables se parecen entre sí, calculamos la matriz de correlaciones de Pearson de las independientes numéricas. <code>total_UPDRS</code> queda fuera por la razón ya explicada: es una puntuación clínica que contiene a <code>motor_UPDRS</code>, no una característica de la voz.</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="intro.html#cb37-1" tabindex="-1"></a>variables_independientes <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb37-2"><a href="intro.html#cb37-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric), <span class="sc">-</span>motor_UPDRS, <span class="sc">-</span>total_UPDRS)</span>
-<span id="cb37-3"><a href="intro.html#cb37-3" tabindex="-1"></a></span>
-<span id="cb37-4"><a href="intro.html#cb37-4" tabindex="-1"></a>matriz_correlaciones <span class="ot">&lt;-</span> <span class="fu">cor</span>(variables_independientes)</span>
-<span id="cb37-5"><a href="intro.html#cb37-5" tabindex="-1"></a></span>
-<span id="cb37-6"><a href="intro.html#cb37-6" tabindex="-1"></a><span class="fu">as.data.frame</span>(<span class="fu">as.table</span>(matriz_correlaciones)) <span class="sc">%&gt;%</span></span>
-<span id="cb37-7"><a href="intro.html#cb37-7" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Var1, <span class="at">y =</span> Var2, <span class="at">fill =</span> Freq)) <span class="sc">+</span></span>
-<span id="cb37-8"><a href="intro.html#cb37-8" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">&quot;white&quot;</span>) <span class="sc">+</span></span>
-<span id="cb37-9"><a href="intro.html#cb37-9" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Freq, <span class="dv">2</span>)), <span class="at">size =</span> <span class="fl">2.6</span>) <span class="sc">+</span></span>
-<span id="cb37-10"><a href="intro.html#cb37-10" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(</span>
-<span id="cb37-11"><a href="intro.html#cb37-11" tabindex="-1"></a>    <span class="at">low =</span> <span class="st">&quot;lightblue&quot;</span>, <span class="at">mid =</span> <span class="st">&quot;white&quot;</span>, <span class="at">high =</span> <span class="st">&quot;#FFB6C1&quot;</span>, <span class="at">midpoint =</span> <span class="dv">0</span>,</span>
-<span id="cb37-12"><a href="intro.html#cb37-12" tabindex="-1"></a>    <span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>), <span class="at">name =</span> <span class="st">&quot;Correlación&quot;</span></span>
-<span id="cb37-13"><a href="intro.html#cb37-13" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb37-14"><a href="intro.html#cb37-14" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
-<span id="cb37-15"><a href="intro.html#cb37-15" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb37-16"><a href="intro.html#cb37-16" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Matriz de correlaciones de las variables independientes numéricas&quot;</span>,</span>
-<span id="cb37-17"><a href="intro.html#cb37-17" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>,</span>
-<span id="cb37-18"><a href="intro.html#cb37-18" tabindex="-1"></a>    <span class="at">y =</span> <span class="cn">NULL</span></span>
-<span id="cb37-19"><a href="intro.html#cb37-19" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb37-20"><a href="intro.html#cb37-20" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb37-21"><a href="intro.html#cb37-21" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
-<p><img src="parkinson-updrs_files/figure-html/matriz-correlaciones-1.png" alt="" width="1056" /></p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="intro.html#cb39-1" tabindex="-1"></a>variables_independientes <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb39-2"><a href="intro.html#cb39-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric), <span class="sc">-</span>motor_UPDRS, <span class="sc">-</span>total_UPDRS)</span>
+<span id="cb39-3"><a href="intro.html#cb39-3" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="intro.html#cb39-4" tabindex="-1"></a>matriz_correlaciones <span class="ot">&lt;-</span> <span class="fu">cor</span>(variables_independientes)</span>
+<span id="cb39-5"><a href="intro.html#cb39-5" tabindex="-1"></a></span>
+<span id="cb39-6"><a href="intro.html#cb39-6" tabindex="-1"></a><span class="fu">as.data.frame</span>(<span class="fu">as.table</span>(matriz_correlaciones)) <span class="sc">%&gt;%</span></span>
+<span id="cb39-7"><a href="intro.html#cb39-7" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Var1, <span class="at">y =</span> Var2, <span class="at">fill =</span> Freq)) <span class="sc">+</span></span>
+<span id="cb39-8"><a href="intro.html#cb39-8" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">&quot;white&quot;</span>) <span class="sc">+</span></span>
+<span id="cb39-9"><a href="intro.html#cb39-9" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Freq, <span class="dv">2</span>)), <span class="at">size =</span> <span class="fl">2.6</span>) <span class="sc">+</span></span>
+<span id="cb39-10"><a href="intro.html#cb39-10" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(</span>
+<span id="cb39-11"><a href="intro.html#cb39-11" tabindex="-1"></a>    <span class="at">low =</span> <span class="st">&quot;lightblue&quot;</span>, <span class="at">mid =</span> <span class="st">&quot;white&quot;</span>, <span class="at">high =</span> <span class="st">&quot;#FFB6C1&quot;</span>, <span class="at">midpoint =</span> <span class="dv">0</span>,</span>
+<span id="cb39-12"><a href="intro.html#cb39-12" tabindex="-1"></a>    <span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>), <span class="at">name =</span> <span class="st">&quot;Correlación&quot;</span></span>
+<span id="cb39-13"><a href="intro.html#cb39-13" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb39-14"><a href="intro.html#cb39-14" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
+<span id="cb39-15"><a href="intro.html#cb39-15" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb39-16"><a href="intro.html#cb39-16" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Matriz de correlaciones de las variables independientes numéricas&quot;</span>,</span>
+<span id="cb39-17"><a href="intro.html#cb39-17" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb39-18"><a href="intro.html#cb39-18" tabindex="-1"></a>    <span class="at">y =</span> <span class="cn">NULL</span></span>
+<span id="cb39-19"><a href="intro.html#cb39-19" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb39-20"><a href="intro.html#cb39-20" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb39-21"><a href="intro.html#cb39-21" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
+<div class="figure"><span style="display:block;" id="fig:matriz-correlaciones"></span>
+<img src="parkinson-updrs_files/figure-html/matriz-correlaciones-1.png" alt="Matriz de correlaciones de Pearson entre las variables independientes numéricas." width="1056" />
+<p class="caption">
+Figura 1.47: Matriz de correlaciones de Pearson entre las variables independientes numéricas.
+</p>
+</div>
 <p>Lo primero que salta a la vista en la matriz son dos bloques de color intenso: las cinco medidas de Jitter se correlacionan entre sí con valores de 0.79 a 1, y las seis de Shimmer con valores de 0.89 a 1. Esto es debido a que dentro de cada familia todas las variables miden lo mismo (la variación de la frecuencia en un caso y la de la amplitud en el otro), solo que con fórmulas y escalas distintas. Incluso hay dos pares con correlación exactamente igual a 1, porque <code>Jitter.DDP</code> y <code>Shimmer.DDA</code> no son más que el triple de <code>Jitter.RAP</code> y <code>Shimmer.APQ3</code>.</p>
 <p>Fuera de esos bloques las relaciones son las esperables: las dos familias se asocian entre sí de forma moderada (0.59 a 0.73), <code>NHR</code> sube y <code>HNR</code> baja cuando la voz se vuelve más inestable, <code>PPE</code> acompaña sobre todo al jitter, y <code>DFA</code>, <code>age</code> y <code>test_time</code> apenas se relacionan con el resto.</p>
 <p>La conclusión es que usar las once medidas de Jitter y Shimmer a la vez sería redundante y traería problemas de multicolinealidad, así que en la ingeniería de características cada familia se resumirá en una sola variable. Antes de eso, vale la pena mirar de cerca los pares más correlacionados que todavía no se habían graficado.</p>
 </div>
 <div id="pares-más-correlacionados" class="section level3 hasAnchor" number="1.4.3">
 <h3><span class="header-section-number">1.4.3</span> Pares más correlacionados<a href="intro.html#pares-m%C3%A1s-correlacionados" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="intro.html#cb38-1" tabindex="-1"></a>grafico_dispersion <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y, titulo) {</span>
-<span id="cb38-2"><a href="intro.html#cb38-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> .data[[x]], <span class="at">y =</span> .data[[y]])) <span class="sc">+</span></span>
-<span id="cb38-3"><a href="intro.html#cb38-3" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">color =</span> <span class="st">&quot;#C77D98&quot;</span>) <span class="sc">+</span></span>
-<span id="cb38-4"><a href="intro.html#cb38-4" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> titulo, <span class="at">x =</span> x, <span class="at">y =</span> y) <span class="sc">+</span></span>
-<span id="cb38-5"><a href="intro.html#cb38-5" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
-<span id="cb38-6"><a href="intro.html#cb38-6" tabindex="-1"></a>}</span>
-<span id="cb38-7"><a href="intro.html#cb38-7" tabindex="-1"></a>        </span>
-<span id="cb38-8"><a href="intro.html#cb38-8" tabindex="-1"></a>p_cor1 <span class="ot">&lt;-</span> <span class="fu">grafico_dispersion</span>(<span class="st">&quot;Jitter...&quot;</span>, <span class="st">&quot;Jitter.RAP&quot;</span>, <span class="st">&quot;Jitter(%) y Jitter:RAP&quot;</span>)</span>
-<span id="cb38-9"><a href="intro.html#cb38-9" tabindex="-1"></a>p_cor2 <span class="ot">&lt;-</span> <span class="fu">grafico_dispersion</span>(<span class="st">&quot;Jitter...&quot;</span>, <span class="st">&quot;Jitter.Abs.&quot;</span>, <span class="st">&quot;Jitter(%) y Jitter(Abs)&quot;</span>)</span>
-<span id="cb38-10"><a href="intro.html#cb38-10" tabindex="-1"></a>p_cor3 <span class="ot">&lt;-</span> <span class="fu">grafico_dispersion</span>(<span class="st">&quot;Shimmer&quot;</span>, <span class="st">&quot;Shimmer.dB.&quot;</span>, <span class="st">&quot;Shimmer y Shimmer(dB)&quot;</span>)</span>
-<span id="cb38-11"><a href="intro.html#cb38-11" tabindex="-1"></a>p_cor4 <span class="ot">&lt;-</span> <span class="fu">grafico_dispersion</span>(<span class="st">&quot;Shimmer&quot;</span>, <span class="st">&quot;Shimmer.APQ5&quot;</span>, <span class="st">&quot;Shimmer y Shimmer:APQ5&quot;</span>)</span>
-<span id="cb38-12"><a href="intro.html#cb38-12" tabindex="-1"></a>p_cor5 <span class="ot">&lt;-</span> <span class="fu">grafico_dispersion</span>(<span class="st">&quot;Shimmer.APQ5&quot;</span>, <span class="st">&quot;Shimmer.APQ11&quot;</span>, <span class="st">&quot;Shimmer:APQ5 y Shimmer:APQ11&quot;</span>)</span>
-<span id="cb38-13"><a href="intro.html#cb38-13" tabindex="-1"></a>p_cor6 <span class="ot">&lt;-</span> <span class="fu">grafico_dispersion</span>(<span class="st">&quot;Jitter.PPQ5&quot;</span>, <span class="st">&quot;NHR&quot;</span>, <span class="st">&quot;Jitter:PPQ5 y NHR&quot;</span>)</span>
-<span id="cb38-14"><a href="intro.html#cb38-14" tabindex="-1"></a></span>
-<span id="cb38-15"><a href="intro.html#cb38-15" tabindex="-1"></a>(p_cor1 <span class="sc">+</span> p_cor2 <span class="sc">+</span> p_cor3) <span class="sc">/</span> (p_cor4 <span class="sc">+</span> p_cor5 <span class="sc">+</span> p_cor6)</span></code></pre></div>
-<p><img src="parkinson-updrs_files/figure-html/dispersion-pares-correlacionados-1.png" alt="" width="1152" /></p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="intro.html#cb40-1" tabindex="-1"></a>grafico_dispersion <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y, titulo) {</span>
+<span id="cb40-2"><a href="intro.html#cb40-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> .data[[x]], <span class="at">y =</span> .data[[y]])) <span class="sc">+</span></span>
+<span id="cb40-3"><a href="intro.html#cb40-3" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>, <span class="at">color =</span> <span class="st">&quot;#C77D98&quot;</span>) <span class="sc">+</span></span>
+<span id="cb40-4"><a href="intro.html#cb40-4" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> titulo, <span class="at">x =</span> x, <span class="at">y =</span> y) <span class="sc">+</span></span>
+<span id="cb40-5"><a href="intro.html#cb40-5" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
+<span id="cb40-6"><a href="intro.html#cb40-6" tabindex="-1"></a>}</span>
+<span id="cb40-7"><a href="intro.html#cb40-7" tabindex="-1"></a>        </span>
+<span id="cb40-8"><a href="intro.html#cb40-8" tabindex="-1"></a>p_cor1 <span class="ot">&lt;-</span> <span class="fu">grafico_dispersion</span>(<span class="st">&quot;Jitter...&quot;</span>, <span class="st">&quot;Jitter.RAP&quot;</span>, <span class="st">&quot;Jitter(%) y Jitter:RAP&quot;</span>)</span>
+<span id="cb40-9"><a href="intro.html#cb40-9" tabindex="-1"></a>p_cor2 <span class="ot">&lt;-</span> <span class="fu">grafico_dispersion</span>(<span class="st">&quot;Jitter...&quot;</span>, <span class="st">&quot;Jitter.Abs.&quot;</span>, <span class="st">&quot;Jitter(%) y Jitter(Abs)&quot;</span>)</span>
+<span id="cb40-10"><a href="intro.html#cb40-10" tabindex="-1"></a>p_cor3 <span class="ot">&lt;-</span> <span class="fu">grafico_dispersion</span>(<span class="st">&quot;Shimmer&quot;</span>, <span class="st">&quot;Shimmer.dB.&quot;</span>, <span class="st">&quot;Shimmer y Shimmer(dB)&quot;</span>)</span>
+<span id="cb40-11"><a href="intro.html#cb40-11" tabindex="-1"></a>p_cor4 <span class="ot">&lt;-</span> <span class="fu">grafico_dispersion</span>(<span class="st">&quot;Shimmer&quot;</span>, <span class="st">&quot;Shimmer.APQ5&quot;</span>, <span class="st">&quot;Shimmer y Shimmer:APQ5&quot;</span>)</span>
+<span id="cb40-12"><a href="intro.html#cb40-12" tabindex="-1"></a>p_cor5 <span class="ot">&lt;-</span> <span class="fu">grafico_dispersion</span>(<span class="st">&quot;Shimmer.APQ5&quot;</span>, <span class="st">&quot;Shimmer.APQ11&quot;</span>, <span class="st">&quot;Shimmer:APQ5 y Shimmer:APQ11&quot;</span>)</span>
+<span id="cb40-13"><a href="intro.html#cb40-13" tabindex="-1"></a>p_cor6 <span class="ot">&lt;-</span> <span class="fu">grafico_dispersion</span>(<span class="st">&quot;Jitter.PPQ5&quot;</span>, <span class="st">&quot;NHR&quot;</span>, <span class="st">&quot;Jitter:PPQ5 y NHR&quot;</span>)</span>
+<span id="cb40-14"><a href="intro.html#cb40-14" tabindex="-1"></a></span>
+<span id="cb40-15"><a href="intro.html#cb40-15" tabindex="-1"></a>(p_cor1 <span class="sc">+</span> p_cor2 <span class="sc">+</span> p_cor3) <span class="sc">/</span> (p_cor4 <span class="sc">+</span> p_cor5 <span class="sc">+</span> p_cor6)</span></code></pre></div>
+<div class="figure"><span style="display:block;" id="fig:dispersion-pares-correlacionados"></span>
+<img src="parkinson-updrs_files/figure-html/dispersion-pares-correlacionados-1.png" alt="Dispersión de los seis pares de variables más correlacionados que no se habían graficado." width="1152" />
+<p class="caption">
+Figura 1.48: Dispersión de los seis pares de variables más correlacionados que no se habían graficado.
+</p>
+</div>
 <p><strong><code>Jitter...</code> vs <code>Jitter.RAP</code>:</strong> Relación positiva muy fuerte (r = 0.98): cuando una aumenta, la otra aumenta casi en la misma proporción.</p>
 <p><strong><code>Jitter...</code> vs <code>Jitter.Abs.</code>:</strong> Relación positiva muy fuerte (r = 0.87), aunque más dispersa: cuando el jitter porcentual aumenta, el absoluto también.</p>
 <p><strong><code>Shimmer</code> vs <code>Shimmer.dB.</code>:</strong> Relación positiva casi perfecta (r = 0.99): las dos miden lo mismo en escalas distintas.</p>
@@ -847,106 +1120,111 @@ div.csl-indent {
 <h3><span class="header-section-number">1.5.1</span> Construcción de los índices<a href="intro.html#construcci%C3%B3n-de-los-%C3%ADndices" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Cada familia mide un mismo fenómeno con fórmulas y unidades distintas: <code>Jitter...</code> está en porcentaje, <code>Jitter.Abs.</code> en segundos, <code>Shimmer.dB.</code> en decibelios. Como no se pueden promediar directamente, estandarizamos cada variable (restamos su media y dividimos por su desviación estándar) y promediamos los valores estandarizados de cada familia. Así nacen <code>indice_jitter</code> e <code>indice_shimmer</code>: un valor de 0 es una grabación con perturbación promedio, los positivos indican más inestabilidad que el promedio y los negativos menos, medido en desviaciones estándar.</p>
 <p>Dejamos fuera <code>Jitter.DDP</code> y <code>Shimmer.DDA</code>, que son el triple exacto de <code>Jitter.RAP</code> y <code>Shimmer.APQ3</code>: estandarizadas darían los mismos valores y contarían dos veces. <code>NHR</code>, <code>HNR</code>, <code>RPDE</code>, <code>DFA</code> y <code>PPE</code> se quedan como están, porque cada una mide algo distinto (ruido, complejidad, escalado fractal, entropía) y sus correlaciones entre sí no pasan de 0.76; <code>age</code> y <code>test_time</code> también, ya que no se correlacionan con nada.</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="intro.html#cb39-1" tabindex="-1"></a>estandarizar <span class="ot">&lt;-</span> <span class="cf">function</span>(x) (x <span class="sc">-</span> <span class="fu">mean</span>(x)) <span class="sc">/</span> <span class="fu">sd</span>(x)</span>
-<span id="cb39-2"><a href="intro.html#cb39-2" tabindex="-1"></a></span>
-<span id="cb39-3"><a href="intro.html#cb39-3" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb39-4"><a href="intro.html#cb39-4" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb39-5"><a href="intro.html#cb39-5" tabindex="-1"></a>    <span class="at">indice_jitter =</span> (<span class="fu">estandarizar</span>(Jitter...) <span class="sc">+</span> <span class="fu">estandarizar</span>(Jitter.Abs.) <span class="sc">+</span></span>
-<span id="cb39-6"><a href="intro.html#cb39-6" tabindex="-1"></a>                       <span class="fu">estandarizar</span>(Jitter.RAP) <span class="sc">+</span> <span class="fu">estandarizar</span>(Jitter.PPQ5)) <span class="sc">/</span> <span class="dv">4</span>,</span>
-<span id="cb39-7"><a href="intro.html#cb39-7" tabindex="-1"></a>    <span class="at">indice_shimmer =</span> (<span class="fu">estandarizar</span>(Shimmer) <span class="sc">+</span> <span class="fu">estandarizar</span>(Shimmer.dB.) <span class="sc">+</span></span>
-<span id="cb39-8"><a href="intro.html#cb39-8" tabindex="-1"></a>                        <span class="fu">estandarizar</span>(Shimmer.APQ3) <span class="sc">+</span> <span class="fu">estandarizar</span>(Shimmer.APQ5) <span class="sc">+</span></span>
-<span id="cb39-9"><a href="intro.html#cb39-9" tabindex="-1"></a>                        <span class="fu">estandarizar</span>(Shimmer.APQ11)) <span class="sc">/</span> <span class="dv">5</span></span>
-<span id="cb39-10"><a href="intro.html#cb39-10" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="intro.html#cb41-1" tabindex="-1"></a>estandarizar <span class="ot">&lt;-</span> <span class="cf">function</span>(x) (x <span class="sc">-</span> <span class="fu">mean</span>(x)) <span class="sc">/</span> <span class="fu">sd</span>(x)</span>
+<span id="cb41-2"><a href="intro.html#cb41-2" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="intro.html#cb41-3" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb41-4"><a href="intro.html#cb41-4" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb41-5"><a href="intro.html#cb41-5" tabindex="-1"></a>    <span class="at">indice_jitter =</span> (<span class="fu">estandarizar</span>(Jitter...) <span class="sc">+</span> <span class="fu">estandarizar</span>(Jitter.Abs.) <span class="sc">+</span></span>
+<span id="cb41-6"><a href="intro.html#cb41-6" tabindex="-1"></a>                       <span class="fu">estandarizar</span>(Jitter.RAP) <span class="sc">+</span> <span class="fu">estandarizar</span>(Jitter.PPQ5)) <span class="sc">/</span> <span class="dv">4</span>,</span>
+<span id="cb41-7"><a href="intro.html#cb41-7" tabindex="-1"></a>    <span class="at">indice_shimmer =</span> (<span class="fu">estandarizar</span>(Shimmer) <span class="sc">+</span> <span class="fu">estandarizar</span>(Shimmer.dB.) <span class="sc">+</span></span>
+<span id="cb41-8"><a href="intro.html#cb41-8" tabindex="-1"></a>                        <span class="fu">estandarizar</span>(Shimmer.APQ3) <span class="sc">+</span> <span class="fu">estandarizar</span>(Shimmer.APQ5) <span class="sc">+</span></span>
+<span id="cb41-9"><a href="intro.html#cb41-9" tabindex="-1"></a>                        <span class="fu">estandarizar</span>(Shimmer.APQ11)) <span class="sc">/</span> <span class="dv">5</span></span>
+<span id="cb41-10"><a href="intro.html#cb41-10" tabindex="-1"></a>  )</span></code></pre></div>
 </div>
 <div id="verificación-de-los-índices" class="section level3 hasAnchor" number="1.5.2">
 <h3><span class="header-section-number">1.5.2</span> Verificación de los índices<a href="intro.html#verificaci%C3%B3n-de-los-%C3%ADndices" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Para comprobar que los índices no pierden información, los correlacionamos con cada variable original (incluidas las dos excluidas) y entre sí.</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="intro.html#cb40-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
-<span id="cb40-2"><a href="intro.html#cb40-2" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(Jitter..., Jitter.Abs., Jitter.RAP, Jitter.PPQ5, Jitter.DDP),</span>
-<span id="cb40-3"><a href="intro.html#cb40-3" tabindex="-1"></a>                   <span class="sc">~</span> <span class="fu">round</span>(<span class="fu">cor</span>(.x, indice_jitter), <span class="dv">3</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="intro.html#cb42-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
+<span id="cb42-2"><a href="intro.html#cb42-2" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(Jitter..., Jitter.Abs., Jitter.RAP, Jitter.PPQ5, Jitter.DDP),</span>
+<span id="cb42-3"><a href="intro.html#cb42-3" tabindex="-1"></a>                   <span class="sc">~</span> <span class="fu">round</span>(<span class="fu">cor</span>(.x, indice_jitter), <span class="dv">3</span>)))</span></code></pre></div>
 <pre><code>##   Jitter... Jitter.Abs. Jitter.RAP Jitter.PPQ5 Jitter.DDP
 ## 1     0.992        0.91      0.981       0.963      0.981</code></pre>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="intro.html#cb42-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
-<span id="cb42-2"><a href="intro.html#cb42-2" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(Shimmer, Shimmer.dB., Shimmer.APQ3, Shimmer.APQ5,</span>
-<span id="cb42-3"><a href="intro.html#cb42-3" tabindex="-1"></a>                     Shimmer.APQ11, Shimmer.DDA),</span>
-<span id="cb42-4"><a href="intro.html#cb42-4" tabindex="-1"></a>                   <span class="sc">~</span> <span class="fu">round</span>(<span class="fu">cor</span>(.x, indice_shimmer), <span class="dv">3</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="intro.html#cb44-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
+<span id="cb44-2"><a href="intro.html#cb44-2" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(Shimmer, Shimmer.dB., Shimmer.APQ3, Shimmer.APQ5,</span>
+<span id="cb44-3"><a href="intro.html#cb44-3" tabindex="-1"></a>                     Shimmer.APQ11, Shimmer.DDA),</span>
+<span id="cb44-4"><a href="intro.html#cb44-4" tabindex="-1"></a>                   <span class="sc">~</span> <span class="fu">round</span>(<span class="fu">cor</span>(.x, indice_shimmer), <span class="dv">3</span>)))</span></code></pre></div>
 <pre><code>##   Shimmer Shimmer.dB. Shimmer.APQ3 Shimmer.APQ5 Shimmer.APQ11 Shimmer.DDA
 ## 1   0.996       0.992        0.977         0.99         0.956       0.977</code></pre>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="intro.html#cb44-1" tabindex="-1"></a><span class="fu">cor</span>(data<span class="sc">$</span>indice_jitter, data<span class="sc">$</span>indice_shimmer)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="intro.html#cb46-1" tabindex="-1"></a><span class="fu">cor</span>(data<span class="sc">$</span>indice_jitter, data<span class="sc">$</span>indice_shimmer)</span></code></pre></div>
 <pre><code>## [1] 0.7089249</code></pre>
 <p>El índice de jitter se correlaciona entre 0.91 y 0.99 con sus cinco variables, y el de shimmer entre 0.96 y 1 con sus seis: cada uno reproduce casi por completo a su familia. Entre ellos la correlación es 0.71, alta pero no tanto como para fundirlos: las voces inestables suelen serlo en frecuencia y amplitud a la vez, pero cada índice conserva información propia.</p>
 </div>
 <div id="descripción-de-los-índices" class="section level3 hasAnchor" number="1.5.3">
 <h3><span class="header-section-number">1.5.3</span> Descripción de los índices<a href="intro.html#descripci%C3%B3n-de-los-%C3%ADndices" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="intro.html#cb46-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
-<span id="cb46-2"><a href="intro.html#cb46-2" tabindex="-1"></a>  <span class="fu">select</span>(indice_jitter, indice_shimmer) <span class="sc">%&gt;%</span></span>
-<span id="cb46-3"><a href="intro.html#cb46-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb46-4"><a href="intro.html#cb46-4" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb46-5"><a href="intro.html#cb46-5" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;variable&quot;</span>,</span>
-<span id="cb46-6"><a href="intro.html#cb46-6" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;valor&quot;</span></span>
-<span id="cb46-7"><a href="intro.html#cb46-7" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb46-8"><a href="intro.html#cb46-8" tabindex="-1"></a>  <span class="fu">group_by</span>(variable) <span class="sc">%&gt;%</span></span>
-<span id="cb46-9"><a href="intro.html#cb46-9" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb46-10"><a href="intro.html#cb46-10" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(valor)),</span>
-<span id="cb46-11"><a href="intro.html#cb46-11" tabindex="-1"></a>    <span class="at">media =</span> <span class="fu">mean</span>(valor),</span>
-<span id="cb46-12"><a href="intro.html#cb46-12" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">sd</span>(valor),</span>
-<span id="cb46-13"><a href="intro.html#cb46-13" tabindex="-1"></a>    <span class="at">mediana =</span> <span class="fu">median</span>(valor),</span>
-<span id="cb46-14"><a href="intro.html#cb46-14" tabindex="-1"></a>    <span class="at">RIC =</span> <span class="fu">IQR</span>(valor),</span>
-<span id="cb46-15"><a href="intro.html#cb46-15" tabindex="-1"></a>    <span class="at">Q1 =</span> <span class="fu">quantile</span>(valor, <span class="fl">0.25</span>),</span>
-<span id="cb46-16"><a href="intro.html#cb46-16" tabindex="-1"></a>    <span class="at">Q3 =</span> <span class="fu">quantile</span>(valor, <span class="fl">0.75</span>),</span>
-<span id="cb46-17"><a href="intro.html#cb46-17" tabindex="-1"></a>    <span class="at">minimo =</span> <span class="fu">min</span>(valor),</span>
-<span id="cb46-18"><a href="intro.html#cb46-18" tabindex="-1"></a>    <span class="at">maximo =</span> <span class="fu">max</span>(valor),</span>
-<span id="cb46-19"><a href="intro.html#cb46-19" tabindex="-1"></a>    <span class="at">asimetria =</span> <span class="fu">skewness</span>(valor),</span>
-<span id="cb46-20"><a href="intro.html#cb46-20" tabindex="-1"></a>    <span class="at">curtosis =</span> <span class="fu">kurtosis</span>(valor)</span>
-<span id="cb46-21"><a href="intro.html#cb46-21" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb46-22"><a href="intro.html#cb46-22" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span><span class="fu">c</span>(variable, n), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">3</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb46-23"><a href="intro.html#cb46-23" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="intro.html#cb48-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
+<span id="cb48-2"><a href="intro.html#cb48-2" tabindex="-1"></a>  <span class="fu">select</span>(indice_jitter, indice_shimmer) <span class="sc">%&gt;%</span></span>
+<span id="cb48-3"><a href="intro.html#cb48-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb48-4"><a href="intro.html#cb48-4" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb48-5"><a href="intro.html#cb48-5" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;variable&quot;</span>,</span>
+<span id="cb48-6"><a href="intro.html#cb48-6" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;valor&quot;</span></span>
+<span id="cb48-7"><a href="intro.html#cb48-7" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb48-8"><a href="intro.html#cb48-8" tabindex="-1"></a>  <span class="fu">group_by</span>(variable) <span class="sc">%&gt;%</span></span>
+<span id="cb48-9"><a href="intro.html#cb48-9" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb48-10"><a href="intro.html#cb48-10" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(valor)),</span>
+<span id="cb48-11"><a href="intro.html#cb48-11" tabindex="-1"></a>    <span class="at">media =</span> <span class="fu">mean</span>(valor),</span>
+<span id="cb48-12"><a href="intro.html#cb48-12" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">sd</span>(valor),</span>
+<span id="cb48-13"><a href="intro.html#cb48-13" tabindex="-1"></a>    <span class="at">mediana =</span> <span class="fu">median</span>(valor),</span>
+<span id="cb48-14"><a href="intro.html#cb48-14" tabindex="-1"></a>    <span class="at">RIC =</span> <span class="fu">IQR</span>(valor),</span>
+<span id="cb48-15"><a href="intro.html#cb48-15" tabindex="-1"></a>    <span class="at">Q1 =</span> <span class="fu">quantile</span>(valor, <span class="fl">0.25</span>),</span>
+<span id="cb48-16"><a href="intro.html#cb48-16" tabindex="-1"></a>    <span class="at">Q3 =</span> <span class="fu">quantile</span>(valor, <span class="fl">0.75</span>),</span>
+<span id="cb48-17"><a href="intro.html#cb48-17" tabindex="-1"></a>    <span class="at">minimo =</span> <span class="fu">min</span>(valor),</span>
+<span id="cb48-18"><a href="intro.html#cb48-18" tabindex="-1"></a>    <span class="at">maximo =</span> <span class="fu">max</span>(valor),</span>
+<span id="cb48-19"><a href="intro.html#cb48-19" tabindex="-1"></a>    <span class="at">asimetria =</span> <span class="fu">skewness</span>(valor),</span>
+<span id="cb48-20"><a href="intro.html#cb48-20" tabindex="-1"></a>    <span class="at">curtosis =</span> <span class="fu">kurtosis</span>(valor)</span>
+<span id="cb48-21"><a href="intro.html#cb48-21" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb48-22"><a href="intro.html#cb48-22" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span><span class="fu">c</span>(variable, n), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">3</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb48-23"><a href="intro.html#cb48-23" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span></code></pre></div>
 <pre><code>##         variable    n media    sd mediana   RIC     Q1    Q3 minimo maximo
 ## 1  indice_jitter 5863     0 0.962  -0.225 0.578 -0.459 0.119 -0.920 13.354
 ## 2 indice_shimmer 5863     0 0.982  -0.247 0.818 -0.580 0.238 -1.191  8.635
 ##   asimetria curtosis
 ## 1     5.613   52.085
 ## 2     3.171   17.133</code></pre>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="intro.html#cb48-1" tabindex="-1"></a>datos_caracteristicas <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
-<span id="cb48-2"><a href="intro.html#cb48-2" tabindex="-1"></a>  <span class="fu">select</span>(indice_jitter, indice_shimmer) <span class="sc">%&gt;%</span></span>
-<span id="cb48-3"><a href="intro.html#cb48-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb48-4"><a href="intro.html#cb48-4" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb48-5"><a href="intro.html#cb48-5" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;variable&quot;</span>,</span>
-<span id="cb48-6"><a href="intro.html#cb48-6" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;valor&quot;</span></span>
-<span id="cb48-7"><a href="intro.html#cb48-7" tabindex="-1"></a>  )</span>
-<span id="cb48-8"><a href="intro.html#cb48-8" tabindex="-1"></a></span>
-<span id="cb48-9"><a href="intro.html#cb48-9" tabindex="-1"></a>p_hist_caracteristicas <span class="ot">&lt;-</span> datos_caracteristicas <span class="sc">%&gt;%</span></span>
-<span id="cb48-10"><a href="intro.html#cb48-10" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> valor)) <span class="sc">+</span></span>
-<span id="cb48-11"><a href="intro.html#cb48-11" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">40</span>, <span class="at">fill =</span> <span class="st">&quot;#FAD0C4&quot;</span>, <span class="at">color =</span> <span class="st">&quot;#E8A598&quot;</span>) <span class="sc">+</span></span>
-<span id="cb48-12"><a href="intro.html#cb48-12" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> variable, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb48-13"><a href="intro.html#cb48-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribución de los índices creados&quot;</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">&quot;Frecuencia&quot;</span>) <span class="sc">+</span></span>
-<span id="cb48-14"><a href="intro.html#cb48-14" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb48-15"><a href="intro.html#cb48-15" tabindex="-1"></a></span>
-<span id="cb48-16"><a href="intro.html#cb48-16" tabindex="-1"></a>p_box_caracteristicas <span class="ot">&lt;-</span> datos_caracteristicas <span class="sc">%&gt;%</span></span>
-<span id="cb48-17"><a href="intro.html#cb48-17" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> variable, <span class="at">y =</span> valor)) <span class="sc">+</span></span>
-<span id="cb48-18"><a href="intro.html#cb48-18" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">&quot;#FAD0C4&quot;</span>, <span class="at">color =</span> <span class="st">&quot;#C2185B&quot;</span>,</span>
-<span id="cb48-19"><a href="intro.html#cb48-19" tabindex="-1"></a>               <span class="at">outlier.color =</span> <span class="st">&quot;#8E0038&quot;</span>, <span class="at">outlier.alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb48-20"><a href="intro.html#cb48-20" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> mean, <span class="at">geom =</span> <span class="st">&quot;point&quot;</span>, <span class="at">shape =</span> <span class="dv">18</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">&quot;#8E0038&quot;</span>) <span class="sc">+</span></span>
-<span id="cb48-21"><a href="intro.html#cb48-21" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> variable, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb48-22"><a href="intro.html#cb48-22" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Valores atípicos de los índices creados&quot;</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb48-23"><a href="intro.html#cb48-23" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb48-24"><a href="intro.html#cb48-24" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(), <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>())</span>
-<span id="cb48-25"><a href="intro.html#cb48-25" tabindex="-1"></a></span>
-<span id="cb48-26"><a href="intro.html#cb48-26" tabindex="-1"></a>p_hist_caracteristicas <span class="sc">+</span> p_box_caracteristicas</span></code></pre></div>
-<p><img src="parkinson-updrs_files/figure-html/graficos-caracteristicas-1.png" alt="" width="1152" /></p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="intro.html#cb50-1" tabindex="-1"></a>datos_caracteristicas <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb50-2"><a href="intro.html#cb50-2" tabindex="-1"></a>  <span class="fu">select</span>(indice_jitter, indice_shimmer) <span class="sc">%&gt;%</span></span>
+<span id="cb50-3"><a href="intro.html#cb50-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb50-4"><a href="intro.html#cb50-4" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb50-5"><a href="intro.html#cb50-5" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;variable&quot;</span>,</span>
+<span id="cb50-6"><a href="intro.html#cb50-6" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;valor&quot;</span></span>
+<span id="cb50-7"><a href="intro.html#cb50-7" tabindex="-1"></a>  )</span>
+<span id="cb50-8"><a href="intro.html#cb50-8" tabindex="-1"></a></span>
+<span id="cb50-9"><a href="intro.html#cb50-9" tabindex="-1"></a>p_hist_caracteristicas <span class="ot">&lt;-</span> datos_caracteristicas <span class="sc">%&gt;%</span></span>
+<span id="cb50-10"><a href="intro.html#cb50-10" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> valor)) <span class="sc">+</span></span>
+<span id="cb50-11"><a href="intro.html#cb50-11" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">40</span>, <span class="at">fill =</span> <span class="st">&quot;#FAD0C4&quot;</span>, <span class="at">color =</span> <span class="st">&quot;#E8A598&quot;</span>) <span class="sc">+</span></span>
+<span id="cb50-12"><a href="intro.html#cb50-12" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> variable, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb50-13"><a href="intro.html#cb50-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribución de los índices creados&quot;</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">&quot;Frecuencia&quot;</span>) <span class="sc">+</span></span>
+<span id="cb50-14"><a href="intro.html#cb50-14" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb50-15"><a href="intro.html#cb50-15" tabindex="-1"></a></span>
+<span id="cb50-16"><a href="intro.html#cb50-16" tabindex="-1"></a>p_box_caracteristicas <span class="ot">&lt;-</span> datos_caracteristicas <span class="sc">%&gt;%</span></span>
+<span id="cb50-17"><a href="intro.html#cb50-17" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> variable, <span class="at">y =</span> valor)) <span class="sc">+</span></span>
+<span id="cb50-18"><a href="intro.html#cb50-18" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">&quot;#FAD0C4&quot;</span>, <span class="at">color =</span> <span class="st">&quot;#C2185B&quot;</span>,</span>
+<span id="cb50-19"><a href="intro.html#cb50-19" tabindex="-1"></a>               <span class="at">outlier.color =</span> <span class="st">&quot;#8E0038&quot;</span>, <span class="at">outlier.alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb50-20"><a href="intro.html#cb50-20" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> mean, <span class="at">geom =</span> <span class="st">&quot;point&quot;</span>, <span class="at">shape =</span> <span class="dv">18</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">&quot;#8E0038&quot;</span>) <span class="sc">+</span></span>
+<span id="cb50-21"><a href="intro.html#cb50-21" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> variable, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb50-22"><a href="intro.html#cb50-22" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Valores atípicos de los índices creados&quot;</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb50-23"><a href="intro.html#cb50-23" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb50-24"><a href="intro.html#cb50-24" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(), <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb50-25"><a href="intro.html#cb50-25" tabindex="-1"></a></span>
+<span id="cb50-26"><a href="intro.html#cb50-26" tabindex="-1"></a>p_hist_caracteristicas <span class="sc">+</span> p_box_caracteristicas</span></code></pre></div>
+<div class="figure"><span style="display:block;" id="fig:graficos-caracteristicas"></span>
+<img src="parkinson-updrs_files/figure-html/graficos-caracteristicas-1.png" alt="Histogramas y diagramas de caja de los índices de jitter y shimmer." width="1152" />
+<p class="caption">
+Figura 1.49: Histogramas y diagramas de caja de los índices de jitter y shimmer.
+</p>
+</div>
 <p>Para cuantificar lo que muestran los boxplots, contamos los atípicos con la regla de 1.5 veces el rango intercuartílico y calculamos los percentiles 90 y 99 de cada índice:</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="intro.html#cb49-1" tabindex="-1"></a>datos_caracteristicas <span class="sc">%&gt;%</span></span>
-<span id="cb49-2"><a href="intro.html#cb49-2" tabindex="-1"></a>  <span class="fu">group_by</span>(variable) <span class="sc">%&gt;%</span></span>
-<span id="cb49-3"><a href="intro.html#cb49-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb49-4"><a href="intro.html#cb49-4" tabindex="-1"></a>    <span class="at">limite_superior =</span> <span class="fu">quantile</span>(valor, <span class="fl">0.75</span>) <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> <span class="fu">IQR</span>(valor),</span>
-<span id="cb49-5"><a href="intro.html#cb49-5" tabindex="-1"></a>    <span class="at">atipicos_superiores =</span> <span class="fu">sum</span>(valor <span class="sc">&gt;</span> limite_superior),</span>
-<span id="cb49-6"><a href="intro.html#cb49-6" tabindex="-1"></a>    <span class="at">porcentaje =</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> <span class="fu">mean</span>(valor <span class="sc">&gt;</span> limite_superior), <span class="dv">1</span>),</span>
-<span id="cb49-7"><a href="intro.html#cb49-7" tabindex="-1"></a>    <span class="at">atipicos_inferiores =</span> <span class="fu">sum</span>(valor <span class="sc">&lt;</span> <span class="fu">quantile</span>(valor, <span class="fl">0.25</span>) <span class="sc">-</span> <span class="fl">1.5</span> <span class="sc">*</span> <span class="fu">IQR</span>(valor)),</span>
-<span id="cb49-8"><a href="intro.html#cb49-8" tabindex="-1"></a>    <span class="at">p90 =</span> <span class="fu">quantile</span>(valor, <span class="fl">0.90</span>),</span>
-<span id="cb49-9"><a href="intro.html#cb49-9" tabindex="-1"></a>    <span class="at">p99 =</span> <span class="fu">quantile</span>(valor, <span class="fl">0.99</span>)</span>
-<span id="cb49-10"><a href="intro.html#cb49-10" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb49-11"><a href="intro.html#cb49-11" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">2</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb49-12"><a href="intro.html#cb49-12" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="intro.html#cb51-1" tabindex="-1"></a>datos_caracteristicas <span class="sc">%&gt;%</span></span>
+<span id="cb51-2"><a href="intro.html#cb51-2" tabindex="-1"></a>  <span class="fu">group_by</span>(variable) <span class="sc">%&gt;%</span></span>
+<span id="cb51-3"><a href="intro.html#cb51-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb51-4"><a href="intro.html#cb51-4" tabindex="-1"></a>    <span class="at">limite_superior =</span> <span class="fu">quantile</span>(valor, <span class="fl">0.75</span>) <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> <span class="fu">IQR</span>(valor),</span>
+<span id="cb51-5"><a href="intro.html#cb51-5" tabindex="-1"></a>    <span class="at">atipicos_superiores =</span> <span class="fu">sum</span>(valor <span class="sc">&gt;</span> limite_superior),</span>
+<span id="cb51-6"><a href="intro.html#cb51-6" tabindex="-1"></a>    <span class="at">porcentaje =</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> <span class="fu">mean</span>(valor <span class="sc">&gt;</span> limite_superior), <span class="dv">1</span>),</span>
+<span id="cb51-7"><a href="intro.html#cb51-7" tabindex="-1"></a>    <span class="at">atipicos_inferiores =</span> <span class="fu">sum</span>(valor <span class="sc">&lt;</span> <span class="fu">quantile</span>(valor, <span class="fl">0.25</span>) <span class="sc">-</span> <span class="fl">1.5</span> <span class="sc">*</span> <span class="fu">IQR</span>(valor)),</span>
+<span id="cb51-8"><a href="intro.html#cb51-8" tabindex="-1"></a>    <span class="at">p90 =</span> <span class="fu">quantile</span>(valor, <span class="fl">0.90</span>),</span>
+<span id="cb51-9"><a href="intro.html#cb51-9" tabindex="-1"></a>    <span class="at">p99 =</span> <span class="fu">quantile</span>(valor, <span class="fl">0.99</span>)</span>
+<span id="cb51-10"><a href="intro.html#cb51-10" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb51-11"><a href="intro.html#cb51-11" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">2</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb51-12"><a href="intro.html#cb51-12" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span></code></pre></div>
 <pre><code>##         variable limite_superior atipicos_superiores porcentaje
 ## 1  indice_jitter            0.99                 416        7.1
 ## 2 indice_shimmer            1.46                 325        5.5
@@ -961,17 +1239,17 @@ div.csl-indent {
 <div id="relación-con-la-variable-respuesta" class="section level3 hasAnchor" number="1.5.4">
 <h3><span class="header-section-number">1.5.4</span> Relación con la variable respuesta<a href="intro.html#relaci%C3%B3n-con-la-variable-respuesta" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Por último, vemos cómo se relacionan con la respuesta las variables que quedan tras la ingeniería de características.</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="intro.html#cb51-1" tabindex="-1"></a>variables_finales <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;age&quot;</span>, <span class="st">&quot;test_time&quot;</span>, <span class="st">&quot;indice_jitter&quot;</span>, <span class="st">&quot;indice_shimmer&quot;</span>,</span>
-<span id="cb51-2"><a href="intro.html#cb51-2" tabindex="-1"></a>                       <span class="st">&quot;NHR&quot;</span>, <span class="st">&quot;HNR&quot;</span>, <span class="st">&quot;RPDE&quot;</span>, <span class="st">&quot;DFA&quot;</span>, <span class="st">&quot;PPE&quot;</span>)</span>
-<span id="cb51-3"><a href="intro.html#cb51-3" tabindex="-1"></a></span>
-<span id="cb51-4"><a href="intro.html#cb51-4" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
-<span id="cb51-5"><a href="intro.html#cb51-5" tabindex="-1"></a>  <span class="fu">select</span>(motor_UPDRS, <span class="fu">all_of</span>(variables_finales)) <span class="sc">%&gt;%</span></span>
-<span id="cb51-6"><a href="intro.html#cb51-6" tabindex="-1"></a>  <span class="fu">cor</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb51-7"><a href="intro.html#cb51-7" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb51-8"><a href="intro.html#cb51-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">&quot;variable&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb51-9"><a href="intro.html#cb51-9" tabindex="-1"></a>  <span class="fu">select</span>(variable, <span class="at">correlacion =</span> motor_UPDRS) <span class="sc">%&gt;%</span></span>
-<span id="cb51-10"><a href="intro.html#cb51-10" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">!=</span> <span class="st">&quot;motor_UPDRS&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb51-11"><a href="intro.html#cb51-11" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="fu">abs</span>(correlacion)))</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="intro.html#cb53-1" tabindex="-1"></a>variables_finales <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;age&quot;</span>, <span class="st">&quot;test_time&quot;</span>, <span class="st">&quot;indice_jitter&quot;</span>, <span class="st">&quot;indice_shimmer&quot;</span>,</span>
+<span id="cb53-2"><a href="intro.html#cb53-2" tabindex="-1"></a>                       <span class="st">&quot;NHR&quot;</span>, <span class="st">&quot;HNR&quot;</span>, <span class="st">&quot;RPDE&quot;</span>, <span class="st">&quot;DFA&quot;</span>, <span class="st">&quot;PPE&quot;</span>)</span>
+<span id="cb53-3"><a href="intro.html#cb53-3" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="intro.html#cb53-4" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
+<span id="cb53-5"><a href="intro.html#cb53-5" tabindex="-1"></a>  <span class="fu">select</span>(motor_UPDRS, <span class="fu">all_of</span>(variables_finales)) <span class="sc">%&gt;%</span></span>
+<span id="cb53-6"><a href="intro.html#cb53-6" tabindex="-1"></a>  <span class="fu">cor</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb53-7"><a href="intro.html#cb53-7" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb53-8"><a href="intro.html#cb53-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">&quot;variable&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb53-9"><a href="intro.html#cb53-9" tabindex="-1"></a>  <span class="fu">select</span>(variable, <span class="at">correlacion =</span> motor_UPDRS) <span class="sc">%&gt;%</span></span>
+<span id="cb53-10"><a href="intro.html#cb53-10" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">!=</span> <span class="st">&quot;motor_UPDRS&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb53-11"><a href="intro.html#cb53-11" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="fu">abs</span>(correlacion)))</span></code></pre></div>
 <pre><code>##         variable correlacion
 ## 1            age  0.27446940
 ## 2            PPE  0.16333440

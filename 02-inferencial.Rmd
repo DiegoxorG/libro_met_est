@@ -131,7 +131,7 @@ $$H_0: \mu_{\text{Masculino}} = \mu_{\text{Femenino}} \qquad H_1: \mu_{\text{Mas
 resumen_grupo(pacientes, "sex")
 ```
 
-```{r inf-sexo-boxplot}
+```{r inf-sexo-boxplot, fig.cap="Severidad motora promedio por paciente según el sexo."}
 pacientes %>%
   ggplot(aes(x = sex, y = motor)) +
   geom_boxplot(fill = "#FAD0C4", color = "#C2185B", width = 0.4,
@@ -216,7 +216,7 @@ $$H_0: \mu_{<60} = \mu_{60-70} = \mu_{>70} \qquad H_1: \text{al menos una media 
 resumen_grupo(pacientes, "grupo_edad")
 ```
 
-```{r inf-edad-boxplot}
+```{r inf-edad-boxplot, fig.cap="Severidad motora promedio por paciente según el grupo de edad."}
 pacientes %>%
   ggplot(aes(x = grupo_edad, y = motor)) +
   geom_boxplot(fill = "#FAD0C4", color = "#C2185B", width = 0.5,
@@ -308,7 +308,7 @@ resumen_grupo(pacientes, "nivel_jitter")
 resumen_grupo(pacientes, "nivel_shimmer")
 ```
 
-```{r inf-voz-boxplot, fig.width=10, fig.height=4.5}
+```{r inf-voz-boxplot, fig.width=10, fig.height=4.5, fig.cap="Severidad motora promedio por paciente según el nivel de los índices de jitter y shimmer."}
 p_jitter <- pacientes %>%
   ggplot(aes(x = nivel_jitter, y = motor)) +
   geom_boxplot(fill = "#FAD0C4", color = "#C2185B", width = 0.4,
@@ -438,7 +438,7 @@ pacientes %>%
   as.data.frame()
 ```
 
-```{r inf-pareado-grafico, fig.width=10, fig.height=4.5}
+```{r inf-pareado-grafico, fig.width=10, fig.height=4.5, fig.cap="Severidad motora en la primera y la última grabación de cada paciente, y distribución de las diferencias."}
 p_trayectorias <- pacientes %>%
   select(subject., motor_inicio, motor_final) %>%
   pivot_longer(cols = c(motor_inicio, motor_final),
@@ -537,7 +537,7 @@ pacientes <- pacientes %>%
 variables_cor <- c("age", "jitter", "shimmer", "NHR", "HNR", "RPDE", "DFA", "PPE")
 ```
 
-```{r inf-cor-dispersion, fig.width=10, fig.height=6}
+```{r inf-cor-dispersion, fig.width=10, fig.height=6, fig.cap="Severidad motora promedio frente a cada característica, con un punto por paciente."}
 pacientes %>%
   select(motor, all_of(variables_cor)) %>%
   pivot_longer(-motor, names_to = "variable", values_to = "valor") %>%
@@ -644,7 +644,7 @@ tabla_edad_severidad
 round(prop.table(tabla_edad_severidad, margin = 1) * 100, 1)
 ```
 
-```{r inf-chi-grafico, fig.height=4}
+```{r inf-chi-grafico, fig.height=4, fig.cap="Nivel de severidad motora según el grupo de edad."}
 pacientes %>%
   count(grupo_edad, severidad) %>%
   group_by(grupo_edad) %>%

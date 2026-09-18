@@ -78,7 +78,7 @@ La escala observada va de 5.04 a 39.51 puntos, así que la muestra incluye desde
 
 ### Histograma
 
-```{r histograma-motor-updrs}
+```{r histograma-motor-updrs, fig.cap="Histograma y curva de densidad de la puntuación motor UPDRS."}
 data %>%
   ggplot(aes(x = motor_UPDRS)) +
   geom_histogram(aes(y = after_stat(density)),
@@ -107,7 +107,7 @@ El histograma muestra una distribución bimodal: un pico alrededor de los 17 pun
 
 ### Diagrama de caja
 
-```{r boxplot-motor-updrs}
+```{r boxplot-motor-updrs, fig.cap="Diagrama de caja de la puntuación motor UPDRS."}
 data %>%
   ggplot(aes(x = "", y = motor_UPDRS)) +
   geom_boxplot(fill = "#FAD0C4",
@@ -217,11 +217,13 @@ data %>%
 
 ### Histogramas
 
-```{r histogramas-independientes}
+```{r variables-numericas}
 variables_numericas <- data %>%
   select(where(is.numeric), -motor_UPDRS, -total_UPDRS) %>%
   names()
+```
 
+```{r histogramas-independientes, fig.cap=paste0("Histograma de ", variables_numericas, ".")}
 for (variable in variables_numericas) {
   
   grafico <- ggplot(data, aes(x = .data[[variable]])) +
@@ -279,11 +281,7 @@ for (variable in variables_numericas) {
 
 ### Dispersión frente a `motor_UPDRS`
 
-```{r dispersion-vs-motor-updrs}
-variables_numericas <- data %>%
-  select(where(is.numeric), -motor_UPDRS, -total_UPDRS) %>%
-  names()
-
+```{r dispersion-vs-motor-updrs, fig.cap=paste0("Dispersión de ", variables_numericas, " frente a motor UPDRS.")}
 for (variable in variables_numericas) {
   
   grafico <- ggplot(data, aes(x = .data[[variable]], y = motor_UPDRS)) +
@@ -364,7 +362,7 @@ data %>%
   mutate(porcentaje = round(pacientes / sum(pacientes) * 100, 1))
 ```
 
-```{r grafico-sexo}
+```{r grafico-sexo, fig.cap="Distribución de los registros según el sexo del paciente."}
 tabla_sexo %>%
   mutate(etiqueta = paste0(registros, " (", porcentaje, "%)")) %>%
   ggplot(aes(x = sex, y = registros)) +
@@ -398,7 +396,7 @@ data %>%
   as.data.frame()
 ```
 
-```{r boxplot-motor-sexo}
+```{r boxplot-motor-sexo, fig.cap="Puntuación motor UPDRS según el sexo del paciente."}
 data %>%
   ggplot(aes(x = sex, y = motor_UPDRS)) +
   geom_boxplot(fill = "#FAD0C4",
@@ -422,7 +420,7 @@ Las medias son casi iguales: 21.46 puntos en hombres y 20.92 en mujeres, medio p
 
 ### Pares seleccionados
 
-```{r dispersion-pares-seleccionados}
+```{r pares-seleccionados}
 comparaciones <- list(
   c("age", "test_time"),
   c("Jitter...", "Jitter.PPQ5"),
@@ -431,7 +429,9 @@ comparaciones <- list(
   c("Shimmer", "HNR"),
   c("RPDE", "PPE")
 )
+```
 
+```{r dispersion-pares-seleccionados, fig.cap=sapply(comparaciones, function(par) paste0("Dispersión de ", par[1], " frente a ", par[2], "."))}
 for (comparacion in comparaciones) {
   
   variable_x <- comparacion[1]
@@ -475,7 +475,7 @@ for (comparacion in comparaciones) {
 
 Para ver de forma sistemática qué variables se parecen entre sí, calculamos la matriz de correlaciones de Pearson de las independientes numéricas. `total_UPDRS` queda fuera por la razón ya explicada: es una puntuación clínica que contiene a `motor_UPDRS`, no una característica de la voz.
 
-```{r matriz-correlaciones, fig.width=11, fig.height=10}
+```{r matriz-correlaciones, fig.width=11, fig.height=10, fig.cap="Matriz de correlaciones de Pearson entre las variables independientes numéricas."}
 variables_independientes <- data %>%
   select(where(is.numeric), -motor_UPDRS, -total_UPDRS)
 
@@ -507,7 +507,7 @@ La conclusión es que usar las once medidas de Jitter y Shimmer a la vez sería 
 
 ### Pares más correlacionados
 
-```{r dispersion-pares-correlacionados, fig.width=12, fig.height=8}
+```{r dispersion-pares-correlacionados, fig.width=12, fig.height=8, fig.cap="Dispersión de los seis pares de variables más correlacionados que no se habían graficado."}
 grafico_dispersion <- function(x, y, titulo) {
   ggplot(data, aes(x = .data[[x]], y = .data[[y]])) +
     geom_point(alpha = 0.4, color = "#C77D98") +
@@ -605,7 +605,7 @@ data %>%
   as.data.frame()
 ```
 
-```{r graficos-caracteristicas, fig.width=12, fig.height=8}
+```{r graficos-caracteristicas, fig.width=12, fig.height=8, fig.cap="Histogramas y diagramas de caja de los índices de jitter y shimmer."}
 datos_caracteristicas <- data %>%
   select(indice_jitter, indice_shimmer) %>%
   pivot_longer(
