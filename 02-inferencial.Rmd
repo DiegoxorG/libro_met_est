@@ -152,19 +152,7 @@ Los 28 hombres promedian 21.27 puntos (desviación 7.74) y las 14 mujeres 20.33 
 normalidad_grupo(pacientes, "sex")
 ```
 
-```{r inf-sexo-qq, fig.height=4}
-pacientes %>%
-  ggplot(aes(sample = motor)) +
-  stat_qq(color = "#C77D98") +
-  stat_qq_line(color = "#8F4A68") +
-  facet_wrap(~ sex) +
-  labs(title = "Gráficos cuantil-cuantil de la severidad motora por sexo",
-       x = "Cuantiles teóricos",
-       y = "Cuantiles muestrales") +
-  theme_minimal()
-```
-
-Ninguna prueba rechaza la normalidad: Shapiro-Wilk da p = 0.663 en hombres y p = 0.318 en mujeres, y Kolmogorov-Smirnov y Lilliefors coinciden (p entre 0.3 y 0.87). En los QQ-plots los puntos siguen la recta, con las desviaciones leves en los extremos que son normales en muestras pequeñas. Asumimos normalidad en ambos grupos.
+Ninguna prueba rechaza la normalidad: Shapiro-Wilk da p = 0.663 en hombres y p = 0.318 en mujeres, y Kolmogorov-Smirnov y Lilliefors coinciden (p entre 0.3 y 0.87). Asumimos normalidad en ambos grupos.
 
 ### Supuesto de homocedasticidad
 
@@ -318,19 +306,7 @@ La severidad sube con la edad: 18.24 puntos en los menores de 60, 19.96 entre 60
 normalidad_grupo(pacientes, "grupo_edad")
 ```
 
-```{r inf-edad-qq, fig.height=4}
-pacientes %>%
-  ggplot(aes(sample = motor)) +
-  stat_qq(color = "#C77D98") +
-  stat_qq_line(color = "#8F4A68") +
-  facet_wrap(~ grupo_edad) +
-  labs(title = "Gráficos cuantil-cuantil de la severidad motora por grupo de edad",
-       x = "Cuantiles teóricos",
-       y = "Cuantiles muestrales") +
-  theme_minimal()
-```
-
-Shapiro-Wilk no rechaza en ningún grupo (p = 0.105, 0.964 y 0.257) y Kolmogorov-Smirnov tampoco. Solo Lilliefors queda al límite en los menores de 60 (p = 0.049), cuyo QQ-plot se curva un poco por la concentración de valores bajos. Como Shapiro-Wilk, la prueba más potente en muestras pequeñas, no rechaza, y el ANOVA es robusto a desvíos moderados con grupos de tamaño parecido, asumimos normalidad.
+Shapiro-Wilk no rechaza en ningún grupo (p = 0.105, 0.964 y 0.257) y Kolmogorov-Smirnov tampoco. Solo Lilliefors queda al límite en los menores de 60 (p = 0.049). Como Shapiro-Wilk, la prueba más potente en muestras pequeñas, no rechaza, y el ANOVA es robusto a desvíos moderados con grupos de tamaño parecido, asumimos normalidad.
 
 ### Supuesto de homocedasticidad
 
@@ -482,24 +458,7 @@ normalidad_grupo(pacientes, "nivel_jitter")
 normalidad_grupo(pacientes, "nivel_shimmer")
 ```
 
-```{r inf-voz-qq, fig.width=10, fig.height=4}
-pacientes %>%
-  select(motor, nivel_jitter, nivel_shimmer) %>%
-  pivot_longer(cols = c(nivel_jitter, nivel_shimmer),
-               names_to = "indice", values_to = "nivel") %>%
-  mutate(indice = if_else(indice == "nivel_jitter", "Jitter", "Shimmer"),
-         grupo = paste(indice, nivel)) %>%
-  ggplot(aes(sample = motor)) +
-  stat_qq(color = "#C77D98") +
-  stat_qq_line(color = "#8F4A68") +
-  facet_wrap(~ grupo, nrow = 1) +
-  labs(title = "Gráficos cuantil-cuantil de la severidad motora por nivel de inestabilidad vocal",
-       x = "Cuantiles teóricos",
-       y = "Cuantiles muestrales") +
-  theme_minimal()
-```
-
-Nada rechaza la normalidad: Shapiro-Wilk da p = 0.287 y 0.645 para jitter bajo y alto, y 0.132 y 0.785 para shimmer; las otras dos pruebas superan 0.2 en todos los casos y los QQ-plots se ajustan bien a la recta.
+Nada rechaza la normalidad: Shapiro-Wilk da p = 0.287 y 0.645 para jitter bajo y alto, y 0.132 y 0.785 para shimmer; las otras dos pruebas superan 0.2 en todos los casos.
 
 ### Supuesto de homocedasticidad
 
@@ -641,18 +600,7 @@ ks.test(scale(pacientes$diferencia), "pnorm")
 lillie.test(pacientes$diferencia)
 ```
 
-```{r inf-pareado-qq, fig.height=4}
-pacientes %>%
-  ggplot(aes(sample = diferencia)) +
-  stat_qq(color = "#C77D98") +
-  stat_qq_line(color = "#8F4A68") +
-  labs(title = "Gráfico cuantil-cuantil de las diferencias final - inicio",
-       x = "Cuantiles teóricos",
-       y = "Cuantiles muestrales") +
-  theme_minimal()
-```
-
-Las diferencias se ajustan muy bien a la normal: Shapiro-Wilk da W = 0.987 (p = 0.92), Kolmogorov-Smirnov p = 0.995 y Lilliefors p = 0.958, y el QQ-plot es prácticamente una recta. Se cumple el supuesto de la t pareada.
+Las diferencias se ajustan muy bien a la normal: Shapiro-Wilk da W = 0.987 (p = 0.92), Kolmogorov-Smirnov p = 0.995 y Lilliefors p = 0.958. Se cumple el supuesto de la t pareada.
 
 ### Prueba de hipótesis: t pareada
 
