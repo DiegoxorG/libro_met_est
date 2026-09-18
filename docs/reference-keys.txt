@@ -33,7 +33,7 @@ análisis-exploratorio-1
 supuesto-de-normalidad-1
 supuesto-de-homocedasticidad-1
 prueba-de-hipótesis-anova-de-un-factor
-análisis-de-sensibilidad-kruskal-wallis-y-prueba-de-dunn
+análisis-de-sensibilidad-kruskal-wallis-y-comparaciones-post-hoc
 tamaño-del-efecto-1
 conclusión-1
 objetivo-3-severidad-motora-según-el-nivel-de-inestabilidad-vocal

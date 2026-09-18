@@ -36,4 +36,4 @@ El resultado se escribe en `docs/`.
 ## Paquetes necesarios
 
 `bookdown`, `tidyverse`, `moments`, `scales`, `patchwork`, `GGally`, `Amelia`,
-`effsize`, `nortest`, `car`, `rstatix`, `coin`, `dunn.test`.
+`effsize`, `nortest`, `car`, `rstatix`.

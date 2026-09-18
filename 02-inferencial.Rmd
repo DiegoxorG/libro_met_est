@@ -7,7 +7,6 @@ library(effsize)
 library(nortest)
 library(car)
 library(rstatix)
-library(dunn.test)
 ```
 
 ## Unidad de análisis: tabla por paciente
@@ -265,32 +264,36 @@ TukeyHSD(modelo_anova)
 
 La única comparación que se acerca es mayores de 70 frente a menores de 60: 6.79 puntos de diferencia, p ajustado = 0.062, intervalo de -0.28 a 13.85. Las que involucran al grupo intermedio quedan lejos (p = 0.81 y 0.19).
 
-### Análisis de sensibilidad: Kruskal-Wallis y prueba de Dunn
+### Análisis de sensibilidad: Kruskal-Wallis y comparaciones post hoc
 
-Como el resultado quedó al límite y una prueba de normalidad también, repetimos el contraste con Kruskal-Wallis y el post hoc de Dunn con corrección de Bonferroni.
+Como el resultado quedó al límite y una prueba de normalidad también, repetimos el contraste con Kruskal-Wallis y, como post hoc, comparaciones por pares de Mann-Whitney con corrección de Holm.
 
 ```{r inf-edad-kw}
 kruskal.test(motor ~ grupo_edad, data = pacientes)
-dunn.test(x = pacientes$motor, g = pacientes$grupo_edad, method = "bonferroni")
+pairwise.wilcox.test(pacientes$motor, pacientes$grupo_edad,
+                     p.adjust.method = "holm", exact = FALSE)
 ```
 
-Kruskal-Wallis da $\chi^2$ = 6.02 (2 g.l., p = 0.049), justo por debajo de 0.05, y Dunn señala como única diferencia significativa la de mayores de 70 frente a menores de 60 (z = -2.4, p ajustado = 0.024). Ambas aproximaciones coinciden en la dirección y en el par de grupos; discrepan en si se cruza o no el umbral del 5 %, señal de que con 42 pacientes estamos al límite de la potencia necesaria.
+Kruskal-Wallis da $\chi^2$ = 6.02 (2 g.l., p = 0.049), justo por debajo de 0.05, y las comparaciones por pares señalan como única diferencia significativa la de mayores de 70 frente a menores de 60 (p ajustado = 0.049). Ambas aproximaciones coinciden en la dirección y en el par de grupos; discrepan en si se cruza o no el umbral del 5 %, señal de que con 42 pacientes estamos al límite de la potencia necesaria.
 
 ### Tamaño del efecto
 
-```{r inf-edad-eta}
-eta_cuadrado_edad <- unname(eta_squared(modelo_anova))
-eta_cuadrado_edad
+```{r inf-edad-cohen}
+motor_menores_60 <- pacientes %>% filter(grupo_edad == "Menor de 60") %>% pull(motor)
+motor_60_a_70 <- pacientes %>% filter(grupo_edad == "60 a 70") %>% pull(motor)
+motor_mayores_70 <- pacientes %>% filter(grupo_edad == "Mayor de 70") %>% pull(motor)
 
-pacientes %>%
-  kruskal_effsize(motor ~ grupo_edad)
+d_edad <- cohen.d(motor_mayores_70, motor_menores_60, paired = FALSE)
+d_edad
+cohen.d(motor_mayores_70, motor_60_a_70, paired = FALSE)
+cohen.d(motor_60_a_70, motor_menores_60, paired = FALSE)
 ```
 
-El eta cuadrado es 0.131: el grupo de edad explica el 13 % de la variabilidad de la severidad entre pacientes, un efecto medio-grande (referencias: 0.01 pequeño, 0.06 medio, 0.14 grande). El basado en el H de Kruskal-Wallis es 0.103, también moderado.
+Medimos la magnitud con la d de Cohen entre pares de grupos. Entre los mayores de 70 y los menores de 60 la d es 0.96, un efecto grande (intervalo de 0.12 a 1.8, que no incluye al 0); entre los mayores de 70 y el grupo intermedio es 0.66, medio; y entre el grupo intermedio y los menores de 60 es 0.22, pequeño. La diferencia se concentra en el grupo de mayor edad.
 
 ### Conclusión
 
-Con una confianza del 95 %, el ANOVA no permite afirmar que la severidad motora difiera entre grupos de edad (F = 2.94, p = 0.065), aunque Kruskal-Wallis sí detecta una diferencia marginal (p = 0.049) entre los mayores de 70 y los menores de 60. El tamaño del efecto (eta cuadrado = 0.13, casi 7 puntos entre extremos) indica que la diferencia es relevante en la práctica y que lo que falta es muestra, no relación: es coherente con la correlación positiva entre edad y `motor_UPDRS` que ya aparecía en el exploratorio.
+Con una confianza del 95 %, el ANOVA no permite afirmar que la severidad motora difiera entre grupos de edad (F = 2.94, p = 0.065), aunque Kruskal-Wallis sí detecta una diferencia marginal (p = 0.049) entre los mayores de 70 y los menores de 60. El tamaño del efecto entre los grupos extremos (d = 0.96, casi 7 puntos) indica que la diferencia es relevante en la práctica y que lo que falta es muestra, no relación: es coherente con la correlación positiva entre edad y `motor_UPDRS` que ya aparecía en el exploratorio.
 
 ## Objetivo 3: severidad motora según el nivel de inestabilidad vocal
 
@@ -601,7 +604,7 @@ La edad es la única característica que se acerca al umbral: r = 0.299 (interva
 
 ### Tamaño del efecto
 
-En una correlación el tamaño del efecto es el propio coeficiente: |r| menor de 0.3 se considera una correlación débil, entre 0.3 y 0.7 moderada y de 0.7 en adelante fuerte, y r² indica qué proporción de la variabilidad comparten las dos variables.
+En una correlación el tamaño del efecto es el propio coeficiente. Según la escala de referencia, |r| menor de 0.25 se interpreta como sin correlación o muy débil, entre 0.25 y 0.5 débil, entre 0.5 y 0.75 moderada y por encima de 0.75 muy fuerte; r² indica qué proporción de la variabilidad comparten las dos variables.
 
 ```{r inf-cor-efecto}
 resultados_cor %>%
@@ -609,17 +612,18 @@ resultados_cor %>%
     variable,
     r_pearson,
     r_cuadrado = round(r_pearson^2, 3),
-    magnitud = case_when(abs(r_pearson) < 0.3 ~ "débil",
-                         abs(r_pearson) < 0.7 ~ "moderada",
-                         TRUE ~ "fuerte")
+    magnitud = case_when(abs(r_pearson) < 0.25 ~ "sin correlación o muy débil",
+                         abs(r_pearson) < 0.5 ~ "débil",
+                         abs(r_pearson) < 0.75 ~ "moderada",
+                         TRUE ~ "muy fuerte")
   )
 ```
 
-La edad queda justo en la frontera entre débil y moderada (r = 0.3, r² = 0.09: comparte un 9 % de su variabilidad con la severidad motora). Las demás son correlaciones débiles: `PPE`, `HNR` y `RPDE` comparten entre el 6 % y el 7 % de la variabilidad, y el resto menos del 4 %.
+La edad (r = 0.3), `PPE` (0.26) y `HNR` (-0.25) son correlaciones débiles: comparten con la severidad motora entre el 6 % y el 9 % de su variabilidad. `RPDE` (0.24), los índices de jitter y shimmer, `NHR` y `DFA` quedan por debajo de 0.25, sin correlación o muy débil, y explican menos del 6 % de la variabilidad.
 
 ### Conclusión
 
-Con una confianza del 95 %, solo la edad muestra una correlación con la severidad motora que puede considerarse significativa, y de forma marginal: Pearson queda justo por encima del umbral (p = 0.054) y Spearman por debajo (p = 0.026), con una correlación en la frontera entre débil y moderada. Las características acústicas de la voz tienen correlaciones débiles, entre 0.12 y 0.26 en valor absoluto, que con 42 pacientes no alcanzan la significancia y que desaparecen al corregir por comparaciones múltiples. Es el mismo mensaje que dejaron el EDA y las comparaciones entre grupos: la edad pesa más que la voz, y para detectar los efectos pequeños de la voz haría falta una muestra mayor de pacientes.
+Con una confianza del 95 %, solo la edad muestra una correlación con la severidad motora que puede considerarse significativa, y de forma marginal: Pearson queda justo por encima del umbral (p = 0.054) y Spearman por debajo (p = 0.026), con una correlación débil. Las características acústicas de la voz tienen correlaciones débiles o muy débiles, entre 0.12 y 0.26 en valor absoluto, que con 42 pacientes no alcanzan la significancia y que desaparecen al corregir por comparaciones múltiples. Es el mismo mensaje que dejaron el EDA y las comparaciones entre grupos: la edad pesa más que la voz, y para detectar los efectos pequeños de la voz haría falta una muestra mayor de pacientes.
 
 ## Objetivo 6: asociación entre el nivel de severidad motora y las características categóricas
 
@@ -674,10 +678,9 @@ La menor frecuencia esperada es 6.5, así que el supuesto se cumple y la prueba 
 
 ```{r inf-chi-prueba}
 prueba_chi_edad
-fisher.test(tabla_edad_severidad)
 ```
 
-El estadístico es χ² = 3.13 con 2 grados de libertad y el p-valor es 0.209. La prueba exacta de Fisher da p = 0.219. No se rechaza $H_0$: con 42 pacientes, la distribución de severidad alta y baja no difiere significativamente entre grupos de edad.
+El estadístico es χ² = 3.13 con 2 grados de libertad y el p-valor es 0.209. No se rechaza $H_0$: con 42 pacientes, la distribución de severidad alta y baja no difiere significativamente entre grupos de edad.
 
 ### Tamaño del efecto: V de Cramer
 
@@ -688,7 +691,7 @@ v_cramer_edad <- cramer_v(tabla_edad_severidad, correct = FALSE)
 v_cramer_edad
 ```
 
-V = 0.27, un efecto entre pequeño y medio, coherente con el eta cuadrado de 0.13 del ANOVA: la asociación entre edad y severidad existe en los datos, pero la muestra es pequeña para que resulte significativa.
+V = 0.27, un efecto entre pequeño y medio, coherente con lo que mostró el ANOVA: la asociación entre edad y severidad existe en los datos, pero la muestra es pequeña para que resulte significativa.
 
 ### Segunda tabla: sexo y nivel de severidad
 
@@ -730,9 +733,9 @@ tibble(
               prueba_t_shimmer$p.value,
               prueba_t_pareada$p.value,
               prueba_chi_edad$p.value),
-  tamano_efecto = c(d_sexo$estimate, eta_cuadrado_edad, d_jitter$estimate,
+  tamano_efecto = c(d_sexo$estimate, d_edad$estimate, d_jitter$estimate,
                     d_shimmer$estimate, d_pareado$estimate, v_cramer_edad),
-  medida = c("d de Cohen", "eta cuadrado", "d de Cohen", "d de Cohen", "d de Cohen",
+  medida = c("d de Cohen", "d de Cohen (>70 vs <60)", "d de Cohen", "d de Cohen", "d de Cohen",
              "V de Cramer")
 ) %>%
   mutate(decision = if_else(p_valor < 0.05, "Se rechaza H0", "No se rechaza H0"),
@@ -740,4 +743,4 @@ tibble(
   as.data.frame()
 ```
 
-Solo la comparación entre el inicio y el final del seguimiento resulta significativa: la severidad motora sube en promedio 2.08 puntos en seis meses, con un efecto pequeño. El sexo y el shimmer no se asocian con la severidad ni estadística ni prácticamente. Los otros dos resultados muestran la diferencia entre significancia y relevancia: el grupo de edad (eta cuadrado = 0.13, casi 7 puntos entre extremos) y el jitter (d = 0.44, 3.4 puntos) tienen efectos apreciables que con 42 pacientes no cruzan el umbral del 5 % en las pruebas paramétricas, aunque en el caso de la edad la no paramétrica sí lo hace por poco. Las pruebas de correlación apuntan en la misma dirección: solo la edad alcanza una correlación en el límite entre débil y moderada con la severidad (r = 0.3, significativa con Spearman y marginal con Pearson), mientras que las medidas acústicas quedan en correlaciones débiles. El chi-cuadrado cuenta la misma historia en versión categórica: la proporción de pacientes con severidad alta casi se duplica entre los menores de 60 y los mayores de 70 (V de Cramer = 0.27), sin alcanzar la significancia (p = 0.209), y el sexo no se asocia con el nivel de severidad (V = 0). En conjunto, la edad y el paso del tiempo son lo que más claramente se vincula con la severidad motora; la voz, tal como la analizamos aquí, guarda con ella una relación débil.
+Solo la comparación entre el inicio y el final del seguimiento resulta significativa: la severidad motora sube en promedio 2.08 puntos en seis meses, con un efecto pequeño. El sexo y el shimmer no se asocian con la severidad ni estadística ni prácticamente. Los otros dos resultados muestran la diferencia entre significancia y relevancia: el grupo de edad (d = 0.96 entre los grupos extremos, casi 7 puntos) y el jitter (d = 0.44, 3.4 puntos) tienen efectos apreciables que con 42 pacientes no cruzan el umbral del 5 % en las pruebas paramétricas, aunque en el caso de la edad la no paramétrica sí lo hace por poco. Las pruebas de correlación apuntan en la misma dirección: solo la edad alcanza una correlación débil pero significativa con Spearman y marginal con Pearson (r = 0.3), mientras que las medidas acústicas quedan en correlaciones débiles o muy débiles. El chi-cuadrado cuenta la misma historia en versión categórica: la proporción de pacientes con severidad alta casi se duplica entre los menores de 60 y los mayores de 70 (V de Cramer = 0.27), sin alcanzar la significancia (p = 0.209), y el sexo no se asocia con el nivel de severidad (V = 0). En conjunto, la edad y el paso del tiempo son lo que más claramente se vincula con la severidad motora; la voz, tal como la analizamos aquí, guarda con ella una relación débil.
