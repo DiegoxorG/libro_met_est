@@ -39,7 +39,7 @@ table(data$sex)
 nlevels(data$subject.)
 ```
 
-Convertimos `subject.` en factor, porque es un identificador y no una cantidad, y le ponemos etiquetas a `sex`.  Cada uno de los 42 pacientes aporta entre 101 y 168 grabaciones, así que los registros de una misma persona comparten edad, sexo y niveles de severidad muy parecidos. El exploratorio se hace sobre los registros; en la parte inferencial esta estructura sí se tendrá en cuenta.
+Convertimos `subject.` en factor, porque es un identificador y no una cantidad, y le ponemos etiquetas a `sex`. Cada uno de los 42 pacientes aporta entre 101 y 168 grabaciones, así que los registros de una misma persona comparten edad, sexo y niveles de severidad muy parecidos. El exploratorio se hace sobre los registros; en la parte inferencial esta estructura sí se tendrá en cuenta.
 
 ```{r limpieza-test-time}
 n_negativos <- sum(data$test_time < 0)
@@ -381,8 +381,6 @@ Dos de cada tres registros son de hombres (3.996 frente a 1.867), y lo mismo pas
 
 ### Severidad motora según el sexo
 
-Ahora comparemos la severidad motora según el sexo del paciente.
-
 ```{r motor-por-sexo}
 data %>%
   group_by(sex) %>%
@@ -418,7 +416,7 @@ data %>%
   theme_minimal()
 ```
 
-Las medias son casi iguales: 21.46 puntos en hombres y 20.92 en mujeres, medio punto de diferencia frente a desviaciones estándar cercanas a 8. Ambos grupos cubren casi toda la escala y no tienen atípicos; la caja de las mujeres es un poco más ancha y empieza más abajo (Q1 de 13.6 frente a 15), es decir, hay algo más de registros con afectación leve. A simple vista no hay una diferencia clara entre sexos; la prueba formal se hace en el capítulo inferencial, por paciente.
+Las medias son casi iguales: 21.46 puntos en hombres y 20.92 en mujeres, medio punto de diferencia frente a desviaciones estándar cercanas a 8. Ambos grupos cubren casi toda la escala y no tienen atípicos; la caja de las mujeres es un poco más ancha y empieza más abajo (Q1 de 13.6 frente a 15), es decir, hay algo más de registros con afectación leve. A simple vista no hay una diferencia clara entre sexos.
 
 ## Relaciones entre las variables independientes numéricas
 
@@ -463,13 +461,13 @@ for (comparacion in comparaciones) {
 
 **`age` vs `test_time`:** No se observa relación: los pacientes de todas las edades tienen grabaciones a lo largo de todo el seguimiento.
 
-**`Jitter...` vs `Jitter.PPQ5`:** Se observa una relación positiva fuerte: cuando una aumenta, la otra aumenta.
+**`Jitter...` vs `Jitter.PPQ5`:** Se observa una relación positiva muy fuerte: cuando una aumenta, la otra aumenta.
 
 **`Jitter.RAP` vs `Jitter.DDP`:** Se observa una relación positiva perfecta: los puntos forman una línea porque DDP es exactamente el triple de RAP.
 
 **`Shimmer.APQ3` vs `Shimmer.DDA`:** Se observa una relación positiva perfecta: DDA es exactamente el triple de APQ3.
 
-**`Shimmer` vs `HNR`:** Se observa una relación negativa: cuando el shimmer aumenta, HNR disminuye.
+**`Shimmer` vs `HNR`:** Se observa una relación negativa muy fuerte: cuando el shimmer aumenta, HNR disminuye.
 
 **`RPDE` vs `PPE`:** Se observa una relación positiva moderada: cuando RPDE aumenta, PPE tiende a aumentar.
 
@@ -529,15 +527,15 @@ p_cor6 <- grafico_dispersion("Jitter.PPQ5", "NHR", "Jitter:PPQ5 y NHR")
 
 **`Jitter...` vs `Jitter.RAP`:** Relación positiva muy fuerte (r = 0.98): cuando una aumenta, la otra aumenta casi en la misma proporción.
 
-**`Jitter...` vs `Jitter.Abs.`:** Relación positiva fuerte (r = 0.87), aunque más dispersa: cuando el jitter porcentual aumenta, el absoluto también.
+**`Jitter...` vs `Jitter.Abs.`:** Relación positiva muy fuerte (r = 0.87), aunque más dispersa: cuando el jitter porcentual aumenta, el absoluto también.
 
 **`Shimmer` vs `Shimmer.dB.`:** Relación positiva casi perfecta (r = 0.99): las dos miden lo mismo en escalas distintas.
 
 **`Shimmer` vs `Shimmer.APQ5`:** Relación positiva muy fuerte (r = 0.98): cuando una aumenta, la otra aumenta.
 
-**`Shimmer.APQ5` vs `Shimmer.APQ11`:** Relación positiva fuerte (r = 0.94), con más dispersión en los valores altos.
+**`Shimmer.APQ5` vs `Shimmer.APQ11`:** Relación positiva muy fuerte (r = 0.94), con más dispersión en los valores altos.
 
-**`Jitter.PPQ5` vs `NHR`:** Relación positiva fuerte (r = 0.86): cuando el jitter aumenta, el ruido también aumenta.
+**`Jitter.PPQ5` vs `NHR`:** Relación positiva muy fuerte (r = 0.86): cuando el jitter aumenta, el ruido también aumenta.
 
 ## Ingeniería de características
 

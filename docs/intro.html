@@ -704,7 +704,6 @@ div.csl-indent {
 </div>
 <div id="severidad-motora-según-el-sexo" class="section level3 hasAnchor" number="1.3.2">
 <h3><span class="header-section-number">1.3.2</span> Severidad motora según el sexo<a href="intro.html#severidad-motora-seg%C3%BAn-el-sexo" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Ahora comparemos la severidad motora según el sexo del paciente.</p>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="intro.html#cb33-1" tabindex="-1"></a>data <span class="sc">%&gt;%</span></span>
 <span id="cb33-2"><a href="intro.html#cb33-2" tabindex="-1"></a>  <span class="fu">group_by</span>(sex) <span class="sc">%&gt;%</span></span>
 <span id="cb33-3"><a href="intro.html#cb33-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
@@ -738,7 +737,7 @@ div.csl-indent {
 <span id="cb35-14"><a href="intro.html#cb35-14" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Motor UPDRS (Puntos)&quot;</span>) <span class="sc">+</span></span>
 <span id="cb35-15"><a href="intro.html#cb35-15" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
 <p><img src="parkinson-updrs_files/figure-html/boxplot-motor-sexo-1.png" alt="" width="672" /></p>
-<p>Las medias son casi iguales: 21.46 puntos en hombres y 20.92 en mujeres, medio punto de diferencia frente a desviaciones estándar cercanas a 8. Ambos grupos cubren casi toda la escala y no tienen atípicos; la caja de las mujeres es un poco más ancha y empieza más abajo (Q1 de 13.6 frente a 15), es decir, hay algo más de registros con afectación leve. A simple vista no hay una diferencia clara entre sexos; la prueba formal se hace en el capítulo inferencial, por paciente.</p>
+<p>Las medias son casi iguales: 21.46 puntos en hombres y 20.92 en mujeres, medio punto de diferencia frente a desviaciones estándar cercanas a 8. Ambos grupos cubren casi toda la escala y no tienen atípicos; la caja de las mujeres es un poco más ancha y empieza más abajo (Q1 de 13.6 frente a 15), es decir, hay algo más de registros con afectación leve. A simple vista no hay una diferencia clara entre sexos.</p>
 </div>
 </div>
 <div id="relaciones-entre-las-variables-independientes-numéricas" class="section level2 hasAnchor" number="1.4">
@@ -781,10 +780,10 @@ div.csl-indent {
 <span id="cb36-34"><a href="intro.html#cb36-34" tabindex="-1"></a>}</span></code></pre></div>
 <p><img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-1.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-2.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-3.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-4.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-5.png" alt="" width="672" /><img src="parkinson-updrs_files/figure-html/dispersion-pares-seleccionados-6.png" alt="" width="672" /></p>
 <p><strong><code>age</code> vs <code>test_time</code>:</strong> No se observa relación: los pacientes de todas las edades tienen grabaciones a lo largo de todo el seguimiento.</p>
-<p><strong><code>Jitter...</code> vs <code>Jitter.PPQ5</code>:</strong> Se observa una relación positiva fuerte: cuando una aumenta, la otra aumenta.</p>
+<p><strong><code>Jitter...</code> vs <code>Jitter.PPQ5</code>:</strong> Se observa una relación positiva muy fuerte: cuando una aumenta, la otra aumenta.</p>
 <p><strong><code>Jitter.RAP</code> vs <code>Jitter.DDP</code>:</strong> Se observa una relación positiva perfecta: los puntos forman una línea porque DDP es exactamente el triple de RAP.</p>
 <p><strong><code>Shimmer.APQ3</code> vs <code>Shimmer.DDA</code>:</strong> Se observa una relación positiva perfecta: DDA es exactamente el triple de APQ3.</p>
-<p><strong><code>Shimmer</code> vs <code>HNR</code>:</strong> Se observa una relación negativa: cuando el shimmer aumenta, HNR disminuye.</p>
+<p><strong><code>Shimmer</code> vs <code>HNR</code>:</strong> Se observa una relación negativa muy fuerte: cuando el shimmer aumenta, HNR disminuye.</p>
 <p><strong><code>RPDE</code> vs <code>PPE</code>:</strong> Se observa una relación positiva moderada: cuando RPDE aumenta, PPE tiende a aumentar.</p>
 </div>
 <div id="matriz-de-correlaciones" class="section level3 hasAnchor" number="1.4.2">
@@ -835,11 +834,11 @@ div.csl-indent {
 <span id="cb38-15"><a href="intro.html#cb38-15" tabindex="-1"></a>(p_cor1 <span class="sc">+</span> p_cor2 <span class="sc">+</span> p_cor3) <span class="sc">/</span> (p_cor4 <span class="sc">+</span> p_cor5 <span class="sc">+</span> p_cor6)</span></code></pre></div>
 <p><img src="parkinson-updrs_files/figure-html/dispersion-pares-correlacionados-1.png" alt="" width="1152" /></p>
 <p><strong><code>Jitter...</code> vs <code>Jitter.RAP</code>:</strong> Relación positiva muy fuerte (r = 0.98): cuando una aumenta, la otra aumenta casi en la misma proporción.</p>
-<p><strong><code>Jitter...</code> vs <code>Jitter.Abs.</code>:</strong> Relación positiva fuerte (r = 0.87), aunque más dispersa: cuando el jitter porcentual aumenta, el absoluto también.</p>
+<p><strong><code>Jitter...</code> vs <code>Jitter.Abs.</code>:</strong> Relación positiva muy fuerte (r = 0.87), aunque más dispersa: cuando el jitter porcentual aumenta, el absoluto también.</p>
 <p><strong><code>Shimmer</code> vs <code>Shimmer.dB.</code>:</strong> Relación positiva casi perfecta (r = 0.99): las dos miden lo mismo en escalas distintas.</p>
 <p><strong><code>Shimmer</code> vs <code>Shimmer.APQ5</code>:</strong> Relación positiva muy fuerte (r = 0.98): cuando una aumenta, la otra aumenta.</p>
-<p><strong><code>Shimmer.APQ5</code> vs <code>Shimmer.APQ11</code>:</strong> Relación positiva fuerte (r = 0.94), con más dispersión en los valores altos.</p>
-<p><strong><code>Jitter.PPQ5</code> vs <code>NHR</code>:</strong> Relación positiva fuerte (r = 0.86): cuando el jitter aumenta, el ruido también aumenta.</p>
+<p><strong><code>Shimmer.APQ5</code> vs <code>Shimmer.APQ11</code>:</strong> Relación positiva muy fuerte (r = 0.94), con más dispersión en los valores altos.</p>
+<p><strong><code>Jitter.PPQ5</code> vs <code>NHR</code>:</strong> Relación positiva muy fuerte (r = 0.86): cuando el jitter aumenta, el ruido también aumenta.</p>
 </div>
 </div>
 <div id="ingeniería-de-características" class="section level2 hasAnchor" number="1.5">
