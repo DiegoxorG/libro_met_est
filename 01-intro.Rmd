@@ -103,7 +103,7 @@ data %>%
   )
 ```
 
-El histograma muestra una distribución bimodal: un pico alrededor de los 17 puntos (afectación leve-moderada), otro cerca de los 26 (moderada-avanzada) y un valle entre ambos hacia los 21. Esa forma ya indica que la distribución no es normal. Conviene recordar que cada paciente aporta unas 140 grabaciones con puntuaciones muy parecidas entre sí, así que las dos modas reflejan sobre todo la mezcla de pacientes con distintos niveles de severidad, más que dos subgrupos clínicos definidos.
+El histograma muestra una distribución bimodal: un pico alrededor de los 17 puntos (afectación leve-moderada), otro cerca de los 26 (moderada-avanzada) y un valle entre ambos hacia los 21. Este comportamiento bimodal indica que la muestra global no sigue una distribución normal univariada y sugiere la existencia de dos subgrupos clínicos diferenciados dentro del estudio, lo que puede asociarse a distintas etapas de progresión de la enfermedad de Parkinson.
 
 ### Diagrama de caja
 
@@ -142,11 +142,13 @@ El boxplot confirma la simetría: el valor que parte la muestra por la mitad (20
 
 ## Caracterización de las variables numéricas
 
-Aquí se describen las variables independientes numéricas. Dejamos fuera `total_UPDRS`: es la otra puntuación clínica del estudio e incluye la parte motora (su correlación con `motor_UPDRS` es 0.95), así que no puede tratarse como variable explicativa.
+Aquí se describen las variables independientes numéricas. Dejamos fuera `total_UPDRS` porque no es una característica del paciente ni de su voz: es la puntuación completa de la escala UPDRS, que el médico asigna en la misma evaluación que `motor_UPDRS` y que incluye la sección motora entre sus componentes. Es decir, es otra forma de medir la severidad, no algo que pueda explicarla. Como comprobación, calculamos la correlación entre las dos puntuaciones:
 
 ```{r correlacion-total-updrs}
 cor(data$motor_UPDRS, data$total_UPDRS)
 ```
+
+La correlación es 0.95: las dos puntuaciones prácticamente miden lo mismo, lo que confirma que `total_UPDRS` debe quedarse fuera de las variables explicativas.
 
 ### Resumen estadístico por variable
 
