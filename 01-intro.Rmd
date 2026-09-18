@@ -139,6 +139,7 @@ data %>%
 ```
 
 El diagrama de caja confirma una distribución simétrica en la severidad motora de los pacientes, reflejando un valor central de 20.87 puntos que coincide estrechamente con el promedio muestral de 21.3 puntos. El rango intercuartílico de 12.6 puntos sitúa al núcleo de la muestra entre un estado de deterioro leve (15 puntos) y una etapa de compromiso motor moderado-avanzado (27.6 puntos). Los datos cubren el intervalo completo (entre 5.04 y 39.51 puntos), demostrando que los pacientes abarcan todo el espectro funcional de la enfermedad. Además, la ausencia de outliers revela que la dispersión proviene de la variabilidad biológica esperada en el progreso del Parkinson y no de inconsistencias de medición.
+
 ## Caracterización de las variables numéricas
 
 Aquí se describen las variables independientes numéricas. Dejamos fuera `total_UPDRS` porque no es una característica del paciente ni de su voz: es la puntuación completa de la escala UPDRS, que el médico asigna en la misma evaluación que `motor_UPDRS` y que incluye la sección motora entre sus componentes. Es decir, es otra forma de medir la severidad, no algo que pueda explicarla. Como comprobación, calculamos la correlación entre las dos puntuaciones:
