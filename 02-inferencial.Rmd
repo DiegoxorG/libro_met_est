@@ -1,6 +1,6 @@
 # Estadística inferencial {#inferencial}
 
-Este capítulo cubre los objetivos 5, 6 y 7: revisamos los supuestos de normalidad y homocedasticidad, contrastamos si la severidad motora cambia según el sexo, la edad, la inestabilidad vocal y el momento del seguimiento, probamos la correlación de cada característica con la severidad, y medimos el tamaño de cada efecto. En todas las pruebas usamos $\alpha = 0.05$.
+Este capítulo cubre los objetivos 5, 6 y 7: revisamos los supuestos de normalidad y homocedasticidad, contrastamos si la severidad motora cambia según el sexo, la edad, la inestabilidad vocal y el momento del seguimiento, probamos la correlación de cada característica con la severidad y la asociación entre el nivel de severidad y las variables categóricas, y medimos el tamaño de cada efecto. En todas las pruebas usamos $\alpha = 0.05$.
 
 ```{r inf-librerias, message=FALSE, warning=FALSE}
 library(effsize)
@@ -84,7 +84,7 @@ tibble(
 
 A nivel de registro sale p = 0.019 con un efecto despreciable (d = 0.07): la "significancia" viene solo de contar a cada paciente unas 140 veces. Por paciente, con una diferencia parecida, p = 0.72. Todo lo que sigue usa la tabla `pacientes`.
 
-Para no repetir código, definimos dos funciones: el resumen descriptivo por grupo y las pruebas de normalidad vistas en clase (Shapiro-Wilk, Kolmogorov-Smirnov sobre datos estandarizados y Lilliefors).
+Para no repetir código, definimos dos funciones: el resumen descriptivo por grupo y las tres pruebas de normalidad (Shapiro-Wilk, Kolmogorov-Smirnov sobre datos estandarizados y Lilliefors).
 
 ```{r inf-funciones}
 resumen_grupo <- function(datos, grupo, variable = "motor") {
@@ -846,6 +846,114 @@ La edad queda justo en la frontera entre efecto pequeño y medio (r = 0.3, r² =
 
 Con una confianza del 95 %, solo la edad muestra una correlación con la severidad motora que puede considerarse significativa, y de forma marginal: Pearson queda justo por encima del umbral (p = 0.054) y Spearman por debajo (p = 0.026), con un efecto en la frontera entre pequeño y medio. Las características acústicas de la voz tienen correlaciones pequeñas, entre 0.12 y 0.26 en valor absoluto, que con 42 pacientes no alcanzan la significancia y que desaparecen al corregir por comparaciones múltiples. Es el mismo mensaje que dejaron el EDA y las comparaciones entre grupos: la edad pesa más que la voz, y para detectar los efectos pequeños de la voz haría falta una muestra mayor de pacientes.
 
+## Objetivo 6: asociación entre el nivel de severidad motora y las características categóricas
+
+Las pruebas anteriores comparan promedios o miden correlaciones. La prueba chi-cuadrado de independencia responde otra pregunta: si **dos variables categóricas** están asociadas. Como `sex` es la única categórica del conjunto de datos, construimos las demás categorizando variables numéricas: el grupo de edad ya está definido, y la severidad motora se clasifica en alta o baja según el promedio de `motor_UPDRS` de cada paciente esté por encima o por debajo de la mediana. La pregunta principal es si el nivel de severidad está asociado con el grupo de edad; como segunda tabla, se cruza con el sexo.
+
+$$H_0: \text{el nivel de severidad es independiente del grupo de edad} \qquad H_1: \text{están asociados}$$
+
+### Tabla de contingencia
+
+```{r inf-chi-tabla}
+pacientes <- pacientes %>%
+  mutate(severidad = factor(if_else(motor > median(motor), "Alta", "Baja"),
+                            levels = c("Baja", "Alta")))
+
+tabla_edad_severidad <- table(pacientes$grupo_edad, pacientes$severidad)
+tabla_edad_severidad
+
+round(prop.table(tabla_edad_severidad, margin = 1) * 100, 1)
+```
+
+```{r inf-chi-grafico, fig.height=4}
+pacientes %>%
+  count(grupo_edad, severidad) %>%
+  group_by(grupo_edad) %>%
+  mutate(porcentaje = n / sum(n) * 100) %>%
+  ggplot(aes(x = grupo_edad, y = porcentaje, fill = severidad)) +
+  geom_col(width = 0.6, color = "white") +
+  geom_text(aes(label = paste0(n, " (", round(porcentaje), " %)")),
+            position = position_stack(vjust = 0.5), size = 3.5) +
+  scale_fill_manual(values = c(Baja = "#FAD0C4", Alta = "#E8A598"), name = "Severidad") +
+  labs(title = "Nivel de severidad motora según el grupo de edad",
+       x = "Grupo de edad (años)",
+       y = "Porcentaje de pacientes") +
+  theme_minimal()
+```
+
+La proporción de pacientes con severidad alta sube con la edad: 5 de 14 (36 %) en los menores de 60, 7 de 15 (47 %) entre 60 y 70 y 9 de 13 (69 %) en los mayores de 70. La tabla apunta en la misma dirección que el ANOVA del objetivo 2; falta ver si la diferencia es mayor de lo que produciría el azar.
+
+### Supuesto: frecuencias esperadas
+
+Bajo $H_0$, la frecuencia esperada de cada celda es (total de la fila × total de la columna) / N. La prueba requiere que todas sean al menos 5.
+
+```{r inf-chi-esperados}
+esperados <- outer(rowSums(tabla_edad_severidad), colSums(tabla_edad_severidad),
+                   FUN = function(f, c) f * c / sum(tabla_edad_severidad))
+round(esperados, 2)
+min(esperados)
+```
+
+La menor frecuencia esperada es 6.5, así que el supuesto se cumple y la prueba es válida.
+
+### Prueba de hipótesis: chi-cuadrado de independencia
+
+Cálculo manual paso a paso, comparado con `chisq.test`:
+
+```{r inf-chi-prueba}
+chi_manual <- sum((tabla_edad_severidad - esperados)^2 / esperados)
+gl_chi <- (nrow(tabla_edad_severidad) - 1) * (ncol(tabla_edad_severidad) - 1)
+chi_critico <- qchisq(1 - alpha, df = gl_chi)
+p_chi_manual <- pchisq(chi_manual, df = gl_chi, lower.tail = FALSE)
+
+prueba_chi_edad <- chisq.test(tabla_edad_severidad, correct = FALSE)
+
+tibble(
+  chi_cuadrado_manual = chi_manual,
+  chi_cuadrado_chisq_test = unname(prueba_chi_edad$statistic),
+  grados_libertad = gl_chi,
+  chi_critico = chi_critico,
+  p_valor_manual = p_chi_manual,
+  p_valor_chisq_test = prueba_chi_edad$p.value
+) %>%
+  mutate(across(everything(), ~ round(.x, 4))) %>%
+  as.data.frame()
+
+fisher.test(tabla_edad_severidad)
+```
+
+El estadístico es χ² = 3.13 con 2 grados de libertad, por debajo del valor crítico de 5.99, y el p-valor es 0.209; el cálculo manual coincide con `chisq.test`. La prueba exacta de Fisher da p = 0.219. No se rechaza $H_0$: con 42 pacientes, la distribución de severidad alta y baja no difiere significativamente entre grupos de edad.
+
+### Tamaño del efecto: V de Cramer
+
+La V de Cramer corrige el chi-cuadrado por el tamaño de muestra, $V = \sqrt{\chi^2 / (N \cdot \min(r - 1, c - 1))}$, y va de 0 (independencia) a 1 (asociación perfecta); las referencias habituales son 0.1 pequeño, 0.3 medio y 0.5 grande.
+
+```{r inf-chi-cramer}
+n_chi <- sum(tabla_edad_severidad)
+v_manual <- sqrt(chi_manual / (n_chi * min(dim(tabla_edad_severidad) - 1)))
+v_manual
+
+cramer_v(tabla_edad_severidad, correct = FALSE)
+```
+
+V = 0.27, un efecto entre pequeño y medio, coherente con el eta cuadrado de 0.13 del ANOVA: la asociación entre edad y severidad existe en los datos, pero la muestra es pequeña para que resulte significativa.
+
+### Segunda tabla: sexo y nivel de severidad
+
+```{r inf-chi-sexo}
+tabla_sexo_severidad <- table(pacientes$sex, pacientes$severidad)
+tabla_sexo_severidad
+
+chisq.test(tabla_sexo_severidad, correct = FALSE)
+cramer_v(tabla_sexo_severidad, correct = FALSE)
+```
+
+La tabla queda exactamente balanceada: 14 hombres y 7 mujeres en cada nivel, es decir, la mitad de cada sexo con severidad alta. El chi-cuadrado es 0 (p = 1) y la V de Cramer es 0: el sexo y el nivel de severidad son independientes, lo mismo que mostró la prueba t del objetivo 1.
+
+### Conclusión
+
+Con una confianza del 95 %, no hay evidencia de asociación entre el nivel de severidad motora y el grupo de edad (χ² = 3.13, p = 0.209) ni entre el nivel de severidad y el sexo (χ² = 0, p = 1). La V de Cramer distingue los dos casos: para la edad el efecto es pequeño-medio (V = 0.27), con una proporción de severidad alta que casi se duplica entre los menores de 60 y los mayores de 70; para el sexo es nulo (V = 0).
+
 ## Síntesis de resultados
 
 ```{r inf-sintesis}
@@ -854,26 +962,30 @@ tibble(
                "Grupo de edad (3 grupos)",
                "Inestabilidad de la frecuencia (jitter alto vs. bajo)",
                "Inestabilidad de la amplitud (shimmer alto vs. bajo)",
-               "Seguimiento (última vs. primera grabación)"),
+               "Seguimiento (última vs. primera grabación)",
+               "Grupo de edad x nivel de severidad"),
   prueba = c("t de Student", "ANOVA de un factor", "t de Student",
-             "t de Student", "t pareada"),
+             "t de Student", "t pareada", "Chi-cuadrado de independencia"),
   estadistico = c(prueba_t_sexo$statistic,
                   summary(modelo_anova)[[1]]$`F value`[1],
                   prueba_t_jitter$statistic,
                   prueba_t_shimmer$statistic,
-                  prueba_t_pareada$statistic),
+                  prueba_t_pareada$statistic,
+                  prueba_chi_edad$statistic),
   p_valor = c(prueba_t_sexo$p.value,
               summary(modelo_anova)[[1]]$`Pr(>F)`[1],
               prueba_t_jitter$p.value,
               prueba_t_shimmer$p.value,
-              prueba_t_pareada$p.value),
+              prueba_t_pareada$p.value,
+              prueba_chi_edad$p.value),
   tamano_efecto = c(d_sexo$estimate, eta_cuadrado_manual, d_jitter$estimate,
-                    d_shimmer$estimate, d_pareado$estimate),
-  medida = c("d de Cohen", "eta cuadrado", "d de Cohen", "d de Cohen", "d de Cohen")
+                    d_shimmer$estimate, d_pareado$estimate, v_manual),
+  medida = c("d de Cohen", "eta cuadrado", "d de Cohen", "d de Cohen", "d de Cohen",
+             "V de Cramer")
 ) %>%
   mutate(decision = if_else(p_valor < 0.05, "Se rechaza H0", "No se rechaza H0"),
          across(where(is.numeric), ~ round(.x, 3))) %>%
   as.data.frame()
 ```
 
-Solo la comparación entre el inicio y el final del seguimiento resulta significativa: la severidad motora sube en promedio 2.08 puntos en seis meses, con un efecto pequeño. El sexo y el shimmer no se asocian con la severidad ni estadística ni prácticamente. Los otros dos resultados muestran la diferencia entre significancia y relevancia: el grupo de edad (eta cuadrado = 0.13, casi 7 puntos entre extremos) y el jitter (d = 0.44, 3.4 puntos) tienen efectos apreciables que con 42 pacientes no cruzan el umbral del 5 % en las pruebas paramétricas, aunque en el caso de la edad la no paramétrica sí lo hace por poco. Las pruebas de correlación apuntan en la misma dirección: solo la edad alcanza una correlación cercana al tamaño medio con la severidad (r = 0.3, significativa con Spearman y marginal con Pearson), mientras que las medidas acústicas no pasan de correlaciones pequeñas. En conjunto, la edad y el paso del tiempo son lo que más claramente se vincula con la severidad motora; la voz, tal como la analizamos aquí, guarda con ella una relación débil.
+Solo la comparación entre el inicio y el final del seguimiento resulta significativa: la severidad motora sube en promedio 2.08 puntos en seis meses, con un efecto pequeño. El sexo y el shimmer no se asocian con la severidad ni estadística ni prácticamente. Los otros dos resultados muestran la diferencia entre significancia y relevancia: el grupo de edad (eta cuadrado = 0.13, casi 7 puntos entre extremos) y el jitter (d = 0.44, 3.4 puntos) tienen efectos apreciables que con 42 pacientes no cruzan el umbral del 5 % en las pruebas paramétricas, aunque en el caso de la edad la no paramétrica sí lo hace por poco. Las pruebas de correlación apuntan en la misma dirección: solo la edad alcanza una correlación cercana al tamaño medio con la severidad (r = 0.3, significativa con Spearman y marginal con Pearson), mientras que las medidas acústicas no pasan de correlaciones pequeñas. El chi-cuadrado cuenta la misma historia en versión categórica: la proporción de pacientes con severidad alta casi se duplica entre los menores de 60 y los mayores de 70 (V de Cramer = 0.27), sin alcanzar la significancia (p = 0.209), y el sexo no se asocia con el nivel de severidad (V = 0). En conjunto, la edad y el paso del tiempo son lo que más claramente se vincula con la severidad motora; la voz, tal como la analizamos aquí, guarda con ella una relación débil.
