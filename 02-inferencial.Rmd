@@ -601,7 +601,7 @@ La edad es la única característica que se acerca al umbral: r = 0.299 (interva
 
 ### Tamaño del efecto
 
-En una correlación el tamaño del efecto es el propio coeficiente: según los puntos de referencia habituales, |r| de 0.1 es pequeño, 0.3 medio y 0.5 grande, y r² indica qué proporción de la variabilidad comparten las dos variables.
+En una correlación el tamaño del efecto es el propio coeficiente: |r| menor de 0.3 se considera una correlación débil, entre 0.3 y 0.7 moderada y de 0.7 en adelante fuerte, y r² indica qué proporción de la variabilidad comparten las dos variables.
 
 ```{r inf-cor-efecto}
 resultados_cor %>%
@@ -609,18 +609,17 @@ resultados_cor %>%
     variable,
     r_pearson,
     r_cuadrado = round(r_pearson^2, 3),
-    magnitud = case_when(abs(r_pearson) < 0.1 ~ "despreciable",
-                         abs(r_pearson) < 0.3 ~ "pequeño",
-                         abs(r_pearson) < 0.5 ~ "medio",
-                         TRUE ~ "grande")
+    magnitud = case_when(abs(r_pearson) < 0.3 ~ "débil",
+                         abs(r_pearson) < 0.7 ~ "moderada",
+                         TRUE ~ "fuerte")
   )
 ```
 
-La edad queda justo en la frontera entre efecto pequeño y medio (r = 0.3, r² = 0.09: comparte un 9 % de su variabilidad con la severidad motora). `PPE`, `HNR` y `RPDE` son efectos pequeños pero cercanos al medio (r² entre 0.06 y 0.07), y el resto explican menos del 4 % de la variabilidad.
+La edad queda justo en la frontera entre débil y moderada (r = 0.3, r² = 0.09: comparte un 9 % de su variabilidad con la severidad motora). Las demás son correlaciones débiles: `PPE`, `HNR` y `RPDE` comparten entre el 6 % y el 7 % de la variabilidad, y el resto menos del 4 %.
 
 ### Conclusión
 
-Con una confianza del 95 %, solo la edad muestra una correlación con la severidad motora que puede considerarse significativa, y de forma marginal: Pearson queda justo por encima del umbral (p = 0.054) y Spearman por debajo (p = 0.026), con un efecto en la frontera entre pequeño y medio. Las características acústicas de la voz tienen correlaciones pequeñas, entre 0.12 y 0.26 en valor absoluto, que con 42 pacientes no alcanzan la significancia y que desaparecen al corregir por comparaciones múltiples. Es el mismo mensaje que dejaron el EDA y las comparaciones entre grupos: la edad pesa más que la voz, y para detectar los efectos pequeños de la voz haría falta una muestra mayor de pacientes.
+Con una confianza del 95 %, solo la edad muestra una correlación con la severidad motora que puede considerarse significativa, y de forma marginal: Pearson queda justo por encima del umbral (p = 0.054) y Spearman por debajo (p = 0.026), con una correlación en la frontera entre débil y moderada. Las características acústicas de la voz tienen correlaciones débiles, entre 0.12 y 0.26 en valor absoluto, que con 42 pacientes no alcanzan la significancia y que desaparecen al corregir por comparaciones múltiples. Es el mismo mensaje que dejaron el EDA y las comparaciones entre grupos: la edad pesa más que la voz, y para detectar los efectos pequeños de la voz haría falta una muestra mayor de pacientes.
 
 ## Objetivo 6: asociación entre el nivel de severidad motora y las características categóricas
 
@@ -741,4 +740,4 @@ tibble(
   as.data.frame()
 ```
 
-Solo la comparación entre el inicio y el final del seguimiento resulta significativa: la severidad motora sube en promedio 2.08 puntos en seis meses, con un efecto pequeño. El sexo y el shimmer no se asocian con la severidad ni estadística ni prácticamente. Los otros dos resultados muestran la diferencia entre significancia y relevancia: el grupo de edad (eta cuadrado = 0.13, casi 7 puntos entre extremos) y el jitter (d = 0.44, 3.4 puntos) tienen efectos apreciables que con 42 pacientes no cruzan el umbral del 5 % en las pruebas paramétricas, aunque en el caso de la edad la no paramétrica sí lo hace por poco. Las pruebas de correlación apuntan en la misma dirección: solo la edad alcanza una correlación cercana al tamaño medio con la severidad (r = 0.3, significativa con Spearman y marginal con Pearson), mientras que las medidas acústicas no pasan de correlaciones pequeñas. El chi-cuadrado cuenta la misma historia en versión categórica: la proporción de pacientes con severidad alta casi se duplica entre los menores de 60 y los mayores de 70 (V de Cramer = 0.27), sin alcanzar la significancia (p = 0.209), y el sexo no se asocia con el nivel de severidad (V = 0). En conjunto, la edad y el paso del tiempo son lo que más claramente se vincula con la severidad motora; la voz, tal como la analizamos aquí, guarda con ella una relación débil.
+Solo la comparación entre el inicio y el final del seguimiento resulta significativa: la severidad motora sube en promedio 2.08 puntos en seis meses, con un efecto pequeño. El sexo y el shimmer no se asocian con la severidad ni estadística ni prácticamente. Los otros dos resultados muestran la diferencia entre significancia y relevancia: el grupo de edad (eta cuadrado = 0.13, casi 7 puntos entre extremos) y el jitter (d = 0.44, 3.4 puntos) tienen efectos apreciables que con 42 pacientes no cruzan el umbral del 5 % en las pruebas paramétricas, aunque en el caso de la edad la no paramétrica sí lo hace por poco. Las pruebas de correlación apuntan en la misma dirección: solo la edad alcanza una correlación en el límite entre débil y moderada con la severidad (r = 0.3, significativa con Spearman y marginal con Pearson), mientras que las medidas acústicas quedan en correlaciones débiles. El chi-cuadrado cuenta la misma historia en versión categórica: la proporción de pacientes con severidad alta casi se duplica entre los menores de 60 y los mayores de 70 (V de Cramer = 0.27), sin alcanzar la significancia (p = 0.209), y el sexo no se asocia con el nivel de severidad (V = 0). En conjunto, la edad y el paso del tiempo son lo que más claramente se vincula con la severidad motora; la voz, tal como la analizamos aquí, guarda con ella una relación débil.
