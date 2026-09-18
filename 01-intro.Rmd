@@ -70,6 +70,7 @@ data %>%
     asimetria = skewness(motor_UPDRS),
     curtosis = kurtosis(motor_UPDRS))
 ```
+
 `motor_UPDRS` tiene 5.863 registros con una media de 21.29 puntos y una desviación estándar de 8.13, es decir, bastante variabilidad entre evaluaciones. El 50 % de los registros está por debajo de 20.87 puntos y el otro 50 % por encima, un valor muy cercano a la media, y la asimetría es casi nula (0.077): las puntuaciones se reparten de forma equilibrada alrededor del centro. La mitad central de los registros está entre 15 y 27.59 puntos (rango intercuartílico de 12.59); el 25 % más leve queda por debajo de 15 y el 25 % más afectado por encima de 27.59.
 
 La escala observada va de 5.04 a 39.51 puntos, así que la muestra incluye desde pacientes con afectación motora mínima hasta casos avanzados. La curtosis de 2.06, por debajo de la de una distribución normal (3), indica menos concentración en el centro y colas más ligeras: las puntuaciones están repartidas de manera bastante uniforme a lo largo del rango medio en lugar de agruparse en un solo punto.
@@ -101,6 +102,7 @@ data %>%
     panel.grid.major = element_line(color = "gray92")
   )
 ```
+
 El histograma muestra una distribución bimodal: un pico alrededor de los 17 puntos (afectación leve-moderada), otro cerca de los 26 (moderada-avanzada) y un valle entre ambos hacia los 21. Esa forma ya indica que la distribución no es normal. Conviene recordar que cada paciente aporta unas 140 grabaciones con puntuaciones muy parecidas entre sí, así que las dos modas reflejan sobre todo la mezcla de pacientes con distintos niveles de severidad, más que dos subgrupos clínicos definidos.
 
 ### Diagrama de caja
@@ -135,6 +137,7 @@ data %>%
     panel.grid.major.y = element_line(color = "gray92")
   )
 ```
+
 El boxplot confirma la simetría: el valor que parte la muestra por la mitad (20.87) casi coincide con la media (21.3), la caja va de 15 a 27.6 puntos (rango intercuartílico de 12.6) y los bigotes cubren toda la escala, de 5.04 a 39.51. No hay ningún valor atípico, así que la dispersión no viene de mediciones raras sino de la variabilidad propia de la enfermedad entre pacientes.
 
 ## Caracterización de las variables numéricas
@@ -235,6 +238,7 @@ for (variable in variables_numericas) {
   print(grafico)
 }
 ```
+
 **`age`:** La distribución de la edad muestra que la mayoría de los pacientes son adultos mayores, con picos de frecuencia muy claros entre los 55 y 60 años, entre los 65 y 68 años, y entre los 72 y 74 años, además de un grupo pequeño aislado alrededor de los 36 años. Como la edad no cambia dentro de un paciente, cada barra refleja cuántos pacientes tienen esa edad y cuántas grabaciones aportó cada uno; el grupo de los 36 años, por ejemplo, es un solo paciente. Esta concentración en edades avanzadas coincide con el comportamiento real de la enfermedad de Parkinson, donde los diagnósticos aumentan considerablemente a partir de los 60 años. Tener pacientes con diferentes edades servirá para analizar si el empeoramiento en la voz y en el control motor se debe al avance de la enfermedad o simplemente al envejecimiento natural.
 
 **`test_time`:** El tiempo de prueba muestra un registro continuo y parejo durante los primeros 170 días del estudio, con una pequeña baja cerca del día 90 y una caída marcada después del día 180. Esto indica que a los pacientes se les realizó un seguimiento constante y organizado durante aproximadamente seis meses. La disminución a partir del día 180 ocurre porque varios pacientes completaron su tiempo en el estudio o dejaron de enviar mediciones, garantizando una base de datos sólida para evaluar cómo evolucionan los síntomas con el paso de los meses.
@@ -295,6 +299,7 @@ for (variable in variables_numericas) {
   print(grafico)
 }
 ```
+
 **`age` vs `motor_UPDRS`:** Se observa una relación positiva: a mayor edad, mayor tiende a ser la severidad motora. Los puntos forman franjas verticales porque la edad es fija para cada paciente.
 
 **`test_time` vs `motor_UPDRS`:** No se observa relación: la severidad se distribuye igual a lo largo de todo el seguimiento.
@@ -447,6 +452,7 @@ for (comparacion in comparaciones) {
   print(grafico)
 }
 ```
+
 **`age` vs `test_time`:** No se observa relación: los pacientes de todas las edades tienen grabaciones a lo largo de todo el seguimiento.
 
 **`Jitter...` vs `Jitter.PPQ5`:** Se observa una relación positiva fuerte: cuando una aumenta, la otra aumenta.
