@@ -205,13 +205,13 @@ data %>%
 
 **`Shimmer.dB.`:** El shimmer en decibelios tiene media 0.311 y desviación estándar 0.23. La mitad central está entre 0.175 y 0.365 dB (rango intercuartílico de 0.19) y los valores van de 0.026 a 2.107 dB. La asimetría de 3.1 y la curtosis de 16.09 muestran la misma asimetría positiva y la misma tendencia a valores atípicos altos que el shimmer en escala lineal.
 
-**`NHR`:** NHR promedia 0.0321, pero su desviación estándar (0.0597) casi duplica la media. La mitad central va de 0.01095 a 0.03146 (rango intercuartílico de 0.02051), mientras que el máximo llega a 0.74826 frente a un mínimo de 0.000286. La asimetría de 6.55 y la curtosis de 55.51 reflejan que casi todos los registros tienen poco ruido y unos pocos, muchísimo; esos pocos valores altos pesan mucho en la media y en la desviación.
+**`NHR`:** NHR promedia 0.0321, pero su desviación estándar (0.0597) casi duplica la media. La mitad central va de 0.01095 a 0.03146 (rango intercuartílico de 0.02051), mientras que el máximo llega a 0.74826 frente a un mínimo de 0.000286. La asimetría de 6.55 y la curtosis de 55.51 indican que la mayoría de las muestras corresponden a voces limpias con bajo nivel de ruido, concentradas en valores pequeños. Sin embargo, existen unas cuantas muestras con ronquera o alto ruido que elevan el valor del promedio y distorsionan la desviación estándar.
 
 **`HNR`:** HNR tiene media 21.68 y desviación estándar 4.29, una dispersión moderada. La mitad central está entre 19.4 y 24.45 (rango intercuartílico de 5.04) y los valores van de 1.66 a 37.88. El 50 % de los registros supera los 21.92 dB, un poco más que la media, y la asimetría es -0.811: aquí los valores que se alejan del resto están a la izquierda, en las grabaciones con peor relación armónico-ruido. La curtosis de 5.5 indica que los valores atípicos pueden ocurrir con mayor probabilidad que en una distribución normal.
 
 **`RPDE`:** RPDE promedia 0.541 con desviación estándar de 0.101. La mitad central va de 0.47 a 0.614 (rango intercuartílico de 0.144) y los valores de 0.151 a 0.966. El 50 % de los registros está por debajo de 0.542, prácticamente el mismo valor que la media; la asimetría es -0.037 y la curtosis 2.93: es la variable acústica con la distribución más parecida a una normal, aunque eso no basta para afirmar que lo sea.
 
-**`DFA`:** DFA tiene media 0.653 y desviación estándar 0.071. La mitad central está entre 0.596 y 0.711 (rango intercuartílico de 0.115) y los valores van de 0.514 a 0.866. El 50 % de los registros está por debajo de 0.644, ligeramente menos que la media, y la asimetría es 0.282, una leve tendencia a valores por encima del centro. La curtosis de 2.12 indica una distribución más plana que la normal, con los valores repartidos de forma bastante uniforme.
+**`DFA`:** DFA tiene media 0.653 y desviación estándar 0.071. La mitad central está entre 0.596 y 0.711 (rango intercuartílico de 0.115) y los valores van de 0.514 a 0.866. El 50 % de los registros está por debajo de 0.644, ligeramente menos que la media, y la asimetría es 0.282, una leve tendencia a valores por encima del centro. La curtosis de 2.12 indica una distribución más plana que la normal, con los valores repartidos de forma uniforme y extendida a lo largo de todo el rango (entre 0.514 y 0.866).
 
 **`PPE`:** PPE promedia 0.22 con desviación estándar de 0.0915. La mitad central va de 0.156 a 0.265 (rango intercuartílico de 0.108) y el rango completo de 0.02198 a 0.73173. La asimetría de 1.09 y la curtosis de 4.95 muestran una asimetría positiva moderada, con valores atípicos algo más probables que en una normal: la mayoría de las grabaciones tiene valores estables y algunas se alejan hacia arriba.
 
@@ -345,25 +345,31 @@ for (variable in variables_numericas) {
 
 ### Distribución por registros y por pacientes
 
-```{r tabla-sexo}
+Distribución por registros (cada grabación cuenta una vez):
+
+```{r tabla-sexo-registros}
 tabla_sexo <- data %>%
-  count(sex, name = "n") %>%
-  mutate(Porcentaje = round(n / sum(n) * 100, 1))
+  count(sex, name = "registros") %>%
+  mutate(porcentaje = round(registros / sum(registros) * 100, 1))
 
 tabla_sexo
+```
 
+Distribución por pacientes (cada persona cuenta una vez):
+
+```{r tabla-sexo-pacientes}
 data %>%
   distinct(subject., sex) %>%
   count(sex, name = "pacientes") %>%
-  mutate(Porcentaje = round(pacientes / sum(pacientes) * 100, 1))
+  mutate(porcentaje = round(pacientes / sum(pacientes) * 100, 1))
 ```
 
 ```{r grafico-sexo}
 tabla_sexo %>%
-  mutate(Etiqueta = paste0(n, " (", Porcentaje, "%)")) %>%
-  ggplot(aes(x = sex, y = n)) +
+  mutate(etiqueta = paste0(registros, " (", porcentaje, "%)")) %>%
+  ggplot(aes(x = sex, y = registros)) +
   geom_col(fill = "#FAD0C4", color = "#C2185B", width = 0.6) +
-  geom_text(aes(label = Etiqueta), vjust = -0.5, size = 4) +
+  geom_text(aes(label = etiqueta), vjust = -0.5, size = 4) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
   labs(title = "Distribución de los registros según el sexo del paciente",
        x = NULL,
