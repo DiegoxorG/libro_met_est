@@ -1,6 +1,6 @@
 # Estadística inferencial {#inferencial}
 
-Este capítulo cubre los objetivos 5, 6 y 7: revisamos los supuestos de normalidad y homocedasticidad, contrastamos si la severidad motora cambia según el sexo, la edad, la inestabilidad vocal y el momento del seguimiento, probamos la correlación de cada característica con la severidad y la asociación entre el nivel de severidad y las variables categóricas, y medimos el tamaño de cada efecto. En todas las pruebas usamos $\alpha = 0.05$.
+Este capítulo cubre los objetivos específicos 5, 6 y 7: revisamos los supuestos de normalidad y homocedasticidad, contrastamos si la severidad motora cambia según el sexo, la edad, la inestabilidad vocal y el momento del seguimiento, probamos la correlación de cada característica con la severidad y la asociación entre el nivel de severidad y las variables categóricas, y medimos el tamaño de cada efecto. En todas las pruebas usamos $\alpha = 0.05$.
 
 ```{r inf-librerias, message=FALSE, warning=FALSE}
 library(effsize)
@@ -119,7 +119,7 @@ normalidad_grupo <- function(datos, grupo, variable = "motor") {
 }
 ```
 
-## Objetivo 1: severidad motora según el sexo
+## Severidad motora según el sexo
 
 ¿Difiere la severidad motora promedio entre hombres y mujeres?
 
@@ -204,7 +204,7 @@ La d de Cohen es 0.12, un efecto despreciable, con un intervalo de -0.54 a 0.78 
 
 Con una confianza del 95 %, no hay evidencia de que la severidad motora difiera entre hombres y mujeres (t = 0.36, p = 0.721). La diferencia observada, menos de un punto, tampoco tiene relevancia práctica (d = 0.12).
 
-## Objetivo 2: severidad motora según el grupo de edad
+## Severidad motora según el grupo de edad
 
 ¿Difiere la severidad motora promedio entre los tres grupos de edad?
 
@@ -295,7 +295,7 @@ Medimos la magnitud con la d de Cohen entre pares de grupos. Entre los mayores d
 
 Con una confianza del 95 %, el ANOVA no permite afirmar que la severidad motora difiera entre grupos de edad (F = 2.94, p = 0.065), aunque Kruskal-Wallis sí detecta una diferencia marginal (p = 0.049) entre los mayores de 70 y los menores de 60. El tamaño del efecto entre los grupos extremos (d = 0.96, casi 7 puntos) indica que la diferencia es relevante en la práctica y que lo que falta es muestra, no relación: es coherente con la correlación positiva entre edad y `motor_UPDRS` que ya aparecía en el exploratorio.
 
-## Objetivo 3: severidad motora según el nivel de inestabilidad vocal
+## Severidad motora según el nivel de inestabilidad vocal
 
 ¿Tienen los pacientes con alta inestabilidad vocal una severidad motora distinta de los de baja inestabilidad? Lo contrastamos por separado para el índice de jitter (frecuencia) y el de shimmer (amplitud):
 
@@ -394,7 +394,7 @@ La d de Cohen es 0.44 para el jitter, un efecto pequeño que roza el medio (inte
 
 Con una confianza del 95 %, no hay evidencia de que la severidad motora difiera entre pacientes con alta y baja inestabilidad vocal, ni en frecuencia (jitter: t = 1.42, p = 0.163) ni en amplitud (shimmer: t = 0.62, p = 0.541). Los tamaños del efecto sí los distinguen: el del shimmer es despreciable (d = 0.19), pero el del jitter (d = 0.44, 3.4 puntos más de severidad) no es trivial; con 21 pacientes por grupo no alcanza la significancia, pero va en la misma dirección que la asociación débil entre jitter y `motor_UPDRS` que vimos en el exploratorio.
 
-## Objetivo 4: evolución de la severidad motora durante el seguimiento
+## Evolución de la severidad motora durante el seguimiento
 
 ¿Cambia la severidad motora entre la primera y la última grabación de cada paciente? Las separan entre 153 y 204 días; en la mitad de los pacientes, 170 días o más, es decir, unos seis meses. Como son dos medidas del mismo paciente, los datos son pareados y la hipótesis se plantea sobre la media de las diferencias:
 
@@ -514,7 +514,7 @@ La d de Cohen pareada es 0.25, un efecto pequeño, pero esta vez el intervalo (0
 
 Con una confianza del 95 %, la severidad motora aumenta de forma significativa entre la primera y la última grabación (t = 2.16, p = 0.037): en promedio, 2.08 puntos en unos seis meses. El efecto es pequeño (d = 0.25), lo que encaja con una progresión lenta en la etapa temprana de la enfermedad y con la heterogeneidad entre pacientes: cerca de un tercio mejora en ese periodo.
 
-## Objetivo 5: correlación entre las características y la severidad motora
+## Correlación entre las características y la severidad motora
 
 En el EDA vimos que, registro a registro, ninguna característica se correlaciona con fuerza con `motor_UPDRS`. Aquí contrastamos esas correlaciones formalmente y a nivel de paciente: para cada característica (edad, los dos índices de inestabilidad vocal y las cinco medidas acústicas restantes, todas promediadas por paciente) probamos si su correlación con la severidad motora es distinta de cero.
 
@@ -625,7 +625,7 @@ La edad (r = 0.3), `PPE` (0.26) y `HNR` (-0.25) son correlaciones débiles: comp
 
 Con una confianza del 95 %, solo la edad muestra una correlación con la severidad motora que puede considerarse significativa, y de forma marginal: Pearson queda justo por encima del umbral (p = 0.054) y Spearman por debajo (p = 0.026), con una correlación débil. Las características acústicas de la voz tienen correlaciones débiles o muy débiles, entre 0.12 y 0.26 en valor absoluto, que con 42 pacientes no alcanzan la significancia y que desaparecen al corregir por comparaciones múltiples. Es el mismo mensaje que dejaron el EDA y las comparaciones entre grupos: la edad pesa más que la voz, y para detectar los efectos pequeños de la voz haría falta una muestra mayor de pacientes.
 
-## Objetivo 6: asociación entre el nivel de severidad motora y las características categóricas
+## Asociación entre el nivel de severidad motora y las características categóricas
 
 Las pruebas anteriores comparan promedios o miden correlaciones. La prueba chi-cuadrado de independencia responde otra pregunta: si **dos variables categóricas** están asociadas. Como `sex` es la única categórica del conjunto de datos, construimos las demás categorizando variables numéricas: el grupo de edad ya está definido, y la severidad motora se clasifica en alta o baja según el promedio de `motor_UPDRS` de cada paciente quede en la mitad superior o en la mitad inferior de los 42 pacientes. La pregunta principal es si el nivel de severidad está asociado con el grupo de edad; como segunda tabla, se cruza con el sexo.
 
@@ -660,7 +660,7 @@ pacientes %>%
   theme_minimal()
 ```
 
-La proporción de pacientes con severidad alta sube con la edad: 5 de 14 (36 %) en los menores de 60, 7 de 15 (47 %) entre 60 y 70 y 9 de 13 (69 %) en los mayores de 70. La tabla apunta en la misma dirección que el ANOVA del objetivo 2; falta ver si la diferencia es mayor de lo que produciría el azar.
+La proporción de pacientes con severidad alta sube con la edad: 5 de 14 (36 %) en los menores de 60, 7 de 15 (47 %) entre 60 y 70 y 9 de 13 (69 %) en los mayores de 70. La tabla apunta en la misma dirección que el ANOVA por grupo de edad; falta ver si la diferencia es mayor de lo que produciría el azar.
 
 ### Supuesto: frecuencias esperadas
 
@@ -703,7 +703,7 @@ chisq.test(tabla_sexo_severidad, correct = FALSE)
 cramer_v(tabla_sexo_severidad, correct = FALSE)
 ```
 
-La tabla queda exactamente balanceada: 14 hombres y 7 mujeres en cada nivel, es decir, la mitad de cada sexo con severidad alta. El chi-cuadrado es 0 (p = 1) y la V de Cramer es 0: el sexo y el nivel de severidad son independientes, lo mismo que mostró la prueba t del objetivo 1.
+La tabla queda exactamente balanceada: 14 hombres y 7 mujeres en cada nivel, es decir, la mitad de cada sexo con severidad alta. El chi-cuadrado es 0 (p = 1) y la V de Cramer es 0: el sexo y el nivel de severidad son independientes, lo mismo que mostró la prueba t por sexo.
 
 ### Conclusión
 

@@ -138,7 +138,7 @@ data %>%
   )
 ```
 
-El diagrama de caja confirma una distribución simétrica en la severidad motora de los pacientes, reflejando un valor central de 20.87 puntos que coincide estrechamente con el promedio muestral de 21.3 puntos. El rango intercuartílico de 12.6 puntos sitúa al núcleo de la muestra entre un estado de deterioro leve (15 puntos) y una etapa de compromiso motor moderado-avanzado (27.6 puntos). Los datos cubren el intervalo completo (entre 5.04 y 39.51 puntos), demostrando que los pacientes abarcan todo el espectro funcional de la enfermedad. Además, la ausencia de outliers revela que la dispersión proviene de la variabilidad biológica esperada en el progreso del Parkinson y no de inconsistencias de medición.
+El diagrama de caja confirma que la distribución es simétrica: la línea central de la caja (20.87 puntos) queda casi a la altura de la media (21.3, el rombo). La caja mide 12.6 puntos y va de 15 a 27.6, así que la mitad central de los registros está entre una afectación leve y una moderada-avanzada. Los bigotes llegan hasta los valores extremos observados (5.04 y 39.51) y no aparece ningún punto atípico: ningún registro se aleja del resto más de 1.5 veces el rango intercuartílico.
 
 ## Caracterización de las variables numéricas
 
@@ -187,7 +187,7 @@ data %>%
 
 **`Jitter.Abs.`:** El jitter absoluto promedia 4.4 × 10⁻⁵ segundos, con desviación estándar de 3.6 × 10⁻⁵. La mitad central va de 2.24 × 10⁻⁵ a 5.33 × 10⁻⁵ (rango intercuartílico de 3.09 × 10⁻⁵) y los valores se extienden de 2.25 × 10⁻⁶ a 4.46 × 10⁻⁴. La asimetría de 3.28 y la curtosis de 21.14 describen lo mismo que en el jitter porcentual, una concentración en valores bajos y una alta probabilidad de que ocurran valores atípicos altos.
 
-**`Jitter.RAP`:** El jitter RAP tiene media 0.00299 y desviación estándar 0.00313, algo mayor que la propia media. La mitad central está entre 0.00158 y 0.00329, con un rango intercuartílico de 0.00171, con un valor mínimo de 0.00033 y un máximo de 0.05754. El 50 % de los registros está por debajo de 0.00225, lo cual es menor que la media. La asimetría es 6.94 y la curtosis alcanza 81.4, lo que refleja una concentración en valores bajos con presencia de datos que se alejan hacia valores atípicos extremadamente
+**`Jitter.RAP`:** El jitter RAP tiene media 0.00299 y desviación estándar 0.00313, algo mayor que la propia media. La mitad central está entre 0.00158 y 0.00329, con un rango intercuartílico de 0.00171, con un valor mínimo de 0.00033 y un máximo de 0.05754. El 50 % de los registros está por debajo de 0.00225, lo cual es menor que la media. La asimetría es 6.94 y la curtosis alcanza 81.4: la mayoría de las grabaciones tiene valores bajos y unas pocas se alejan muchísimo del resto, así que los valores atípicos son mucho más probables que en una distribución normal.
 
 **`Jitter.PPQ5`:** Jitter.PPQ5 promedia 0.00328 con desviación estándar de 0.00373. La mitad central va de 0.00182 a 0.00347 (rango intercuartílico de 0.00164) y el rango completo de 0.00043 a 0.06956. Con asimetría de 7.58 y curtosis de 84.39, es la variable más sesgada de la familia: casi todos los registros son bajos y alcanza valores muy superiores.
 
@@ -249,7 +249,7 @@ for (variable in variables_numericas) {
 
 **`Jitter...`:** La medida porcentual de variación en la frecuencia de la voz (Jitter(...)) se concentra en valores bajos, casi todos menores al 0.01 (1 %). La gráfica se extiende hacia la derecha con unos pocos registros que superan 0.05, donde se ubican las tomas de voz con inestabilidades graves. En la práctica, esto significa que las alteraciones fuertes en el tono no son lo habitual en todas las pruebas, sino eventos específicos que destacan sobre el resto.
 
-**`Jitter.Abs.`:** La variación absoluta de la frecuencia en microsegundos (Jitter.Abs.) concentra casi todos sus datos en la zona baja, entre 2 × 10^-5^ y 6 × 10^-5^ segundos. Los pocos registros que se alejan hacia la derecha muestran que existen pocas mediciones con una alteración de voz severa. La forma de esta gráfica es idéntica a la de Jitter(...), lo que confirma que ambas variables miden prácticamente lo mismo y que será necesario combinarlas o seleccionar solo una durante la ingeniería de características para no duplicar información.
+**`Jitter.Abs.`:** La variación absoluta de la frecuencia (Jitter.Abs.), medida en segundos, concentra casi todos sus datos en la zona baja, entre 2 × 10^-5^ y 6 × 10^-5^ segundos. Los pocos registros que se alejan hacia la derecha muestran que existen pocas mediciones con una alteración de voz severa. La forma de esta gráfica es idéntica a la de Jitter(...), lo que confirma que ambas variables miden prácticamente lo mismo y que será necesario combinarlas o seleccionar solo una durante la ingeniería de características para no duplicar información.
 
 **`Jitter.RAP`:** Esta variable repite el mismo patrón de acumulación en valores bajos, situando su punto más alto muy cerca de cero (entre 0.001 y 0.005) y cayendo rápidamente hacia la derecha. Como esta métrica evalúa los cambios de frecuencia entre ciclos de voz cercanos, la falta de valores altos demuestra que solo un grupo reducido de pruebas presenta inestabilidad frecuente. Su parecido con los otros indicadores de frecuencia confirma que todas las variables de la familia Jitter están midiendo el mismo problema de trasfondo.
 
@@ -275,7 +275,7 @@ for (variable in variables_numericas) {
 
 **`RPDE`:** La medida de complejidad del tono muestra una distribución en forma de campana muy limpia y equilibrada, con su centro justo en el rango de 0.5 a 0.55. Los valores se extienden suavemente desde 0.25 hasta 0.75, lo que indica que esta variable se comporta de forma bastante regular en la muestra sin concentraciones extremas en los bordes.
 
-**`DFA`:** El indicador de fractalidad de la señal presenta dos elevaciones muy claras: la primera y más alta está entre 0.6 y 0.63, mientras que la segunda se ubica entre 0.71 y 0.74. Esta separación en dos grupos principales sugiere que los pacientes se dividen en dos categorías según la estructura de sus frecuencias de voz.
+**`DFA`:** El indicador de fractalidad de la señal presenta dos elevaciones muy claras: la primera y más alta está entre 0.6 y 0.63, mientras que la segunda se ubica entre 0.71 y 0.74. Igual que con la severidad motora, cada paciente aporta unas 140 grabaciones con valores parecidos, así que los dos picos reflejan sobre todo la mezcla de pacientes con distintos niveles de DFA, más que dos grupos de pacientes bien definidos.
 
 **`PPE`:** La medida de variación en la frecuencia fundamental muestra una acumulación clara alrededor del rango de 0.18 a 0.22, donde alcanza su pico de máxima frecuencia. A partir de ese punto, la barra desciende de forma progresiva hacia la derecha, y unos pocos registros dispersos alcanzan valores cercanos a 0.6. Esto indica que la gran mayoría de los registros presentan un comportamiento relativamente estable en el tono, mientras que las variaciones más marcadas o inestables ocurren únicamente en un grupo reducido de pruebas.
 
@@ -316,7 +316,7 @@ for (variable in variables_numericas) {
 
 **`Shimmer` vs `motor_UPDRS`:** Se observa una relación positiva débil: cuando el shimmer aumenta, la severidad motora tiende a aumentar ligeramente.
 
-**`Shimmer.dB.` vs `motor_UPDRS`:** Se observa una relación positiva débil, la misma que la de Shimmer en escala de decibelios.
+**`Shimmer.dB.` vs `motor_UPDRS`:** Se observa una relación positiva débil, la misma que con Shimmer: las dos miden la variación de amplitud, una en escala lineal y la otra en decibelios.
 
 **`Shimmer.APQ3` vs `motor_UPDRS`:** No se observa una relación clara: la nube se concentra en valores bajos y cubre toda la escala.
 
