@@ -1,5 +1,5 @@
 --- 
-title: "Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo"
+title: "Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo"
 author: "Diego Payares y Salma Romero"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
@@ -12,7 +12,7 @@ lang: es
 nocite: |
   @tsanas2010, @little2009
 github-repo: DiegoxorG/libro_met_est
-description: "Análisis exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI): relación entre características demográficas, temporales y acústicas de la voz y la severidad motora (motor_UPDRS). Trabajo del curso Métodos Estadísticos, Universidad del Norte."
+description: "Modelado exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI), orientado al estudio de la relación entre características demográficas, temporales y acústicas de la voz y la severidad motora en pacientes con enfermedad de Parkinson. Trabajo del curso Métodos Estadísticos, Universidad del Norte."
 ---
 
 # Contexto del problema {-}
@@ -25,21 +25,21 @@ Para cada registro se dispone de información demográfica y temporal, como la e
 
 # Objetivo general {-}
 
-Analizar exploratoria e inferencialmente las características demográficas, temporales y biomédicas de la voz en pacientes con enfermedad de Parkinson, con el fin de evaluar su relación con la severidad del deterioro motor, identificando patrones de asociación y diferencias estadísticamente significativas entre los grupos analizados.
+Modelar exploratoria e inferencialmente las características demográficas, temporales y biomédicas de la voz en pacientes con enfermedad de Parkinson, con el fin de evaluar su relación con la severidad del deterioro motor, identificando patrones de asociación y diferencias estadísticamente significativas entre los grupos analizados.
 
 # Objetivos específicos {- #objetivos-especificos}
 
-1. Describir y visualizar la variable respuesta motor_UPDRS, las variables independientes numéricas y la variable categórica sexo mediante medidas estadísticas y gráficos univariados, con el propósito de identificar su distribución, tendencia central, dispersión y posibles valores atípicos.
+1. Describir y visualizar la severidad motora, las variables independientes numéricas y la variable categórica sexo mediante medidas estadísticas y gráficos univariados, con el propósito de identificar su distribución, tendencia central, dispersión y posibles valores atípicos.
 
-2. Analizar gráficamente la relación entre cada variable independiente numérica y la puntuación motora UPDRS, mediante gráficos de dispersión, con el fin de identificar patrones de asociación, tendencias y posibles valores atípicos.
+2. Analizar gráficamente la relación entre cada característica independiente numérica y la severidad motora mediante gráficos de dispersión, con el fin de identificar patrones de asociación, tendencias y posibles valores atípicos.
 
 3. Explorar la relación entre pares de variables independientes numéricas mediante gráficos de dispersión y la matriz de correlaciones, con el propósito de identificar asociaciones lineales y redundancias entre las características demográficas, temporales y biomédicas de la voz.
 
-4. Construir, mediante ingeniería de características, nuevas variables que resuman las familias de medidas acústicas altamente correlacionadas (jitter y shimmer), y describirlas mediante medidas estadísticas y gráficos univariados.
+4. Construir, mediante ingeniería de características, nuevas variables que resuman las familias de medidas acústicas altamente correlacionadas y describirlas mediante medidas estadísticas y gráficos univariados.
 
 5. Evaluar, a nivel de paciente, los supuestos de normalidad, homocedasticidad y frecuencias esperadas mínimas necesarios para la aplicación de las pruebas de hipótesis seleccionadas, mediante procedimientos gráficos y pruebas formales, determinando la pertinencia de utilizar métodos paramétricos o no paramétricos.
 
-6. Determinar, mediante pruebas de hipótesis, si existen diferencias estadísticamente significativas en la severidad motora (motor_UPDRS) según el sexo, el grupo de edad y el nivel de inestabilidad vocal de los pacientes, y entre el inicio y el final del periodo de seguimiento; si cada característica demográfica o acústica se correlaciona significativamente con la severidad motora; y si el nivel de severidad motora (alto o bajo) está asociado con el grupo de edad y el sexo.
+6. Determinar, mediante pruebas de hipótesis, si existen diferencias estadísticamente significativas en la severidad motora según el sexo, el grupo de edad y el nivel de inestabilidad vocal de los pacientes, y entre el inicio y el final del periodo de seguimiento; si cada característica demográfica o acústica se correlaciona significativamente con la severidad motora; y si el nivel de severidad motora (alto o bajo) está asociado con el grupo de edad y el sexo.
 
 7. Cuantificar la magnitud de las diferencias y correlaciones encontradas mediante medidas de tamaño del efecto apropiadas según el tipo de prueba utilizada (d de Cohen, el coeficiente de correlación o la V de Cramer), con el propósito de complementar la significancia estadística con una medida de relevancia práctica.
 
