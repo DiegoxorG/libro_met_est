@@ -1,6 +1,6 @@
 Package: libro.met.est
 Type: Book
-Title: Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo
+Title: Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo
 Version: 0.1.0
 Authors@R: c(person("Diego", "Payares", role = c("aut", "cre")),
              person("Salma", "Romero", role = "aut"))

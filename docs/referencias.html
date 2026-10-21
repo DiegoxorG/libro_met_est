@@ -4,26 +4,26 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Referencias | Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo</title>
-  <meta name="description" content="Análisis exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI): relación entre características demográficas, temporales y acústicas de la voz y la severidad motora (motor_UPDRS). Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
+  <title>Referencias | Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo</title>
+  <meta name="description" content="Modelado exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI), orientado al estudio de la relación entre características demográficas, temporales y acústicas de la voz y la severidad motora en pacientes con enfermedad de Parkinson. Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
   <meta name="generator" content="bookdown 0.47 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Referencias | Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo" />
+  <meta property="og:title" content="Referencias | Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo" />
   <meta property="og:type" content="book" />
   
-  <meta property="og:description" content="Análisis exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI): relación entre características demográficas, temporales y acústicas de la voz y la severidad motora (motor_UPDRS). Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
+  <meta property="og:description" content="Modelado exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI), orientado al estudio de la relación entre características demográficas, temporales y acústicas de la voz y la severidad motora en pacientes con enfermedad de Parkinson. Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
   <meta name="github-repo" content="DiegoxorG/libro_met_est" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Referencias | Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo" />
+  <meta name="twitter:title" content="Referencias | Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo" />
   
-  <meta name="twitter:description" content="Análisis exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI): relación entre características demográficas, temporales y acústicas de la voz y la severidad motora (motor_UPDRS). Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
+  <meta name="twitter:description" content="Modelado exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI), orientado al estudio de la relación entre características demográficas, temporales y acústicas de la voz y la severidad motora en pacientes con enfermedad de Parkinson. Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
   
 
 <meta name="author" content="Diego Payares y Salma Romero" />
 
 
-<meta name="date" content="2026-09-17" />
+<meta name="date" content="2026-10-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -52,6 +52,10 @@
 <link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
 <link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<link href="libs/bsTable-3.3.7/bootstrapTable.min.css" rel="stylesheet" />
+<script src="libs/bsTable-3.3.7/bootstrapTable.js"></script>
 
 
 <style type="text/css">
@@ -174,13 +178,13 @@ div.csl-indent {
 <li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#histograma"><i class="fa fa-check"></i><b>1.1.2</b> Histograma</a></li>
 <li class="chapter" data-level="1.1.3" data-path="intro.html"><a href="intro.html#diagrama-de-caja"><i class="fa fa-check"></i><b>1.1.3</b> Diagrama de caja</a></li>
 </ul></li>
-<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#caracterizaci%C3%B3n-de-las-variables-num%C3%A9ricas"><i class="fa fa-check"></i><b>1.2</b> Caracterización de las variables numéricas</a>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#variables-independientes-num%C3%A9ricas"><i class="fa fa-check"></i><b>1.2</b> Variables independientes numéricas</a>
 <ul>
 <li class="chapter" data-level="1.2.1" data-path="intro.html"><a href="intro.html#resumen-estad%C3%ADstico-por-variable"><i class="fa fa-check"></i><b>1.2.1</b> Resumen estadístico por variable</a></li>
 <li class="chapter" data-level="1.2.2" data-path="intro.html"><a href="intro.html#histogramas"><i class="fa fa-check"></i><b>1.2.2</b> Histogramas</a></li>
 <li class="chapter" data-level="1.2.3" data-path="intro.html"><a href="intro.html#dispersi%C3%B3n-frente-a-motor_updrs"><i class="fa fa-check"></i><b>1.2.3</b> Dispersión frente a <code>motor_UPDRS</code></a></li>
 </ul></li>
-<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#caracterizaci%C3%B3n-de-la-variable-categ%C3%B3rica-sex"><i class="fa fa-check"></i><b>1.3</b> Caracterización de la variable categórica <code>sex</code></a>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#variable-independiente-categ%C3%B3rica-sex"><i class="fa fa-check"></i><b>1.3</b> Variable independiente categórica <code>sex</code></a>
 <ul>
 <li class="chapter" data-level="1.3.1" data-path="intro.html"><a href="intro.html#distribuci%C3%B3n-por-registros-y-por-pacientes"><i class="fa fa-check"></i><b>1.3.1</b> Distribución por registros y por pacientes</a></li>
 <li class="chapter" data-level="1.3.2" data-path="intro.html"><a href="intro.html#severidad-motora-seg%C3%BAn-el-sexo"><i class="fa fa-check"></i><b>1.3.2</b> Severidad motora según el sexo</a></li>
@@ -202,7 +206,7 @@ div.csl-indent {
 <li class="chapter" data-level="2" data-path="inferencial.html"><a href="inferencial.html"><i class="fa fa-check"></i><b>2</b> Estadística inferencial</a>
 <ul>
 <li class="chapter" data-level="2.1" data-path="inferencial.html"><a href="inferencial.html#unidad-de-an%C3%A1lisis-tabla-por-paciente"><i class="fa fa-check"></i><b>2.1</b> Unidad de análisis: tabla por paciente</a></li>
-<li class="chapter" data-level="2.2" data-path="inferencial.html"><a href="inferencial.html#objetivo-1-severidad-motora-seg%C3%BAn-el-sexo"><i class="fa fa-check"></i><b>2.2</b> Severidad motora según el sexo</a>
+<li class="chapter" data-level="2.2" data-path="inferencial.html"><a href="inferencial.html#severidad-motora-seg%C3%BAn-el-sexo-1"><i class="fa fa-check"></i><b>2.2</b> Severidad motora según el sexo</a>
 <ul>
 <li class="chapter" data-level="2.2.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio"><i class="fa fa-check"></i><b>2.2.1</b> Análisis exploratorio</a></li>
 <li class="chapter" data-level="2.2.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad"><i class="fa fa-check"></i><b>2.2.2</b> Supuesto de normalidad</a></li>
@@ -211,7 +215,7 @@ div.csl-indent {
 <li class="chapter" data-level="2.2.5" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto"><i class="fa fa-check"></i><b>2.2.5</b> Tamaño del efecto</a></li>
 <li class="chapter" data-level="2.2.6" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n"><i class="fa fa-check"></i><b>2.2.6</b> Conclusión</a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="inferencial.html"><a href="inferencial.html#objetivo-2-severidad-motora-seg%C3%BAn-el-grupo-de-edad"><i class="fa fa-check"></i><b>2.3</b> Severidad motora según el grupo de edad</a>
+<li class="chapter" data-level="2.3" data-path="inferencial.html"><a href="inferencial.html#severidad-motora-seg%C3%BAn-el-grupo-de-edad"><i class="fa fa-check"></i><b>2.3</b> Severidad motora según el grupo de edad</a>
 <ul>
 <li class="chapter" data-level="2.3.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio-1"><i class="fa fa-check"></i><b>2.3.1</b> Análisis exploratorio</a></li>
 <li class="chapter" data-level="2.3.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad-1"><i class="fa fa-check"></i><b>2.3.2</b> Supuesto de normalidad</a></li>
@@ -221,7 +225,7 @@ div.csl-indent {
 <li class="chapter" data-level="2.3.6" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-1"><i class="fa fa-check"></i><b>2.3.6</b> Tamaño del efecto</a></li>
 <li class="chapter" data-level="2.3.7" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-1"><i class="fa fa-check"></i><b>2.3.7</b> Conclusión</a></li>
 </ul></li>
-<li class="chapter" data-level="2.4" data-path="inferencial.html"><a href="inferencial.html#objetivo-3-severidad-motora-seg%C3%BAn-el-nivel-de-inestabilidad-vocal"><i class="fa fa-check"></i><b>2.4</b> Severidad motora según el nivel de inestabilidad vocal</a>
+<li class="chapter" data-level="2.4" data-path="inferencial.html"><a href="inferencial.html#severidad-motora-seg%C3%BAn-el-nivel-de-inestabilidad-vocal"><i class="fa fa-check"></i><b>2.4</b> Severidad motora según el nivel de inestabilidad vocal</a>
 <ul>
 <li class="chapter" data-level="2.4.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio-2"><i class="fa fa-check"></i><b>2.4.1</b> Análisis exploratorio</a></li>
 <li class="chapter" data-level="2.4.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad-2"><i class="fa fa-check"></i><b>2.4.2</b> Supuesto de normalidad</a></li>
@@ -230,7 +234,7 @@ div.csl-indent {
 <li class="chapter" data-level="2.4.5" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-2"><i class="fa fa-check"></i><b>2.4.5</b> Tamaño del efecto</a></li>
 <li class="chapter" data-level="2.4.6" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-2"><i class="fa fa-check"></i><b>2.4.6</b> Conclusión</a></li>
 </ul></li>
-<li class="chapter" data-level="2.5" data-path="inferencial.html"><a href="inferencial.html#objetivo-4-evoluci%C3%B3n-de-la-severidad-motora-durante-el-seguimiento"><i class="fa fa-check"></i><b>2.5</b> Evolución de la severidad motora durante el seguimiento</a>
+<li class="chapter" data-level="2.5" data-path="inferencial.html"><a href="inferencial.html#evoluci%C3%B3n-de-la-severidad-motora-durante-el-seguimiento"><i class="fa fa-check"></i><b>2.5</b> Evolución de la severidad motora durante el seguimiento</a>
 <ul>
 <li class="chapter" data-level="2.5.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio-3"><i class="fa fa-check"></i><b>2.5.1</b> Análisis exploratorio</a></li>
 <li class="chapter" data-level="2.5.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad-de-las-diferencias"><i class="fa fa-check"></i><b>2.5.2</b> Supuesto de normalidad de las diferencias</a></li>
@@ -238,7 +242,7 @@ div.csl-indent {
 <li class="chapter" data-level="2.5.4" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-3"><i class="fa fa-check"></i><b>2.5.4</b> Tamaño del efecto</a></li>
 <li class="chapter" data-level="2.5.5" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-3"><i class="fa fa-check"></i><b>2.5.5</b> Conclusión</a></li>
 </ul></li>
-<li class="chapter" data-level="2.6" data-path="inferencial.html"><a href="inferencial.html#objetivo-5-correlaci%C3%B3n-entre-las-caracter%C3%ADsticas-y-la-severidad-motora"><i class="fa fa-check"></i><b>2.6</b> Correlación entre las características y la severidad motora</a>
+<li class="chapter" data-level="2.6" data-path="inferencial.html"><a href="inferencial.html#correlaci%C3%B3n-entre-las-caracter%C3%ADsticas-y-la-severidad-motora"><i class="fa fa-check"></i><b>2.6</b> Correlación entre las características y la severidad motora</a>
 <ul>
 <li class="chapter" data-level="2.6.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio-4"><i class="fa fa-check"></i><b>2.6.1</b> Análisis exploratorio</a></li>
 <li class="chapter" data-level="2.6.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad-3"><i class="fa fa-check"></i><b>2.6.2</b> Supuesto de normalidad</a></li>
@@ -246,7 +250,7 @@ div.csl-indent {
 <li class="chapter" data-level="2.6.4" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-4"><i class="fa fa-check"></i><b>2.6.4</b> Tamaño del efecto</a></li>
 <li class="chapter" data-level="2.6.5" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-4"><i class="fa fa-check"></i><b>2.6.5</b> Conclusión</a></li>
 </ul></li>
-<li class="chapter" data-level="2.7" data-path="inferencial.html"><a href="inferencial.html#objetivo-6-asociaci%C3%B3n-entre-el-nivel-de-severidad-motora-y-las-caracter%C3%ADsticas-categ%C3%B3ricas"><i class="fa fa-check"></i><b>2.7</b> Asociación entre el nivel de severidad motora y las características categóricas</a>
+<li class="chapter" data-level="2.7" data-path="inferencial.html"><a href="inferencial.html#asociaci%C3%B3n-entre-el-nivel-de-severidad-motora-y-las-caracter%C3%ADsticas-categ%C3%B3ricas"><i class="fa fa-check"></i><b>2.7</b> Asociación entre el nivel de severidad motora y las características categóricas</a>
 <ul>
 <li class="chapter" data-level="2.7.1" data-path="inferencial.html"><a href="inferencial.html#tabla-de-contingencia"><i class="fa fa-check"></i><b>2.7.1</b> Tabla de contingencia</a></li>
 <li class="chapter" data-level="2.7.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-frecuencias-esperadas"><i class="fa fa-check"></i><b>2.7.2</b> Supuesto: frecuencias esperadas</a></li>
@@ -272,7 +276,7 @@ div.csl-indent {
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Análisis de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo</a>
           </h1>
         </div>
 

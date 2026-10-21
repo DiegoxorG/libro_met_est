@@ -41,7 +41,8 @@ pacientes <- data %>%
 
 head(pacientes) %>%
   mutate(across(where(is.numeric), ~ round(.x, 2))) %>%
-  as.data.frame()
+  tabla("Primeras filas de la tabla por paciente.",
+        ancha = TRUE)
 ```
 
 ```{r inf-pacientes-resumen}
@@ -58,14 +59,28 @@ pacientes %>%
     curtosis = kurtosis(motor)
   ) %>%
   mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
-  as.data.frame()
+  tabla("Resumen de la severidad motora promedio por paciente.",
+        etiqueta = "inf-pacientes-motor",
+        col.names = c("n", "Media", "Desviación estándar", "Mediana", "RIC", "Mínimo",
+                      "Máximo", "Asimetría", "Curtosis"))
 
-table(pacientes$sex)
-table(pacientes$grupo_edad)
-table(jitter = pacientes$nivel_jitter, shimmer = pacientes$nivel_shimmer)
+pacientes %>%
+  count(sex) %>%
+  tabla("Pacientes según el sexo.", etiqueta = "inf-pacientes-sexo",
+        col.names = c("Sexo", "Pacientes"))
+
+pacientes %>%
+  count(grupo_edad) %>%
+  tabla("Pacientes según el grupo de edad.", etiqueta = "inf-pacientes-edad",
+        col.names = c("Grupo de edad", "Pacientes"))
+
+table(pacientes$nivel_jitter, pacientes$nivel_shimmer) %>%
+  as.data.frame.matrix() %>%
+  tabla("Pacientes según el nivel de jitter (filas) y el nivel de shimmer (columnas).",
+        etiqueta = "inf-pacientes-niveles")
 ```
 
-Quedan 42 pacientes: 28 hombres y 14 mujeres; 14, 15 y 13 por grupo de edad; y 21 con nivel alto y 21 con nivel bajo en cada índice (las dos clasificaciones coinciden en 32 pacientes, reflejo de la correlación de 0.71 entre los índices). La severidad promedio por paciente tiene media 20.95 y desviación estándar 7.88, la mitad de los pacientes está por debajo de 19.83 puntos, y los valores van de 5.82 a 35.99; es simétrica (asimetría 0.02) y algo plana (curtosis 1.92), sin las dos modas del nivel de registro, porque ahora cada paciente cuenta una sola vez.
+Quedan 42 pacientes: 28 hombres y 14 mujeres (Tabla \@ref(tab:inf-pacientes-sexo)); 14, 15 y 13 por grupo de edad (Tabla \@ref(tab:inf-pacientes-edad)); y 21 con nivel alto y 21 con nivel bajo en cada índice (Tabla \@ref(tab:inf-pacientes-niveles); las dos clasificaciones coinciden en 32 pacientes, reflejo de la correlación de 0.71 entre los índices). Según la Tabla \@ref(tab:inf-pacientes-motor), la severidad promedio por paciente tiene media de 20.95 puntos (desviación estándar de 7.88); el 50 % de los pacientes está por debajo de 19.83 puntos (rango intercuartílico de 13.1), y los valores van de 5.82 a 35.99; es simétrica (asimetría 0.02) y algo plana (curtosis 1.92), sin las dos modas del nivel de registro, porque ahora cada paciente cuenta una sola vez.
 
 Para ver el problema en concreto, comparamos `motor_UPDRS` por sexo en los dos niveles:
 
@@ -78,10 +93,11 @@ tibble(
               cohen.d(motor ~ sex, data = pacientes)$estimate)
 ) %>%
   mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
-  as.data.frame()
+  tabla("Prueba t por sexo a nivel de registro y a nivel de paciente.",
+        col.names = c("Nivel", "p-valor de la prueba t", "d de Cohen"))
 ```
 
-A nivel de registro sale p = 0.019 con un efecto despreciable (d = 0.07): la "significancia" viene solo de contar a cada paciente unas 140 veces. Por paciente, con una diferencia parecida, p = 0.72. Todo lo que sigue usa la tabla `pacientes`.
+En la Tabla \@ref(tab:inf-pseudorreplicacion) se ve que a nivel de registro sale p = 0.019 con un efecto despreciable (d = 0.07): la "significancia" viene solo de contar a cada paciente unas 140 veces. Por paciente, con una diferencia parecida, p = 0.72. Todo lo que sigue usa la tabla `pacientes`.
 
 Para no repetir código, definimos dos funciones: el resumen descriptivo por grupo y las tres pruebas de normalidad (Shapiro-Wilk, Kolmogorov-Smirnov sobre datos estandarizados y Lilliefors).
 
@@ -117,6 +133,12 @@ normalidad_grupo <- function(datos, grupo, variable = "motor") {
     mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
     as.data.frame()
 }
+
+columnas_resumen <- c("Grupo", "n", "Media", "Desviación estándar", "Mediana", "RIC",
+                      "Mínimo", "Máximo")
+columnas_normalidad <- c("Grupo", "n", "W (Shapiro-Wilk)", "p Shapiro-Wilk",
+                         "D (Kolmogorov-Smirnov)", "p Kolmogorov-Smirnov",
+                         "D (Lilliefors)", "p Lilliefors")
 ```
 
 ## Severidad motora según el sexo
@@ -128,7 +150,9 @@ $$H_0: \mu_{\text{Masculino}} = \mu_{\text{Femenino}} \qquad H_1: \mu_{\text{Mas
 ### Análisis exploratorio
 
 ```{r inf-sexo-resumen}
-resumen_grupo(pacientes, "sex")
+resumen_grupo(pacientes, "sex") %>%
+  tabla("Severidad motora promedio por paciente según el sexo.",
+        col.names = columnas_resumen)
 ```
 
 ```{r inf-sexo-boxplot, fig.cap="Severidad motora promedio por paciente según el sexo."}
@@ -143,15 +167,17 @@ pacientes %>%
   theme_minimal()
 ```
 
-Los 28 hombres promedian 21.27 puntos (desviación 7.74) y las 14 mujeres 20.33 (desviación 8.4); la mitad de los hombres supera los 21.37 puntos y la mitad de las mujeres los 19.7. La diferencia no llega a un punto, las cajas se solapan casi por completo y no hay atípicos.
+En la Tabla \@ref(tab:inf-sexo-resumen) se ve que los 28 hombres promedian 21.27 puntos (desviación estándar de 7.74) y las 14 mujeres 20.33 (desviación estándar de 8.4). El 50 % de los hombres supera los 21.37 puntos (rango intercuartílico de 11.89) y el 50 % de las mujeres los 19.7 (rango intercuartílico de 13.29). La diferencia no llega a un punto, y en la Figura \@ref(fig:inf-sexo-boxplot) se observa que las cajas se solapan casi por completo y no hay atípicos.
 
 ### Supuesto de normalidad
 
 ```{r inf-sexo-normalidad}
-normalidad_grupo(pacientes, "sex")
+normalidad_grupo(pacientes, "sex") %>%
+  tabla("Pruebas de normalidad de la severidad motora según el sexo.",
+        col.names = columnas_normalidad)
 ```
 
-Ninguna prueba rechaza la normalidad: Shapiro-Wilk da p = 0.663 en hombres y p = 0.318 en mujeres, y Kolmogorov-Smirnov y Lilliefors coinciden (p entre 0.3 y 0.87). Asumimos normalidad en ambos grupos.
+Ninguna prueba rechaza la normalidad (Tabla \@ref(tab:inf-sexo-normalidad)): Shapiro-Wilk da p = 0.663 en hombres y p = 0.318 en mujeres, y Kolmogorov-Smirnov y Lilliefors coinciden (p entre 0.3 y 0.87). Asumimos normalidad en ambos grupos.
 
 ### Supuesto de homocedasticidad
 
@@ -213,7 +239,9 @@ $$H_0: \mu_{<60} = \mu_{60-70} = \mu_{>70} \qquad H_1: \text{al menos una media 
 ### Análisis exploratorio
 
 ```{r inf-edad-resumen}
-resumen_grupo(pacientes, "grupo_edad")
+resumen_grupo(pacientes, "grupo_edad") %>%
+  tabla("Severidad motora promedio por paciente según el grupo de edad.",
+        col.names = columnas_resumen)
 ```
 
 ```{r inf-edad-boxplot, fig.cap="Severidad motora promedio por paciente según el grupo de edad."}
@@ -228,15 +256,17 @@ pacientes %>%
   theme_minimal()
 ```
 
-La severidad sube con la edad: 18.24 puntos en los menores de 60, 19.96 entre 60 y 70 y 25.02 en los mayores de 70, casi 7 puntos entre los extremos. Lo mismo se ve en los valores que parten cada grupo por la mitad: el 50 % de los menores de 60 está por debajo de 15.71 puntos, el 50 % del grupo intermedio por debajo de 19.77 y el 50 % de los mayores de 70 por debajo de 26.4. Las desviaciones estándar son parecidas (7.33, 8.27 y 6.81), el grupo mayor es el más homogéneo y no hay atípicos.
+En la Tabla \@ref(tab:inf-edad-resumen) y la Figura \@ref(fig:inf-edad-boxplot) se observa que la severidad sube con la edad: 18.24 puntos en los menores de 60 (desviación estándar de 7.33), 19.96 entre 60 y 70 (desviación estándar de 8.27) y 25.02 en los mayores de 70 (desviación estándar de 6.81), casi 7 puntos entre los extremos. Lo mismo se ve en los valores que parten cada grupo por la mitad: el 50 % de los menores de 60 está por debajo de 15.71 puntos (rango intercuartílico de 11.79), el 50 % del grupo intermedio por debajo de 19.77 (rango intercuartílico de 12.54) y el 50 % de los mayores de 70 por debajo de 26.4 (rango intercuartílico de 9.65). Las desviaciones estándar son parecidas, el grupo mayor es el más homogéneo y no hay atípicos.
 
 ### Supuesto de normalidad
 
 ```{r inf-edad-normalidad}
-normalidad_grupo(pacientes, "grupo_edad")
+normalidad_grupo(pacientes, "grupo_edad") %>%
+  tabla("Pruebas de normalidad de la severidad motora según el grupo de edad.",
+        col.names = columnas_normalidad)
 ```
 
-Shapiro-Wilk no rechaza en ningún grupo (p = 0.105, 0.964 y 0.257) y Kolmogorov-Smirnov tampoco. Solo Lilliefors queda al límite en los menores de 60 (p = 0.049). Como Shapiro-Wilk, la prueba más potente en muestras pequeñas, no rechaza, y el ANOVA es robusto a desvíos moderados con grupos de tamaño parecido, asumimos normalidad.
+En la Tabla \@ref(tab:inf-edad-normalidad), Shapiro-Wilk no rechaza en ningún grupo (p = 0.105, 0.964 y 0.257) y Kolmogorov-Smirnov tampoco. Solo Lilliefors queda al límite en los menores de 60 (p = 0.049). Como Shapiro-Wilk, la prueba más potente en muestras pequeñas, no rechaza, y el ANOVA es robusto a desvíos moderados con grupos de tamaño parecido, asumimos normalidad.
 
 ### Supuesto de homocedasticidad
 
@@ -304,8 +334,13 @@ $$H_0: \mu_{\text{Alto}} = \mu_{\text{Bajo}} \qquad H_1: \mu_{\text{Alto}} \neq 
 ### Análisis exploratorio
 
 ```{r inf-voz-resumen}
-resumen_grupo(pacientes, "nivel_jitter")
-resumen_grupo(pacientes, "nivel_shimmer")
+resumen_grupo(pacientes, "nivel_jitter") %>%
+  tabla("Severidad motora promedio por paciente según el nivel del índice de jitter.",
+        etiqueta = "inf-voz-resumen-jitter", col.names = columnas_resumen)
+
+resumen_grupo(pacientes, "nivel_shimmer") %>%
+  tabla("Severidad motora promedio por paciente según el nivel del índice de shimmer.",
+        etiqueta = "inf-voz-resumen-shimmer", col.names = columnas_resumen)
 ```
 
 ```{r inf-voz-boxplot, fig.width=10, fig.height=4.5, fig.cap="Severidad motora promedio por paciente según el nivel de los índices de jitter y shimmer."}
@@ -332,16 +367,21 @@ p_shimmer <- pacientes %>%
 p_jitter + p_shimmer
 ```
 
-Con jitter alto la severidad promedio es 22.66 frente a 19.24 con jitter bajo, 3.4 puntos de diferencia, con dispersiones casi iguales. La diferencia es mayor en el centro de cada grupo: la mitad de los pacientes con jitter alto supera los 24.5 puntos, mientras que la mitad de los de jitter bajo no llega a 18.99. Con el shimmer la brecha es menor: 21.71 frente a 20.2. En los cuatro grupos el rango es amplio, no hay atípicos y las cajas se solapan bastante.
+Según la Tabla \@ref(tab:inf-voz-resumen-jitter), con jitter alto la severidad promedio es 22.66 (desviación estándar de 7.63) frente a 19.24 con jitter bajo (desviación estándar de 7.94), 3.4 puntos de diferencia con dispersiones casi iguales. La diferencia es mayor en el centro de cada grupo: el 50 % de los pacientes con jitter alto supera los 24.5 puntos (rango intercuartílico de 12.23), mientras que el 50 % de los de jitter bajo no llega a 18.99 (rango intercuartílico de 12.94). Con el shimmer la brecha es menor (Tabla \@ref(tab:inf-voz-resumen-shimmer)): 21.71 (desviación estándar de 7.59) frente a 20.2 (desviación estándar de 8.27). En la Figura \@ref(fig:inf-voz-boxplot) se observa que en los cuatro grupos el rango es amplio, no hay atípicos y las cajas se solapan bastante.
 
 ### Supuesto de normalidad
 
 ```{r inf-voz-normalidad}
-normalidad_grupo(pacientes, "nivel_jitter")
-normalidad_grupo(pacientes, "nivel_shimmer")
+normalidad_grupo(pacientes, "nivel_jitter") %>%
+  tabla("Pruebas de normalidad según el nivel del índice de jitter.",
+        etiqueta = "inf-voz-normalidad-jitter", col.names = columnas_normalidad)
+
+normalidad_grupo(pacientes, "nivel_shimmer") %>%
+  tabla("Pruebas de normalidad según el nivel del índice de shimmer.",
+        etiqueta = "inf-voz-normalidad-shimmer", col.names = columnas_normalidad)
 ```
 
-Nada rechaza la normalidad: Shapiro-Wilk da p = 0.287 y 0.645 para jitter bajo y alto, y 0.132 y 0.785 para shimmer; las otras dos pruebas superan 0.2 en todos los casos.
+Nada rechaza la normalidad (Tablas \@ref(tab:inf-voz-normalidad-jitter) y \@ref(tab:inf-voz-normalidad-shimmer)): Shapiro-Wilk da p = 0.287 y 0.645 para jitter bajo y alto, y 0.132 y 0.785 para shimmer; las otras dos pruebas superan 0.2 en todos los casos.
 
 ### Supuesto de homocedasticidad
 
@@ -396,12 +436,23 @@ Con una confianza del 95 %, no hay evidencia de que la severidad motora difiera 
 
 ## Evolución de la severidad motora durante el seguimiento
 
-¿Cambia la severidad motora entre la primera y la última grabación de cada paciente? Las separan entre 153 y 204 días; en la mitad de los pacientes, 170 días o más, es decir, unos seis meses. Como son dos medidas del mismo paciente, los datos son pareados y la hipótesis se plantea sobre la media de las diferencias:
+¿Cambia la severidad motora entre la primera y la última grabación de cada paciente? Las separan entre 153 y 204 días; en el 50 % de los pacientes, 170 días o más (rango intercuartílico de 7.76 días), es decir, unos seis meses (Tabla \@ref(tab:inf-pareado-dias)). Como son dos medidas del mismo paciente, los datos son pareados y la hipótesis se plantea sobre la media de las diferencias:
 
 $$H_0: \mu_{\text{final} - \text{inicio}} = 0 \qquad H_1: \mu_{\text{final} - \text{inicio}} \neq 0$$
 
 ```{r inf-pareado-dias}
-summary(pacientes$dias_seguimiento)
+pacientes %>%
+  summarise(
+    minimo = min(dias_seguimiento),
+    Q1 = quantile(dias_seguimiento, 0.25),
+    mediana = median(dias_seguimiento),
+    RIC = IQR(dias_seguimiento),
+    Q3 = quantile(dias_seguimiento, 0.75),
+    maximo = max(dias_seguimiento)
+  ) %>%
+  mutate(across(everything(), ~ round(.x, 2))) %>%
+  tabla("Días entre la primera y la última grabación de cada paciente.",
+        col.names = c("Mínimo", "Q1", "Mediana", "RIC", "Q3", "Máximo"))
 ```
 
 ### Análisis exploratorio
@@ -425,7 +476,13 @@ pacientes %>%
     max_final = max(motor_final)
   ) %>%
   mutate(across(everything(), ~ round(.x, 3))) %>%
-  as.data.frame()
+  pivot_longer(-n, names_to = c(".value", "momento"), names_pattern = "(.*)_(inicio|final)") %>%
+  mutate(momento = if_else(momento == "inicio", "Primera grabación", "Última grabación")) %>%
+  select(momento, n, everything()) %>%
+  tabla("Severidad motora en la primera y la última grabación de cada paciente.",
+        etiqueta = "inf-pareado-momentos",
+        col.names = c("Momento", "n", "Media", "Desviación estándar", "Mediana",
+                      "Mínimo", "Máximo"))
 
 pacientes %>%
   summarise(
@@ -433,13 +490,17 @@ pacientes %>%
     promedio_diferencia = mean(diferencia),
     sd_diferencia = sd(diferencia),
     mediana_diferencia = median(diferencia),
+    RIC_diferencia = IQR(diferencia),
     min_diferencia = min(diferencia),
     max_diferencia = max(diferencia),
     pacientes_que_aumentan = sum(diferencia > 0),
     pacientes_que_disminuyen = sum(diferencia < 0)
   ) %>%
   mutate(across(everything(), ~ round(.x, 3))) %>%
-  as.data.frame()
+  tabla("Diferencias final - inicio de la severidad motora por paciente.",
+        etiqueta = "inf-pareado-diferencias",
+        col.names = c("n", "Media", "Desviación estándar", "Mediana", "RIC", "Mínimo",
+                      "Máximo", "Pacientes que aumentan", "Pacientes que disminuyen"))
 ```
 
 ```{r inf-pareado-grafico, fig.width=10, fig.height=4.5, fig.cap="Severidad motora en la primera y la última grabación de cada paciente, y distribución de las diferencias."}
@@ -477,7 +538,7 @@ p_diferencias <- pacientes %>%
 p_trayectorias + p_diferencias
 ```
 
-La severidad promedio pasa de 19.58 puntos en la primera grabación a 21.65 en la última: un aumento medio de 2.08 puntos (desviación 6.23); en la mitad de los pacientes el cambio supera los 2.05 puntos. No es parejo: 27 de los 42 pacientes (64 %) empeoran y 15 mejoran, con cambios individuales entre -13.12 y 14.7 puntos, como se ve en las trayectorias.
+Según las Tablas \@ref(tab:inf-pareado-momentos) y \@ref(tab:inf-pareado-diferencias), la severidad promedio pasa de 19.58 puntos en la primera grabación a 21.65 en la última: un aumento medio de 2.08 puntos (desviación estándar de 6.23); en el 50 % de los pacientes el cambio supera los 2.05 puntos (rango intercuartílico de 7.16). No es parejo: 27 de los 42 pacientes (64 %) empeoran y 15 mejoran, con cambios individuales entre -13.12 y 14.7 puntos, como se observa en las trayectorias de la Figura \@ref(fig:inf-pareado-grafico).
 
 ### Supuesto de normalidad de las diferencias
 
@@ -555,7 +616,7 @@ pacientes %>%
   theme_minimal()
 ```
 
-Con un punto por paciente se observan relaciones positivas débiles con la edad, `PPE` y `RPDE` (cuando aumentan, la severidad tiende a aumentar) y negativas débiles con `HNR` y `DFA` (cuando aumentan, la severidad tiende a disminuir). Con los índices de inestabilidad y `NHR` no se aprecia una relación clara.
+En la Figura \@ref(fig:inf-cor-dispersion), con un punto por paciente, se observan relaciones positivas débiles con la edad, `PPE` y `RPDE` (cuando aumentan, la severidad tiende a aumentar) y negativas débiles con `HNR` y `DFA` (cuando aumentan, la severidad tiende a disminuir). Con los índices de inestabilidad y `NHR` no se aprecia una relación clara.
 
 ### Supuesto de normalidad
 
@@ -569,10 +630,11 @@ tibble(
 ) %>%
   mutate(across(where(is.numeric), ~ round(.x, 3)),
          metodo = if_else(p_shapiro > 0.05, "Pearson", "Spearman")) %>%
-  as.data.frame()
+  tabla("Normalidad de cada variable a nivel de paciente y método de correlación que corresponde.",
+        col.names = c("Variable", "p Shapiro-Wilk", "Asimetría", "Método"))
 ```
 
-La severidad motora, la edad y `RPDE` pasan Shapiro-Wilk (p = 0.255, 0.317 y 0.946), así que con ellas la correlación de Pearson es válida. El resto no: los índices de jitter y shimmer, `NHR`, `HNR`, `DFA` y `PPE` conservan la asimetría fuerte que ya tenían a nivel de registro, y para ellas la referencia es Spearman. En la tabla siguiente mostramos las dos, de modo que se vea cuánto cambia el resultado con el método.
+En la Tabla \@ref(tab:inf-cor-normalidad) se ve que la severidad motora, la edad y `RPDE` pasan Shapiro-Wilk (p = 0.255, 0.317 y 0.946), así que con ellas la correlación de Pearson es válida. El resto no: los índices de jitter y shimmer, `NHR`, `HNR`, `DFA` y `PPE` conservan la asimetría fuerte que ya tenían a nivel de registro, y para ellas la referencia es Spearman. En la Tabla \@ref(tab:inf-cor-pruebas) mostramos las dos, de modo que se vea cuánto cambia el resultado con el método.
 
 ### Prueba de hipótesis: correlación de Pearson y de Spearman
 
@@ -595,7 +657,9 @@ resultados_cor <- map_dfr(variables_cor, function(v) {
   mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
   as.data.frame()
 
-resultados_cor
+tabla(resultados_cor, "Correlaciones de Pearson y de Spearman de cada característica con la severidad motora.",
+      col.names = c("Variable", "r de Pearson", "IC inferior", "IC superior", "p Pearson",
+                    "rho de Spearman", "p Spearman", "p Pearson (Holm)"))
 ```
 
 Como la edad es la que más se acerca a la significancia, mostramos su `cor.test` completo:
@@ -620,10 +684,12 @@ resultados_cor %>%
                          abs(r_pearson) < 0.5 ~ "débil",
                          abs(r_pearson) < 0.75 ~ "moderada",
                          TRUE ~ "muy fuerte")
-  )
+  ) %>%
+  tabla("Magnitud de cada correlación de Pearson con la severidad motora.",
+        col.names = c("Variable", "r de Pearson", "r²", "Magnitud"))
 ```
 
-La edad (r = 0.3), `PPE` (0.26) y `HNR` (-0.25) son correlaciones débiles: comparten con la severidad motora entre el 6 % y el 9 % de su variabilidad. `RPDE` (0.24), los índices de jitter y shimmer, `NHR` y `DFA` quedan por debajo de 0.25, sin correlación o muy débil, y explican menos del 6 % de la variabilidad.
+Según la Tabla \@ref(tab:inf-cor-efecto), la edad (r = 0.3), `PPE` (0.26) y `HNR` (-0.25) son correlaciones débiles: comparten con la severidad motora entre el 6 % y el 9 % de su variabilidad. `RPDE` (0.24), los índices de jitter y shimmer, `NHR` y `DFA` quedan por debajo de 0.25, sin correlación o muy débil, y explican menos del 6 % de la variabilidad.
 
 ### Conclusión
 
@@ -643,9 +709,16 @@ pacientes <- pacientes %>%
                             levels = c("Baja", "Alta")))
 
 tabla_edad_severidad <- table(pacientes$grupo_edad, pacientes$severidad)
-tabla_edad_severidad
 
-round(prop.table(tabla_edad_severidad, margin = 1) * 100, 1)
+tabla_edad_severidad %>%
+  as.data.frame.matrix() %>%
+  tabla("Pacientes según el grupo de edad (filas) y el nivel de severidad (columnas).",
+        etiqueta = "inf-chi-frecuencias")
+
+round(prop.table(tabla_edad_severidad, margin = 1) * 100, 1) %>%
+  as.data.frame.matrix() %>%
+  tabla("Porcentaje de pacientes con severidad baja y alta dentro de cada grupo de edad.",
+        etiqueta = "inf-chi-porcentajes")
 ```
 
 ```{r inf-chi-grafico, fig.height=4, fig.cap="Nivel de severidad motora según el grupo de edad."}
@@ -664,7 +737,7 @@ pacientes %>%
   theme_minimal()
 ```
 
-La proporción de pacientes con severidad alta sube con la edad: 5 de 14 (36 %) en los menores de 60, 7 de 15 (47 %) entre 60 y 70 y 9 de 13 (69 %) en los mayores de 70. La tabla apunta en la misma dirección que el ANOVA por grupo de edad; falta ver si la diferencia es mayor de lo que produciría el azar.
+En la Tabla \@ref(tab:inf-chi-frecuencias) y la Figura \@ref(fig:inf-chi-grafico) se observa que la proporción de pacientes con severidad alta sube con la edad: 5 de 14 (36 %) en los menores de 60, 7 de 15 (47 %) entre 60 y 70 y 9 de 13 (69 %) en los mayores de 70. La tabla apunta en la misma dirección que el ANOVA por grupo de edad; falta ver si la diferencia es mayor de lo que produciría el azar.
 
 ### Supuesto: frecuencias esperadas
 
@@ -672,11 +745,14 @@ Bajo $H_0$, la frecuencia esperada de cada celda es (total de la fila × total d
 
 ```{r inf-chi-esperados}
 prueba_chi_edad <- chisq.test(tabla_edad_severidad, correct = FALSE)
-round(prueba_chi_edad$expected, 2)
+round(prueba_chi_edad$expected, 2) %>%
+  as.data.frame() %>%
+  tabla("Frecuencias esperadas bajo independencia entre el grupo de edad y el nivel de severidad.")
+
 min(prueba_chi_edad$expected)
 ```
 
-La menor frecuencia esperada es 6.5, así que el supuesto se cumple y la prueba es válida.
+La menor frecuencia esperada es 6.5 (Tabla \@ref(tab:inf-chi-esperados)), así que el supuesto se cumple y la prueba es válida.
 
 ### Prueba de hipótesis: chi-cuadrado de independencia
 
@@ -701,13 +777,16 @@ V = 0.27, un efecto entre pequeño y medio, coherente con lo que mostró el ANOV
 
 ```{r inf-chi-sexo}
 tabla_sexo_severidad <- table(pacientes$sex, pacientes$severidad)
-tabla_sexo_severidad
+
+tabla_sexo_severidad %>%
+  as.data.frame.matrix() %>%
+  tabla("Pacientes según el sexo (filas) y el nivel de severidad (columnas).")
 
 chisq.test(tabla_sexo_severidad, correct = FALSE)
 cramer_v(tabla_sexo_severidad, correct = FALSE)
 ```
 
-La tabla queda exactamente balanceada: 14 hombres y 7 mujeres en cada nivel, es decir, la mitad de cada sexo con severidad alta. El chi-cuadrado es 0 (p = 1) y la V de Cramer es 0: el sexo y el nivel de severidad son independientes, lo mismo que mostró la prueba t por sexo.
+La Tabla \@ref(tab:inf-chi-sexo) queda exactamente balanceada: 14 hombres y 7 mujeres en cada nivel, es decir, la mitad de cada sexo con severidad alta. El chi-cuadrado es 0 (p = 1) y la V de Cramer es 0: el sexo y el nivel de severidad son independientes, lo mismo que mostró la prueba t por sexo.
 
 ### Conclusión
 
@@ -744,7 +823,9 @@ tibble(
 ) %>%
   mutate(decision = if_else(p_valor < 0.05, "Se rechaza H0", "No se rechaza H0"),
          across(where(is.numeric), ~ round(.x, 3))) %>%
-  as.data.frame()
+  tabla("Síntesis de las pruebas de hipótesis.",
+        col.names = c("Objetivo", "Prueba", "Estadístico", "p-valor", "Tamaño del efecto",
+                      "Medida", "Decisión"))
 ```
 
-Solo la comparación entre el inicio y el final del seguimiento resulta significativa: la severidad motora sube en promedio 2.08 puntos en seis meses, con un efecto pequeño. El sexo y el shimmer no se asocian con la severidad ni estadística ni prácticamente. Los otros dos resultados muestran la diferencia entre significancia y relevancia: el grupo de edad (d = 0.96 entre los grupos extremos, casi 7 puntos) y el jitter (d = 0.44, 3.4 puntos) tienen efectos apreciables que con 42 pacientes no cruzan el umbral del 5 % en las pruebas paramétricas, aunque en el caso de la edad la no paramétrica sí lo hace por poco. Las pruebas de correlación apuntan en la misma dirección: la edad alcanza una correlación débil, significativa con Spearman y marginal con Pearson (r = 0.3); entre las medidas acústicas solo `NHR` resulta significativa, y únicamente con Spearman (ρ = 0.32), mientras que las demás quedan en correlaciones débiles o muy débiles. El chi-cuadrado cuenta la misma historia en versión categórica: la proporción de pacientes con severidad alta casi se duplica entre los menores de 60 y los mayores de 70 (V de Cramer = 0.27), sin alcanzar la significancia (p = 0.209), y el sexo no se asocia con el nivel de severidad (V = 0). En conjunto, la edad y el paso del tiempo son lo que más claramente se vincula con la severidad motora; la voz, tal como la analizamos aquí, guarda con ella una relación débil.
+La Tabla \@ref(tab:inf-sintesis) reúne todas las pruebas. Solo la comparación entre el inicio y el final del seguimiento resulta significativa: la severidad motora sube en promedio 2.08 puntos en seis meses, con un efecto pequeño. El sexo y el shimmer no se asocian con la severidad ni estadística ni prácticamente. Los otros dos resultados muestran la diferencia entre significancia y relevancia: el grupo de edad (d = 0.96 entre los grupos extremos, casi 7 puntos) y el jitter (d = 0.44, 3.4 puntos) tienen efectos apreciables que con 42 pacientes no cruzan el umbral del 5 % en las pruebas paramétricas, aunque en el caso de la edad la no paramétrica sí lo hace por poco. Las pruebas de correlación apuntan en la misma dirección: la edad alcanza una correlación débil, significativa con Spearman y marginal con Pearson (r = 0.3); entre las medidas acústicas solo `NHR` resulta significativa, y únicamente con Spearman (ρ = 0.32), mientras que las demás quedan en correlaciones débiles o muy débiles. El chi-cuadrado cuenta la misma historia en versión categórica: la proporción de pacientes con severidad alta casi se duplica entre los menores de 60 y los mayores de 70 (V de Cramer = 0.27), sin alcanzar la significancia (p = 0.209), y el sexo no se asocia con el nivel de severidad (V = 0). En conjunto, la edad y el paso del tiempo son lo que más claramente se vincula con la severidad motora; la voz, tal como la analizamos aquí, guarda con ella una relación débil.

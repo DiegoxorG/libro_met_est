@@ -6,27 +6,75 @@ library(tidyverse)
 library(moments)
 library(patchwork)
 library(dplyr)
+library(kableExtra)
 ```
 
+Para que todas las salidas en forma de tabla se lean igual, definimos una función que las presenta con `kableExtra`, con un título numerado; las tablas muy anchas se pueden desplazar horizontalmente:
+
+```{r funcion-tabla}
+tabla <- function(datos, titulo, etiqueta = NULL, ancha = FALSE, ...) {
+  formato <- if (knitr::is_latex_output()) "latex" else "html"
+  salida <- knitr::kable(datos, format = formato, caption = titulo, label = etiqueta,
+                         booktabs = TRUE, ...) %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                  full_width = FALSE, position = "center")
+  if (ancha) {
+    salida <- salida %>%
+      column_spec(seq_len(ncol(datos)), extra_css = "white-space: nowrap;") %>%
+      scroll_box(width = "100%", extra_css = "margin-bottom: 1em;")
+  }
+  salida
+}
+```
 
 ```{r cargar-datos}
 data <- read.csv("data/parkinsons_updrs.data")
 ```
 
-
 ```{r primeras-filas}
-head(data, n=10)
+head(data, n = 10) %>%
+  tabla("Primeras diez filas del conjunto de datos.",
+        ancha = TRUE)
 ```
 
 ```{r estructura-datos}
-str(data)
+descripciones <- c(
+  "subject." = "Identificador del paciente",
+  "age" = "Edad del paciente (años)",
+  "sex" = "Sexo (0 = masculino, 1 = femenino)",
+  "test_time" = "Días transcurridos desde el reclutamiento",
+  "motor_UPDRS" = "Puntuación motora de la escala UPDRS",
+  "total_UPDRS" = "Puntuación total de la escala UPDRS",
+  "Jitter..." = "Jitter: variación de la frecuencia fundamental (%)",
+  "Jitter.Abs." = "Jitter absoluto (segundos)",
+  "Jitter.RAP" = "Jitter: perturbación relativa promedio (3 periodos)",
+  "Jitter.PPQ5" = "Jitter: cociente de perturbación del periodo (5 periodos)",
+  "Jitter.DDP" = "Jitter: diferencia de diferencias entre periodos",
+  "Shimmer" = "Shimmer: variación de la amplitud",
+  "Shimmer.dB." = "Shimmer en decibelios",
+  "Shimmer.APQ3" = "Shimmer: cociente de perturbación de la amplitud (3 periodos)",
+  "Shimmer.APQ5" = "Shimmer: cociente de perturbación de la amplitud (5 periodos)",
+  "Shimmer.APQ11" = "Shimmer: cociente de perturbación de la amplitud (11 periodos)",
+  "Shimmer.DDA" = "Shimmer: diferencia de diferencias de amplitud",
+  "NHR" = "Relación ruido-armónicos",
+  "HNR" = "Relación armónicos-ruido (dB)",
+  "RPDE" = "Entropía de la densidad del periodo de recurrencia",
+  "DFA" = "Exponente de escalado fractal de la señal",
+  "PPE" = "Entropía del periodo del tono"
+)
+
+tibble(
+  variable = names(data),
+  descripcion = descripciones[names(data)],
+  tipo = sapply(data, class),
+  faltantes = sapply(data, function(x) sum(is.na(x))),
+  primeros_valores = sapply(data, function(x) paste(head(x, 3), collapse = ", "))
+) %>%
+  tabla("Estructura del conjunto de datos: descripción, tipo, datos faltantes y primeros valores de cada variable.",
+        col.names = c("Variable", "Descripción", "Tipo", "Datos faltantes", "Primeros valores"))
 ```
 
-```{r datos-faltantes}
-data |>
-  summarise(across(everything(), ~ sum(is.na(.)), .names = "NA_{.col}"))
-```
-
+El conjunto tiene 22 variables, todas guardadas como números (`integer` o `numeric`), y ninguna tiene datos faltantes (Tabla \@ref(tab:estructura-datos)). Sin embargo, `subject.` y `sex` son códigos: el primero identifica al paciente y el segundo vale 0 para los hombres y 1 para las mujeres.
 
 ```{r transformacion-variables}
 data$subject. <- factor(data$subject.)
@@ -34,12 +82,36 @@ data$subject. <- factor(data$subject.)
 data$sex <- factor(data$sex,
                    levels = c(0, 1),
                    labels = c("Masculino", "Femenino"))
-str(data)
-table(data$sex)
-nlevels(data$subject.)
+
+tibble(
+  variable = names(data),
+  tipo = sapply(data, class),
+  niveles = sapply(data, nlevels)
+) %>%
+  mutate(
+    papel = case_when(
+      variable == "subject." ~ "Identificador",
+      variable == "motor_UPDRS" ~ "Variable respuesta",
+      variable == "total_UPDRS" ~ "Otra puntuación clínica",
+      tipo == "factor" ~ "Independiente categórica",
+      TRUE ~ "Independiente numérica"
+    ),
+    papel = factor(papel, levels = c("Identificador", "Variable respuesta",
+                                     "Otra puntuación clínica",
+                                     "Independiente categórica",
+                                     "Independiente numérica")),
+    variable = if_else(niveles > 0, paste0(variable, " (", niveles, " niveles)"), variable)
+  ) %>%
+  group_by(papel) %>%
+  summarise(tipo = paste(unique(tipo), collapse = " / "), n = n(),
+            variables = paste(variable, collapse = ", "), .groups = "drop") %>%
+  tabla("Tipo y papel de las variables después de la transformación.",
+        col.names = c("Papel", "Tipo", "Número de variables", "Variables"))
 ```
 
-Convertimos `subject.` en factor, porque es un identificador y no una cantidad, y le ponemos etiquetas a `sex`. Cada uno de los 42 pacientes aporta entre 101 y 168 grabaciones, así que los registros de una misma persona comparten edad, sexo y niveles de severidad muy parecidos. El exploratorio se hace sobre los registros; en la parte inferencial esta estructura sí se tendrá en cuenta.
+Convertimos `subject.` en factor, porque es un identificador y no una cantidad, y le ponemos etiquetas a `sex`. Con eso quedan dos variables categóricas, `subject.` (42 niveles, uno por paciente) y `sex`, y 20 numéricas (Tabla \@ref(tab:transformacion-variables)): la variable respuesta `motor_UPDRS`, la otra puntuación clínica `total_UPDRS` y 18 variables independientes numéricas, que son `age`, `test_time` y las 16 medidas acústicas de la voz (`Jitter...`, `Jitter.Abs.`, `Jitter.RAP`, `Jitter.PPQ5`, `Jitter.DDP`, `Shimmer`, `Shimmer.dB.`, `Shimmer.APQ3`, `Shimmer.APQ5`, `Shimmer.APQ11`, `Shimmer.DDA`, `NHR`, `HNR`, `RPDE`, `DFA` y `PPE`).
+
+Cada uno de los 42 pacientes aporta entre 101 y 168 grabaciones, así que los registros de una misma persona comparten edad, sexo y niveles de severidad muy parecidos. El exploratorio se hace sobre los registros; en la parte inferencial esta estructura sí se tendrá en cuenta.
 
 ```{r limpieza-test-time}
 n_negativos <- sum(data$test_time < 0)
@@ -68,10 +140,14 @@ data %>%
     minimo = min(motor_UPDRS),
     maximo = max(motor_UPDRS),
     asimetria = skewness(motor_UPDRS),
-    curtosis = kurtosis(motor_UPDRS))
+    curtosis = kurtosis(motor_UPDRS)) %>%
+  mutate(across(everything(), ~ signif(.x, 4))) %>%
+  tabla("Resumen estadístico de motor_UPDRS.",
+        col.names = c("n", "Media", "Desviación estándar", "Mediana", "RIC", "Q1", "Q3",
+                      "Mínimo", "Máximo", "Asimetría", "Curtosis"))
 ```
 
-`motor_UPDRS` tiene 5.863 registros con una media de 21.29 puntos y una desviación estándar de 8.13, es decir, bastante variabilidad entre evaluaciones. El 50 % de los registros está por debajo de 20.87 puntos y el otro 50 % por encima, un valor muy cercano a la media, y la asimetría es casi nula (0.077): las puntuaciones se reparten de forma equilibrada alrededor del centro. La mitad central de los registros está entre 15 y 27.59 puntos (rango intercuartílico de 12.59); el 25 % más leve queda por debajo de 15 y el 25 % más afectado por encima de 27.59.
+Según la Tabla \@ref(tab:resumen-motor-updrs), `motor_UPDRS` tiene 5.863 registros con una media de 21.29 puntos (desviación estándar de 8.13), es decir, bastante variabilidad entre evaluaciones. El 50 % de los registros está por debajo de 20.87 puntos (rango intercuartílico de 12.59), un valor muy cercano a la media, y la asimetría es casi nula (0.077): las puntuaciones se reparten de forma equilibrada alrededor del centro. El 25 % más leve de los registros queda por debajo de 15 puntos y el 25 % más afectado por encima de 27.59.
 
 La escala observada va de 5.04 a 39.51 puntos, así que la muestra incluye desde pacientes con afectación motora mínima hasta casos avanzados. La curtosis de 2.06, por debajo de la de una distribución normal (3), indica menos concentración en el centro y una probabilidad de valores atípicos menor que en una normal: las puntuaciones están repartidas de manera bastante uniforme a lo largo del rango medio en lugar de agruparse en un solo punto.
 
@@ -103,7 +179,7 @@ data %>%
   )
 ```
 
-El histograma muestra una distribución bimodal: un pico alrededor de los 17 puntos (afectación leve-moderada), otro cerca de los 26 (moderada-avanzada) y un valle entre ambos hacia los 21. Este comportamiento bimodal indica que la muestra global no sigue una distribución normal. Conviene recordar que cada paciente aporta unas 140 grabaciones con puntuaciones muy parecidas entre sí, así que las dos modas reflejan sobre todo la mezcla de pacientes con distintos niveles de severidad, posiblemente en distintas etapas de la enfermedad, más que dos subgrupos clínicos definidos.
+En la Figura \@ref(fig:histograma-motor-updrs) se observa una distribución bimodal: un pico alrededor de los 17 puntos (afectación leve-moderada), otro cerca de los 26 (moderada-avanzada) y un valle entre ambos hacia los 21. Este comportamiento bimodal sugiere que la muestra global no sigue una distribución normal. Conviene recordar que cada paciente aporta unas 140 grabaciones con puntuaciones muy parecidas entre sí, así que las dos modas reflejan sobre todo la mezcla de pacientes con distintos niveles de severidad, posiblemente en distintas etapas de la enfermedad, más que dos subgrupos clínicos definidos.
 
 ### Diagrama de caja
 
@@ -138,9 +214,9 @@ data %>%
   )
 ```
 
-El diagrama de caja confirma que la distribución es simétrica: la línea central de la caja (20.87 puntos) queda casi a la altura de la media (21.3, el rombo). La caja mide 12.6 puntos y va de 15 a 27.6, así que la mitad central de los registros está entre una afectación leve y una moderada-avanzada. Los bigotes llegan hasta los valores extremos observados (5.04 y 39.51) y no aparece ningún punto atípico: ningún registro se aleja del resto más de 1.5 veces el rango intercuartílico.
+El diagrama de caja de la Figura \@ref(fig:boxplot-motor-updrs) confirma que la distribución es simétrica: la línea central de la caja (20.87 puntos) queda casi a la altura de la media (21.3, el rombo). La caja va del primer cuartil (15 puntos) al tercero (27.6), un rango intercuartílico de 12.6 puntos que abarca desde una afectación leve hasta una moderada-avanzada. Los bigotes llegan hasta los valores extremos observados (5.04 y 39.51) y no aparece ningún punto atípico: ningún registro se aleja del resto más de 1.5 veces el rango intercuartílico.
 
-## Caracterización de las variables numéricas
+## Variables independientes numéricas
 
 Dejamos fuera `total_UPDRS` porque no es una característica del paciente ni de su voz: es la puntuación completa de la escala UPDRS, que el médico asigna en la misma evaluación que `motor_UPDRS` y que incluye la sección motora entre sus componentes. Es decir, es otra forma de medir la severidad, no algo que pueda explicarla. Como comprobación, calculamos la correlación entre las dos puntuaciones:
 
@@ -160,6 +236,7 @@ data %>%
     names_to = "variable",
     values_to = "valor"
   ) %>%
+  mutate(variable = fct_inorder(variable)) %>%
   group_by(variable) %>%
   summarise(
     n = sum(!is.na(valor)),
@@ -174,46 +251,51 @@ data %>%
     asimetria = skewness(valor),
     curtosis = kurtosis(valor)
   ) %>%
-  mutate(across(where(is.numeric), ~ signif(.x, 4))) %>%
-  as.data.frame()
+  mutate(across(-variable, ~ sapply(signif(.x, 4), format))) %>%
+  tabla("Resumen estadístico de las variables independientes numéricas.",
+        col.names = c("Variable", "n", "Media", "Desviación estándar", "Mediana", "RIC",
+                      "Q1", "Q3", "Mínimo", "Máximo", "Asimetría", "Curtosis"),
+        align = c("l", rep("r", 11)),
+        ancha = TRUE)
 ```
 
+La Tabla \@ref(tab:resumen-variables-numericas) resume las 18 variables independientes numéricas. Las interpretamos una por una:
 
-**`age`:** La edad tiene 5.863 registros, con media de 64.81 años y desviación estándar de 8.83. La mitad central de los registros está entre 58 y 72 años (rango intercuartílico de 14) y el rango completo va de 36 a 85. La mitad de los registros tiene 65 años o más, un poco por encima de la media, y la asimetría es -0.382: hay unos pocos pacientes bastante más jóvenes que el resto, sin que llegue a ser un sesgo marcado. La curtosis de 3.67, algo mayor que la de una normal, indica una concentración un poco más fuerte alrededor del centro y que los valores atípicos pueden ocurrir con algo más de probabilidad que en una distribución normal.
+**`age`:** La edad tiene 5.863 registros, con media de 64.81 años (desviación estándar de 8.83). El 50 % de los registros tiene 65 años o más (rango intercuartílico de 14 años), un poco por encima de la media; el 25 % está por debajo de 58 años y el 75 % por debajo de 72, y el rango completo va de 36 a 85. La asimetría es -0.382: hay unos pocos pacientes bastante más jóvenes que el resto, sin que llegue a ser un sesgo marcado. La curtosis de 3.67, algo mayor que la de una normal, indica una concentración un poco más fuerte alrededor del centro y que los valores atípicos pueden ocurrir con algo más de probabilidad que en una distribución normal.
 
-**`test_time`:** El tiempo desde el reclutamiento promedia 93.06 días, con desviación estándar de 53.32. La mitad central está entre 47.34 y 138.5 días (rango intercuartílico de 91.12) y los valores van de 0.3958 a 215.5 días, todos positivos tras la limpieza. La asimetría (0.0795) es prácticamente cero y la curtosis (1.85) está por debajo de 3: la distribución es simétrica y más bien plana, lo que refleja que las grabaciones se reparten de forma pareja a lo largo de los seis meses de seguimiento.
+**`test_time`:** El tiempo desde el reclutamiento promedia 93.06 días (desviación estándar de 53.32). El 50 % de los registros está por debajo de 91.75 días (rango intercuartílico de 91.12); el 25 % queda por debajo de 47.34 días y el 75 % por debajo de 138.5, y los valores van de 0.3958 a 215.5 días, todos positivos tras la limpieza. La asimetría (0.0795) es prácticamente cero y la curtosis (1.85) está por debajo de 3: la distribución es simétrica y más bien plana, lo que refleja que las grabaciones se reparten de forma pareja a lo largo de los seis meses de seguimiento.
 
-**`Jitter...`:** El jitter porcentual tiene media 0.00616 y desviación estándar 0.00563, casi tan grande como la media. La mitad central está entre 0.00358 y 0.0068 (rango intercuartílico de 0.00322), pero el máximo llega a 0.09999 frente a un mínimo de 0.00083. El 50 % de los registros está por debajo de 0.0049, menos que la media, y la asimetría es 6.45: la mayoría de las grabaciones tiene valores bajos y unas pocas se van muy lejos por la derecha. La curtosis de 70.39 confirma que los valores atípicos son mucho más probables que en una distribución normal.
+**`Jitter...`:** El jitter porcentual tiene media 0.00616 (desviación estándar de 0.00563, casi tan grande como la media). El 50 % de los registros está por debajo de 0.0049 (rango intercuartílico de 0.00322), menos que la media; el 25 % queda por debajo de 0.00358 y el 75 % por debajo de 0.0068, pero el máximo llega a 0.09999 frente a un mínimo de 0.00083. La asimetría es 6.45: la mayoría de las grabaciones tiene valores bajos y unas pocas se van muy lejos por la derecha. La curtosis de 70.39 confirma que los valores atípicos son mucho más probables que en una distribución normal.
 
-**`Jitter.Abs.`:** El jitter absoluto promedia 4.4 × 10⁻⁵ segundos, con desviación estándar de 3.6 × 10⁻⁵. La mitad central va de 2.24 × 10⁻⁵ a 5.33 × 10⁻⁵ (rango intercuartílico de 3.09 × 10⁻⁵) y los valores se extienden de 2.25 × 10⁻⁶ a 4.46 × 10⁻⁴. La asimetría de 3.28 y la curtosis de 21.14 describen lo mismo que en el jitter porcentual, una concentración en valores bajos y una alta probabilidad de que ocurran valores atípicos altos.
+**`Jitter.Abs.`:** El jitter absoluto promedia 4.4 × 10⁻⁵ segundos (desviación estándar de 3.6 × 10⁻⁵). El 50 % de los registros está por debajo de 3.45 × 10⁻⁵ (rango intercuartílico de 3.09 × 10⁻⁵); el 25 % queda por debajo de 2.24 × 10⁻⁵ y el 75 % por debajo de 5.33 × 10⁻⁵, y los valores se extienden de 2.25 × 10⁻⁶ a 4.46 × 10⁻⁴. La asimetría de 3.28 y la curtosis de 21.14 describen lo mismo que en el jitter porcentual, una concentración en valores bajos y una alta probabilidad de que ocurran valores atípicos altos.
 
-**`Jitter.RAP`:** El jitter RAP tiene media 0.00299 y desviación estándar 0.00313, algo mayor que la propia media. La mitad central está entre 0.00158 y 0.00329, con un rango intercuartílico de 0.00171, con un valor mínimo de 0.00033 y un máximo de 0.05754. El 50 % de los registros está por debajo de 0.00225, lo cual es menor que la media. La asimetría es 6.94 y la curtosis alcanza 81.4: la mayoría de las grabaciones tiene valores bajos y unas pocas se alejan muchísimo del resto, así que los valores atípicos son mucho más probables que en una distribución normal.
+**`Jitter.RAP`:** El jitter RAP tiene media 0.00299 (desviación estándar de 0.00313, algo mayor que la propia media). El 50 % de los registros está por debajo de 0.00225 (rango intercuartílico de 0.00171), lo cual es menor que la media; el 25 % queda por debajo de 0.00158 y el 75 % por debajo de 0.00329, con un valor mínimo de 0.00033 y un máximo de 0.05754. La asimetría es 6.94 y la curtosis alcanza 81.4: la mayoría de las grabaciones tiene valores bajos y unas pocas se alejan muchísimo del resto, así que los valores atípicos son mucho más probables que en una distribución normal.
 
-**`Jitter.PPQ5`:** Jitter.PPQ5 promedia 0.00328 con desviación estándar de 0.00373. La mitad central va de 0.00182 a 0.00347 (rango intercuartílico de 0.00164) y el rango completo de 0.00043 a 0.06956. Con asimetría de 7.58 y curtosis de 84.39, es la variable más sesgada de la familia: casi todos los registros son bajos y alcanza valores muy superiores.
+**`Jitter.PPQ5`:** Jitter.PPQ5 promedia 0.00328 (desviación estándar de 0.00373). El 50 % de los registros está por debajo de 0.00249 (rango intercuartílico de 0.00164); el 25 % queda por debajo de 0.00182 y el 75 % por debajo de 0.00347, y el rango completo de 0.00043 a 0.06956. Con asimetría de 7.58 y curtosis de 84.39, es la variable más sesgada de la familia: casi todos los registros son bajos y alcanza valores muy superiores.
 
-**`Jitter.DDP`:** Jitter.DDP tiene media 0.00896 y desviación estándar 0.00938. La mitad central está entre 0.00473 y 0.00988 (rango intercuartílico de 0.00515) y los valores van de 0.00098 a 0.1726. La asimetría (6.94) y la curtosis (81.4) son idénticas a las de Jitter.RAP, como corresponde a una variable que es exactamente el triple de aquella.
+**`Jitter.DDP`:** Jitter.DDP tiene media 0.00896 (desviación estándar de 0.00938). El 50 % de los registros está por debajo de 0.00675 (rango intercuartílico de 0.00515); el 25 % queda por debajo de 0.00473 y el 75 % por debajo de 0.00988, y los valores van de 0.00098 a 0.1726. La asimetría (6.94) y la curtosis (81.4) son idénticas a las de Jitter.RAP, como corresponde a una variable que es exactamente el triple de aquella.
 
-**`Shimmer`:** El shimmer promedia 0.034 con desviación estándar de 0.0258. La mitad central va de 0.01911 a 0.03978 (rango intercuartílico de 0.02067), mientras que el rango completo se extiende de 0.00306 a 0.2686. La asimetría de 3.31 y la curtosis de 18.24 muestran una asimetría positiva fuerte y una alta probabilidad de valores atípicos: la mayoría de las grabaciones tiene variaciones de amplitud pequeñas y unas pocas, muy grandes.
+**`Shimmer`:** El shimmer promedia 0.034 (desviación estándar de 0.0258). El 50 % de los registros está por debajo de 0.02753 (rango intercuartílico de 0.02067); el 25 % queda por debajo de 0.01911 y el 75 % por debajo de 0.03978, mientras que el rango completo se extiende de 0.00306 a 0.2686. La asimetría de 3.31 y la curtosis de 18.24 muestran una asimetría positiva fuerte y una alta probabilidad de valores atípicos: la mayoría de las grabaciones tiene variaciones de amplitud pequeñas y unas pocas, muy grandes.
 
-**`Shimmer.APQ3`:** Shimmer.APQ3 tiene media 0.01716 y desviación estándar 0.01324. La mitad central está entre 0.00928 y 0.0206 (rango intercuartílico de 0.01132) y los valores van de 0.00161 a 0.1627. La asimetría de 3.1 y la curtosis de 17.73 repiten el patrón de la familia: concentración en valores bajos y valores atípicos altos con probabilidad elevada.
+**`Shimmer.APQ3`:** Shimmer.APQ3 tiene media 0.01716 (desviación estándar de 0.01324). El 50 % de los registros está por debajo de 0.0137 (rango intercuartílico de 0.01132); el 25 % queda por debajo de 0.00928 y el 75 % por debajo de 0.0206, y los valores van de 0.00161 a 0.1627. La asimetría de 3.1 y la curtosis de 17.73 repiten el patrón de la familia: concentración en valores bajos y valores atípicos altos con probabilidad elevada.
 
-**`Shimmer.APQ5`:** Shimmer.APQ5 promedia 0.02015 con desviación estándar de 0.01667. La mitad central va de 0.01079 a 0.02377 (rango intercuartílico de 0.01298) y el rango completo de 0.00194 a 0.167. Con asimetría de 3.7 y curtosis de 22.22, es de las variables de shimmer más influidas por sus valores altos, aunque poco frecuentes.
+**`Shimmer.APQ5`:** Shimmer.APQ5 promedia 0.02015 (desviación estándar de 0.01667). El 50 % de los registros está por debajo de 0.01594 (rango intercuartílico de 0.01298); el 25 % queda por debajo de 0.01079 y el 75 % por debajo de 0.02377, y el rango completo de 0.00194 a 0.167. Con asimetría de 3.7 y curtosis de 22.22, es de las variables de shimmer más influidas por sus valores altos, aunque poco frecuentes.
 
-**`Shimmer.APQ11`:** Shimmer.APQ11 tiene media 0.02749 y desviación estándar 0.02. La mitad central está entre 0.01566 y 0.03273 (rango intercuartílico de 0.01707) y los valores van de 0.00249 a 0.2755. La asimetría de 3.4 y la curtosis de 22.11 indican, como en el resto de la familia, que unas pocas grabaciones muy inestables se alejan mucho del resto y que los valores atípicos son frecuentes.
+**`Shimmer.APQ11`:** Shimmer.APQ11 tiene media 0.02749 (desviación estándar de 0.02). El 50 % de los registros está por debajo de 0.02271 (rango intercuartílico de 0.01707); el 25 % queda por debajo de 0.01566 y el 75 % por debajo de 0.03273, y los valores van de 0.00249 a 0.2755. La asimetría de 3.4 y la curtosis de 22.11 indican, como en el resto de la familia, que unas pocas grabaciones muy inestables se alejan mucho del resto y que los valores atípicos son frecuentes.
 
-**`Shimmer.DDA`:** Shimmer.DDA promedia 0.05147 con desviación estándar de 0.03971. La mitad central va de 0.02783 a 0.0618 (rango intercuartílico de 0.03398) y el rango completo de 0.00484 a 0.488. Su asimetría (3.1) y curtosis (17.73) son las mismas de Shimmer.APQ3, porque DDA es exactamente el triple de APQ3.
+**`Shimmer.DDA`:** Shimmer.DDA promedia 0.05147 (desviación estándar de 0.03971). El 50 % de los registros está por debajo de 0.04111 (rango intercuartílico de 0.03398); el 25 % queda por debajo de 0.02783 y el 75 % por debajo de 0.0618, y el rango completo de 0.00484 a 0.488. Su asimetría (3.1) y curtosis (17.73) son las mismas de Shimmer.APQ3, porque DDA es exactamente el triple de APQ3.
 
-**`Shimmer.dB.`:** El shimmer en decibelios tiene media 0.311 y desviación estándar 0.23. La mitad central está entre 0.175 y 0.365 dB (rango intercuartílico de 0.19) y los valores van de 0.026 a 2.107 dB. La asimetría de 3.1 y la curtosis de 16.09 muestran la misma asimetría positiva y la misma tendencia a valores atípicos altos que el shimmer en escala lineal.
+**`Shimmer.dB.`:** El shimmer en decibelios tiene media 0.311 (desviación estándar de 0.23). El 50 % de los registros está por debajo de 0.253 dB (rango intercuartílico de 0.19); el 25 % queda por debajo de 0.175 dB y el 75 % por debajo de 0.365, y los valores van de 0.026 a 2.107 dB. La asimetría de 3.1 y la curtosis de 16.09 muestran la misma asimetría positiva y la misma tendencia a valores atípicos altos que el shimmer en escala lineal.
 
-**`NHR`:** NHR promedia 0.0321, pero su desviación estándar (0.0597) casi duplica la media. La mitad central va de 0.01095 a 0.03146 (rango intercuartílico de 0.02051), mientras que el máximo llega a 0.7483 frente a un mínimo de 0.000286. La asimetría de 6.55 y la curtosis de 55.51 indican que la mayoría de las muestras corresponden a voces limpias con bajo nivel de ruido, concentradas en valores pequeños. Sin embargo, existen unas cuantas muestras con ronquera o alto ruido que elevan el valor del promedio y distorsionan la desviación estándar.
+**`NHR`:** NHR promedia 0.0321, pero su desviación estándar (0.0597) casi duplica la media. El 50 % de los registros está por debajo de 0.01845 (rango intercuartílico de 0.02051); el 25 % queda por debajo de 0.01095 y el 75 % por debajo de 0.03146, mientras que el máximo llega a 0.7483 frente a un mínimo de 0.000286. La asimetría de 6.55 y la curtosis de 55.51 indican que la mayoría de las muestras corresponden a voces limpias con bajo nivel de ruido, concentradas en valores pequeños. Sin embargo, existen unas cuantas muestras con ronquera o alto ruido que elevan el valor del promedio y distorsionan la desviación estándar.
 
-**`HNR`:** HNR tiene media 21.68 y desviación estándar 4.29, una dispersión moderada. La mitad central está entre 19.4 y 24.45 (rango intercuartílico de 5.04) y los valores van de 1.66 a 37.88. El 50 % de los registros supera los 21.92 dB, un poco más que la media, y la asimetría es -0.811: aquí los valores que se alejan del resto están a la izquierda, en las grabaciones con peor relación armónico-ruido. La curtosis de 5.5 indica que los valores atípicos pueden ocurrir con mayor probabilidad que en una distribución normal.
+**`HNR`:** HNR tiene media 21.68 (desviación estándar de 4.29), una dispersión moderada. El 50 % de los registros supera los 21.92 dB (rango intercuartílico de 5.04), un poco más que la media; el 25 % queda por debajo de 19.4 y el 75 % por debajo de 24.45, y los valores van de 1.66 a 37.88. La asimetría es -0.811: aquí los valores que se alejan del resto están a la izquierda, en las grabaciones con peor relación armónico-ruido. La curtosis de 5.5 indica que los valores atípicos pueden ocurrir con mayor probabilidad que en una distribución normal.
 
-**`RPDE`:** RPDE promedia 0.541 con desviación estándar de 0.101. La mitad central va de 0.47 a 0.614 (rango intercuartílico de 0.144) y los valores de 0.151 a 0.966. El 50 % de los registros está por debajo de 0.542, prácticamente el mismo valor que la media; la asimetría es -0.037 y la curtosis 2.93: es la variable acústica con la distribución más parecida a una normal, aunque eso no basta para afirmar que lo sea.
+**`RPDE`:** RPDE promedia 0.541 (desviación estándar de 0.101). El 50 % de los registros está por debajo de 0.542 (rango intercuartílico de 0.144), prácticamente el mismo valor que la media; el 25 % queda por debajo de 0.47 y el 75 % por debajo de 0.614, y los valores van de 0.151 a 0.966. La asimetría es -0.037 y la curtosis 2.93: es la variable acústica con la distribución más parecida a una normal, aunque eso no basta para afirmar que lo sea.
 
-**`DFA`:** DFA tiene media 0.653 y desviación estándar 0.071. La mitad central está entre 0.596 y 0.7115 (rango intercuartílico de 0.115) y los valores van de 0.514 a 0.866. El 50 % de los registros está por debajo de 0.644, ligeramente menos que la media, y la asimetría es 0.282, una leve tendencia a valores por encima del centro. La curtosis de 2.12 indica una distribución más plana que la normal, con los valores repartidos de forma uniforme y extendida a lo largo de todo el rango (entre 0.514 y 0.866).
+**`DFA`:** DFA tiene media 0.653 (desviación estándar de 0.071). El 50 % de los registros está por debajo de 0.644 (rango intercuartílico de 0.115), ligeramente menos que la media; el 25 % queda por debajo de 0.596 y el 75 % por debajo de 0.7115, y los valores van de 0.514 a 0.866. La asimetría es 0.282, una leve tendencia a valores por encima del centro. La curtosis de 2.12 indica una distribución más plana que la normal, con los valores repartidos de forma uniforme y extendida a lo largo de todo el rango (entre 0.514 y 0.866).
 
-**`PPE`:** PPE promedia 0.22 con desviación estándar de 0.0915. La mitad central va de 0.156 a 0.265 (rango intercuartílico de 0.108) y el rango completo de 0.02198 a 0.7317. La asimetría de 1.09 y la curtosis de 4.95 muestran una asimetría positiva moderada, con valores atípicos algo más probables que en una normal: la mayoría de las grabaciones tiene valores estables y algunas se alejan hacia arriba.
+**`PPE`:** PPE promedia 0.22 (desviación estándar de 0.0915). El 50 % de los registros está por debajo de 0.206 (rango intercuartílico de 0.108); el 25 % queda por debajo de 0.156 y el 75 % por debajo de 0.265, y el rango completo de 0.02198 a 0.7317. La asimetría de 1.09 y la curtosis de 4.95 muestran una asimetría positiva moderada, con valores atípicos algo más probables que en una normal: la mayoría de las grabaciones tiene valores estables y algunas se alejan hacia arriba.
 
 ### Histogramas
 
@@ -243,41 +325,41 @@ for (variable in variables_numericas) {
 }
 ```
 
-**`age`:** La distribución de la edad muestra que la mayoría de los pacientes son adultos mayores, con picos de frecuencia muy claros entre los 55 y 60 años, entre los 65 y 68 años, y entre los 72 y 74 años, además de un grupo pequeño aislado alrededor de los 36 años. Como la edad no cambia dentro de un paciente, cada barra refleja cuántos pacientes tienen esa edad y cuántas grabaciones aportó cada uno; el grupo de los 36 años, por ejemplo, es un solo paciente. Esta concentración en edades avanzadas coincide con el comportamiento real de la enfermedad de Parkinson, donde los diagnósticos aumentan considerablemente a partir de los 60 años. Tener pacientes de edades tan distintas permite comparar la severidad motora entre grupos de edad, algo que se hace en el capítulo 2.
+**`age`:** En la Figura \@ref(fig:histogramas-independientes-1) se observa que la mayoría de los pacientes son adultos mayores, con picos de frecuencia muy claros entre los 55 y 60 años, entre los 65 y 68 años, y entre los 72 y 74 años, además de un grupo pequeño aislado alrededor de los 36 años. Como la edad no cambia dentro de un paciente, cada barra refleja cuántos pacientes tienen esa edad y cuántas grabaciones aportó cada uno; el grupo de los 36 años, por ejemplo, es un solo paciente. Esta concentración en edades avanzadas coincide con el comportamiento real de la enfermedad de Parkinson, donde los diagnósticos aumentan considerablemente a partir de los 60 años. Tener pacientes de edades tan distintas permite comparar la severidad motora entre grupos de edad, algo que se hace en el capítulo 2.
 
-**`test_time`:** El tiempo de prueba muestra un registro continuo y parejo durante los primeros 170 días del estudio, con una pequeña baja cerca del día 90 y una caída marcada después del día 180. Esto indica que a los pacientes se les realizó un seguimiento constante y organizado durante aproximadamente seis meses. La disminución a partir del día 180 ocurre porque varios pacientes completaron su tiempo en el estudio o dejaron de enviar mediciones. Aun así, hay grabaciones suficientes en todo el periodo para ver cómo evolucionan los síntomas con el paso de los meses.
+**`test_time`:** En la Figura \@ref(fig:histogramas-independientes-2) se observa que el tiempo de prueba tiene un registro continuo y parejo durante los primeros 170 días del estudio, con una pequeña baja cerca del día 90 y una caída marcada después del día 180. Esto indica que a los pacientes se les realizó un seguimiento constante y organizado durante aproximadamente seis meses. La disminución a partir del día 180 ocurre porque varios pacientes completaron su tiempo en el estudio o dejaron de enviar mediciones. Aun así, hay grabaciones suficientes en todo el periodo para ver cómo evolucionan los síntomas con el paso de los meses.
 
-**`Jitter...`:** La medida porcentual de variación en la frecuencia de la voz (Jitter(...)) se concentra en valores bajos, casi todos menores a 0.01. La gráfica se extiende hacia la derecha con unos pocos registros que superan 0.05, donde se ubican las tomas de voz con inestabilidades graves. En la práctica, esto significa que las alteraciones fuertes en el tono no son lo habitual en todas las pruebas, sino eventos específicos que destacan sobre el resto.
+**`Jitter...`:** En la Figura \@ref(fig:histogramas-independientes-3) se observa que la medida porcentual de variación en la frecuencia de la voz (Jitter(...)) se concentra en valores bajos, casi todos menores a 0.01. La gráfica se extiende hacia la derecha con unos pocos registros que superan 0.05, donde se ubican las tomas de voz con inestabilidades graves. En la práctica, esto significa que las alteraciones fuertes en el tono no son lo habitual en todas las pruebas, sino eventos específicos que destacan sobre el resto.
 
-**`Jitter.Abs.`:** La variación absoluta de la frecuencia (Jitter.Abs.), medida en segundos, concentra casi todos sus datos en la zona baja, entre 2 × 10^-5^ y 6 × 10^-5^ segundos. Los pocos registros que se alejan hacia la derecha muestran que existen pocas mediciones con una alteración de voz severa. La forma de esta gráfica es muy parecida a la de Jitter(...), lo que confirma que ambas variables miden casi lo mismo y que será necesario combinarlas o seleccionar solo una durante la ingeniería de características para no duplicar información.
+**`Jitter.Abs.`:** En la Figura \@ref(fig:histogramas-independientes-4) se observa que la variación absoluta de la frecuencia (Jitter.Abs.), medida en segundos, concentra casi todos sus datos en la zona baja, entre 2 × 10^-5^ y 6 × 10^-5^ segundos. Los pocos registros que se alejan hacia la derecha muestran que existen pocas mediciones con una alteración de voz severa. La forma de esta gráfica es muy parecida a la de Jitter(...), lo que confirma que ambas variables miden casi lo mismo y que será necesario combinarlas o seleccionar solo una durante la ingeniería de características para no duplicar información.
 
-**`Jitter.RAP`:** Esta variable repite el mismo patrón de acumulación en valores bajos, situando su punto más alto muy cerca de cero (entre 0.001 y 0.005) y cayendo rápidamente hacia la derecha. Como esta métrica evalúa los cambios de frecuencia entre ciclos de voz cercanos, la falta de valores altos demuestra que solo un grupo reducido de pruebas presenta inestabilidad frecuente. Su parecido con los otros indicadores de frecuencia confirma que todas las variables de la familia Jitter están midiendo el mismo problema de trasfondo.
+**`Jitter.RAP`:** En la Figura \@ref(fig:histogramas-independientes-5) se observa que esta variable repite el mismo patrón de acumulación en valores bajos, situando su punto más alto muy cerca de cero (entre 0.001 y 0.005) y cayendo rápidamente hacia la derecha. Como esta métrica evalúa los cambios de frecuencia entre ciclos de voz cercanos, la falta de valores altos demuestra que solo un grupo reducido de pruebas presenta inestabilidad frecuente. Su parecido con los otros indicadores de frecuencia confirma que todas las variables de la familia Jitter están midiendo el mismo problema de trasfondo.
 
-**`Jitter.PPQ5`:** El indicador de variación de tono en bloques de 5 periodos (Jitter.PPQ5) muestra una acumulación masiva en valores menores a 0.005 y se reduce rápidamente hacia la derecha, con unos pocos registros aislados que llegan hasta cerca de 0.07. Aunque esta medida promedia la voz en intervalos más largos para suavizar cambios repentinos, la gráfica sigue concentrada a la izquierda: la inestabilidad sostenida del tono aparece solo en un grupo reducido de grabaciones.
+**`Jitter.PPQ5`:** En la Figura \@ref(fig:histogramas-independientes-6), el indicador de variación de tono en bloques de 5 periodos (Jitter.PPQ5) muestra una acumulación masiva en valores menores a 0.005 y se reduce rápidamente hacia la derecha, con unos pocos registros aislados que llegan hasta cerca de 0.07. Aunque esta medida promedia la voz en intervalos más largos para suavizar cambios repentinos, la gráfica sigue concentrada a la izquierda: la inestabilidad sostenida del tono aparece solo en un grupo reducido de grabaciones.
 
-**`Jitter.DDP`:** Esta métrica presenta una forma idéntica a Jitter.RAP, con la mayoría de los datos amontonados por debajo del 0.01 y unos pocos casos dispersos hacia el 0.05. Esta similitud se debe a que, por definición matemática, los valores de DDP son exactamente el triple de los de RAP. Al ser una copia multiplicada por tres, incluir ambas variables en un análisis inferencial o en un modelo resultaría redundante.
+**`Jitter.DDP`:** En la Figura \@ref(fig:histogramas-independientes-7) se observa que esta métrica presenta una forma idéntica a la de Jitter.RAP (Figura \@ref(fig:histogramas-independientes-5)), con la mayoría de los datos amontonados por debajo del 0.01 y unos pocos casos dispersos hacia el 0.05. Esta similitud se debe a que, por definición matemática, los valores de DDP son exactamente el triple de los de RAP. Al ser una copia multiplicada por tres, incluir ambas variables en un análisis inferencial o en un modelo resultaría redundante.
 
-**`Shimmer`:** La variación en la amplitud de la voz se concentra principalmente en valores bajos, entre 0.02 y 0.05, donde alcanza su pico más alto antes de caer rápidamente. La gráfica se extiende hacia la derecha hasta 0.25 con muy pocos registros, lo que representa un número pequeño de pruebas con cambios de volumen muy pronunciados. Esta acumulación en el extremo izquierdo indica que las alteraciones graves de amplitud no son la norma en todas las grabaciones, sino casos específicos.
+**`Shimmer`:** En la Figura \@ref(fig:histogramas-independientes-8) se observa que la variación en la amplitud de la voz se concentra principalmente en valores bajos, entre 0.02 y 0.05, donde alcanza su pico más alto antes de caer rápidamente. La gráfica se extiende hacia la derecha hasta 0.25 con muy pocos registros, lo que representa un número pequeño de pruebas con cambios de volumen muy pronunciados. Esta acumulación en el extremo izquierdo indica que las alteraciones graves de amplitud no son la norma en todas las grabaciones, sino casos específicos.
 
-**`Shimmer.dB.`:** La medida en decibelios sigue el mismo patrón, situando la mayor cantidad de datos entre 0.15 y 0.35 dB. Presenta una caída progresiva hacia la derecha con algunos registros dispersos que superan 1.5 dB. Dado que mide lo mismo que la variable anterior pero en una escala logarítmica, la forma es prácticamente la misma, ofreciendo información equivalente sobre los cambios de volumen en la voz.
+**`Shimmer.dB.`:** En la Figura \@ref(fig:histogramas-independientes-9) se observa que la medida en decibelios sigue el mismo patrón, situando la mayor cantidad de datos entre 0.15 y 0.35 dB. Presenta una caída progresiva hacia la derecha con algunos registros dispersos que superan 1.5 dB. Dado que mide lo mismo que la variable anterior pero en una escala logarítmica, la forma es prácticamente la misma, ofreciendo información equivalente sobre los cambios de volumen en la voz.
 
-**`Shimmer.APQ3`:** La inestabilidad de amplitud evaluada en grupos de 3 periodos se agrupa con fuerza en valores muy pequeños, alcanzando su punto máximo entre 0.01 y 0.02. A partir de ahí desciende de forma acelerada y solo unos pocos registros aislados llegan hasta 0.15. Esto confirma que las variaciones bruscas a corto plazo son poco habituales en la muestra.
+**`Shimmer.APQ3`:** En la Figura \@ref(fig:histogramas-independientes-10) se observa que la inestabilidad de amplitud evaluada en grupos de 3 periodos se agrupa con fuerza en valores muy pequeños, alcanzando su punto máximo entre 0.01 y 0.02. A partir de ahí desciende de forma acelerada y solo unos pocos registros aislados llegan hasta 0.15. Esto confirma que las variaciones bruscas a corto plazo son poco habituales en la muestra.
 
-**`Shimmer.APQ5`:** El indicador basado en bloques de 5 periodos repite una forma casi idéntica a las anteriores, concentrando el pico principal alrededor de 0.015. Mantiene la mayor parte de los registros en la zona baja y deja solo un puñado de observaciones por encima de 0.05, lo que refleja que el patrón de comportamiento se conserva.
+**`Shimmer.APQ5`:** En la Figura \@ref(fig:histogramas-independientes-11) se observa que el indicador basado en bloques de 5 periodos repite una forma casi idéntica a las anteriores, concentrando el pico principal alrededor de 0.015. Mantiene la mayor parte de los registros en la zona baja y deja solo un puñado de observaciones por encima de 0.05, lo que refleja que el patrón de comportamiento se conserva.
 
-**`Shimmer.APQ11`:** La evaluación en bloques más largos de 11 periodos mantiene el pico dominante en la zona baja (entre 0.015 y 0.03) y unos cuantos registros dispersos que se alejan hacia la derecha. La similitud con las otras variantes APQ demuestra una alta dependencia entre ellas, por lo que medir la amplitud en diferentes tamaños de ventana entrega un resultado prácticamente idéntico.
+**`Shimmer.APQ11`:** En la Figura \@ref(fig:histogramas-independientes-12) se observa que la evaluación en bloques más largos de 11 periodos mantiene el pico dominante en la zona baja (entre 0.015 y 0.03) y unos cuantos registros dispersos que se alejan hacia la derecha. La similitud con las otras variantes APQ demuestra una alta dependencia entre ellas, por lo que medir la amplitud en diferentes tamaños de ventana entrega un resultado prácticamente idéntico.
 
-**`Shimmer.DDA`:** Esta variable muestra la misma tendencia que las anteriores, con la mayoría de las mediciones concentradas por debajo de 0.08 y unos pocos registros muy alejados que llegan hasta 0.4. Al ser una variante directamente derivada del cálculo de APQ3, no aporta información nueva y genera redundancia con el resto del grupo.
+**`Shimmer.DDA`:** En la Figura \@ref(fig:histogramas-independientes-13), esta variable muestra la misma tendencia que las anteriores, con la mayoría de las mediciones concentradas por debajo de 0.08 y unos pocos registros muy alejados que llegan hasta 0.4. Al ser una variante directamente derivada del cálculo de APQ3, no aporta información nueva y genera redundancia con el resto del grupo.
 
-**`NHR`:** La relación entre ruido y señal armónica se amontona casi por completo en la zona más baja del gráfico, entre 0.01 y 0.05. Apenas unos pocos casos aislados superan el valor de 0.2. Esto señala que la presencia de ruido excesivo en las grabaciones es un evento muy poco frecuente y bien delimitado dentro de los datos.
+**`NHR`:** En la Figura \@ref(fig:histogramas-independientes-14) se observa que la relación entre ruido y señal armónica se amontona casi por completo en la zona más baja del gráfico, entre 0.01 y 0.05. Apenas unos pocos casos aislados superan el valor de 0.2. Esto señala que la presencia de ruido excesivo en las grabaciones es un evento muy poco frecuente y bien delimitado dentro de los datos.
 
-**`HNR`:** A diferencia de las anteriores, la proporción de armonía respecto al ruido presenta una forma de campana bien centrada, con el punto más alto entre los 21 y 24 dB. Los datos se distribuyen de manera pareja hacia ambos lados, aunque con un leve estiramiento en la zona baja (de 0 a 10 dB) que corresponde a las grabaciones con peor calidad vocal o más ruido de fondo.
+**`HNR`:** En la Figura \@ref(fig:histogramas-independientes-15) se observa que, a diferencia de las anteriores, la proporción de armonía respecto al ruido presenta una forma de campana bien centrada, con el punto más alto entre los 21 y 24 dB. Los datos se distribuyen de manera pareja hacia ambos lados, aunque con un leve estiramiento en la zona baja (de 0 a 10 dB) que corresponde a las grabaciones con peor calidad vocal o más ruido de fondo.
 
-**`RPDE`:** La medida de complejidad del tono muestra una distribución en forma de campana muy limpia y equilibrada, con su centro justo en el rango de 0.5 a 0.55. Los valores se extienden suavemente desde 0.25 hasta 0.75, lo que indica que esta variable se comporta de forma bastante regular en la muestra sin concentraciones extremas en los bordes.
+**`RPDE`:** En la Figura \@ref(fig:histogramas-independientes-16), la medida de complejidad del tono muestra una distribución en forma de campana muy limpia y equilibrada, con su centro justo en el rango de 0.5 a 0.55. Los valores se extienden suavemente desde 0.25 hasta 0.75, lo que indica que esta variable se comporta de forma bastante regular en la muestra sin concentraciones extremas en los bordes.
 
-**`DFA`:** El indicador de fractalidad de la señal presenta dos elevaciones muy claras: la primera y más alta está entre 0.6 y 0.63, mientras que la segunda se ubica entre 0.71 y 0.74. Igual que con la severidad motora, cada paciente aporta unas 140 grabaciones con valores parecidos, así que los dos picos reflejan sobre todo la mezcla de pacientes con distintos niveles de DFA, más que dos grupos de pacientes bien definidos.
+**`DFA`:** En la Figura \@ref(fig:histogramas-independientes-17) se observa que el indicador de fractalidad de la señal presenta dos elevaciones muy claras: la primera y más alta está entre 0.6 y 0.63, mientras que la segunda se ubica entre 0.71 y 0.74. Igual que con la severidad motora, cada paciente aporta unas 140 grabaciones con valores parecidos, así que los dos picos reflejan sobre todo la mezcla de pacientes con distintos niveles de DFA, más que dos grupos de pacientes bien definidos.
 
-**`PPE`:** La medida de variación en la frecuencia fundamental muestra una acumulación clara alrededor del rango de 0.18 a 0.22, donde alcanza su pico de máxima frecuencia. A partir de ese punto, la barra desciende de forma progresiva hacia la derecha, y unos pocos registros dispersos llegan hasta cerca de 0.73. Esto indica que la gran mayoría de los registros presentan un comportamiento relativamente estable en el tono, mientras que las variaciones más marcadas o inestables ocurren únicamente en un grupo reducido de pruebas.
+**`PPE`:** En la Figura \@ref(fig:histogramas-independientes-18), la medida de variación en la frecuencia fundamental muestra una acumulación clara alrededor del rango de 0.18 a 0.22, donde alcanza su pico de máxima frecuencia. A partir de ese punto, la barra desciende de forma progresiva hacia la derecha, y unos pocos registros dispersos llegan hasta cerca de 0.73. Esto indica que la gran mayoría de los registros presentan un comportamiento relativamente estable en el tono, mientras que las variaciones más marcadas o inestables ocurren únicamente en un grupo reducido de pruebas.
 
 ### Dispersión frente a `motor_UPDRS`
 
@@ -300,44 +382,44 @@ for (variable in variables_numericas) {
 }
 ```
 
-**`age` vs `motor_UPDRS`:** Se observa una relación positiva: a mayor edad, mayor tiende a ser la severidad motora. Los puntos forman franjas verticales porque la edad es fija para cada paciente.
+**`age` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-1) se observa una relación positiva: a mayor edad, mayor tiende a ser la severidad motora. Los puntos forman franjas verticales porque la edad es fija para cada paciente.
 
-**`test_time` vs `motor_UPDRS`:** No se observa relación: la severidad se distribuye igual a lo largo de todo el seguimiento.
+**`test_time` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-2) no se observa relación: la severidad se distribuye igual a lo largo de todo el seguimiento.
 
-**`Jitter...` vs `motor_UPDRS`:** No se observa una relación clara: casi todos los registros tienen jitter bajo y cubren toda la escala motora.
+**`Jitter...` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-3) no se observa una relación clara: casi todos los registros tienen jitter bajo y cubren toda la escala motora.
 
-**`Jitter.Abs.` vs `motor_UPDRS`:** No se observa una relación clara; el patrón es el mismo que el de Jitter porcentual.
+**`Jitter.Abs.` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-4) no se observa una relación clara; el patrón es el mismo que el de Jitter porcentual.
 
-**`Jitter.RAP` vs `motor_UPDRS`:** No se observa una relación clara: la nube es casi vertical, concentrada en valores bajos.
+**`Jitter.RAP` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-5) no se observa una relación clara: la nube es casi vertical, concentrada en valores bajos.
 
-**`Jitter.PPQ5` vs `motor_UPDRS`:** No se observa una relación clara, igual que en las demás variables de la familia Jitter.
+**`Jitter.PPQ5` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-6) no se observa una relación clara, igual que en las demás variables de la familia Jitter.
 
-**`Jitter.DDP` vs `motor_UPDRS`:** No se observa una relación clara; la gráfica es idéntica a la de Jitter.RAP, pues DDP es el triple de RAP.
+**`Jitter.DDP` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-7) no se observa una relación clara; la gráfica es idéntica a la de Jitter.RAP, pues DDP es el triple de RAP.
 
-**`Shimmer` vs `motor_UPDRS`:** Se observa una relación positiva débil: cuando el shimmer aumenta, la severidad motora tiende a aumentar ligeramente.
+**`Shimmer` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-8) se observa una relación positiva débil: cuando el shimmer aumenta, la severidad motora tiende a aumentar ligeramente.
 
-**`Shimmer.dB.` vs `motor_UPDRS`:** Se observa una relación positiva débil, la misma que con Shimmer: las dos miden la variación de amplitud, una en escala lineal y la otra en decibelios.
+**`Shimmer.dB.` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-9) se observa una relación positiva débil, la misma que con Shimmer: las dos miden la variación de amplitud, una en escala lineal y la otra en decibelios.
 
-**`Shimmer.APQ3` vs `motor_UPDRS`:** No se observa una relación clara: la nube se concentra en valores bajos y cubre toda la escala.
+**`Shimmer.APQ3` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-10) no se observa una relación clara: la nube se concentra en valores bajos y cubre toda la escala.
 
-**`Shimmer.APQ5` vs `motor_UPDRS`:** No se observa una relación clara; el patrón es casi idéntico al de APQ3.
+**`Shimmer.APQ5` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-11) no se observa una relación clara; el patrón es casi idéntico al de APQ3.
 
-**`Shimmer.APQ11` vs `motor_UPDRS`:** Se observa una relación positiva débil: los registros con APQ11 más alto tienden a tener puntuaciones motoras mayores.
+**`Shimmer.APQ11` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-12) se observa una relación positiva débil: los registros con APQ11 más alto tienden a tener puntuaciones motoras mayores.
 
-**`Shimmer.DDA` vs `motor_UPDRS`:** No se observa una relación clara; la gráfica es idéntica a la de APQ3, pues DDA es el triple de APQ3.
+**`Shimmer.DDA` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-13) no se observa una relación clara; la gráfica es idéntica a la de APQ3, pues DDA es el triple de APQ3.
 
-**`NHR` vs `motor_UPDRS`:** No se observa una relación clara: casi todos los registros tienen NHR cercano a 0.
+**`NHR` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-14) no se observa una relación clara: casi todos los registros tienen NHR cercano a 0.
 
-**`HNR` vs `motor_UPDRS`:** Se observa una relación negativa débil: cuando HNR aumenta, la severidad motora tiende a disminuir.
+**`HNR` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-15) se observa una relación negativa débil: cuando HNR aumenta, la severidad motora tiende a disminuir.
 
-**`RPDE` vs `motor_UPDRS`:** Se observa una relación positiva débil: cuando RPDE aumenta, la severidad motora tiende a aumentar.
+**`RPDE` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-16) se observa una relación positiva débil: cuando RPDE aumenta, la severidad motora tiende a aumentar.
 
-**`DFA` vs `motor_UPDRS`:** Se observa una relación negativa débil: cuando DFA aumenta, la severidad motora tiende a disminuir.
+**`DFA` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-17) se observa una relación negativa débil: cuando DFA aumenta, la severidad motora tiende a disminuir.
 
-**`PPE` vs `motor_UPDRS`:** Se observa una relación positiva débil: cuando PPE aumenta, la severidad motora tiende a aumentar.
+**`PPE` vs `motor_UPDRS`:** En la Figura \@ref(fig:dispersion-vs-motor-updrs-18) se observa una relación positiva débil: cuando PPE aumenta, la severidad motora tiende a aumentar.
 
 
-## Caracterización de la variable categórica `sex`
+## Variable independiente categórica `sex`
 
 `sex` es la única variable categórica. Como cada paciente aporta muchas grabaciones, la mostramos por registros y por pacientes.
 
@@ -350,7 +432,8 @@ tabla_sexo <- data %>%
   count(sex, name = "registros") %>%
   mutate(porcentaje = round(registros / sum(registros) * 100, 1))
 
-tabla_sexo
+tabla(tabla_sexo, "Distribución de los registros según el sexo.",
+      col.names = c("Sexo", "Registros", "Porcentaje (%)"))
 ```
 
 Distribución por pacientes (cada persona cuenta una vez):
@@ -359,7 +442,9 @@ Distribución por pacientes (cada persona cuenta una vez):
 data %>%
   distinct(subject., sex) %>%
   count(sex, name = "pacientes") %>%
-  mutate(porcentaje = round(pacientes / sum(pacientes) * 100, 1))
+  mutate(porcentaje = round(pacientes / sum(pacientes) * 100, 1)) %>%
+  tabla("Distribución de los pacientes según el sexo.",
+        col.names = c("Sexo", "Pacientes", "Porcentaje (%)"))
 ```
 
 ```{r grafico-sexo, fig.cap="Distribución de los registros según el sexo del paciente."}
@@ -375,7 +460,7 @@ tabla_sexo %>%
   theme_minimal()
 ```
 
-Dos de cada tres registros son de hombres (3.996 frente a 1.867), y lo mismo pasa con los pacientes: 28 hombres y 14 mujeres. La proporción es coherente con la mayor frecuencia del Parkinson en hombres, pero deja un grupo de mujeres pequeño, algo a tener en cuenta cuando se comparen por paciente.
+En la Figura \@ref(fig:grafico-sexo) se observa que dos de cada tres registros son de hombres (3.996 frente a 1.867), y en la Tabla \@ref(tab:tabla-sexo-pacientes) que lo mismo pasa con los pacientes: 28 hombres y 14 mujeres. La proporción es coherente con la mayor frecuencia del Parkinson en hombres, pero deja un grupo de mujeres pequeño, algo a tener en cuenta cuando se comparen por paciente.
 
 ### Severidad motora según el sexo
 
@@ -393,7 +478,10 @@ data %>%
     minimo = min(motor_UPDRS),
     maximo = max(motor_UPDRS)
   ) %>%
-  as.data.frame()
+  mutate(across(where(is.numeric), ~ signif(.x, 4))) %>%
+  tabla("Resumen de motor_UPDRS según el sexo.",
+        col.names = c("Sexo", "n", "Media", "Desviación estándar", "Mediana", "RIC",
+                      "Q1", "Q3", "Mínimo", "Máximo"))
 ```
 
 ```{r boxplot-motor-sexo, fig.cap="Puntuación motor UPDRS según el sexo del paciente."}
@@ -414,7 +502,7 @@ data %>%
   theme_minimal()
 ```
 
-Las medias son casi iguales: 21.46 puntos en hombres y 20.92 en mujeres, medio punto de diferencia frente a desviaciones estándar cercanas a 8. Ambos grupos cubren casi toda la escala y no tienen atípicos; la caja de las mujeres es un poco más ancha y empieza más abajo (Q1 de 13.6 frente a 15), es decir, hay algo más de registros con afectación leve. A simple vista no hay una diferencia clara entre sexos.
+En la Tabla \@ref(tab:motor-por-sexo) y la Figura \@ref(fig:boxplot-motor-sexo) se observa que las medias son casi iguales: 21.46 puntos en hombres (desviación estándar de 7.9) y 20.92 en mujeres (desviación estándar de 8.61), medio punto de diferencia. El 50 % de los registros de los hombres está por debajo de 21.21 puntos (rango intercuartílico de 12.51) y el de las mujeres por debajo de 20.12 (rango intercuartílico de 14.09). Ambos grupos cubren casi toda la escala y no tienen atípicos; la caja de las mujeres es un poco más ancha y empieza más abajo (Q1 de 13.6 frente a 15), es decir, hay algo más de registros con afectación leve. A simple vista no hay una diferencia clara entre sexos.
 
 ## Relaciones entre las variables independientes numéricas
 
@@ -459,17 +547,17 @@ for (comparacion in comparaciones) {
 }
 ```
 
-**`age` vs `test_time`:** No se observa relación: los pacientes de todas las edades tienen grabaciones a lo largo de todo el seguimiento.
+**`age` vs `test_time`:** En la Figura \@ref(fig:dispersion-pares-seleccionados-1) no se observa relación: los pacientes de todas las edades tienen grabaciones a lo largo de todo el seguimiento.
 
-**`Jitter...` vs `Jitter.PPQ5`:** Se observa una relación positiva muy fuerte: cuando una aumenta, la otra aumenta.
+**`Jitter...` vs `Jitter.PPQ5`:** En la Figura \@ref(fig:dispersion-pares-seleccionados-2) se observa una relación positiva muy fuerte: cuando una aumenta, la otra aumenta.
 
-**`Jitter.RAP` vs `Jitter.DDP`:** Se observa una relación positiva perfecta: los puntos forman una línea porque DDP es exactamente el triple de RAP.
+**`Jitter.RAP` vs `Jitter.DDP`:** En la Figura \@ref(fig:dispersion-pares-seleccionados-3) se observa una relación positiva perfecta: los puntos forman una línea porque DDP es exactamente el triple de RAP.
 
-**`Shimmer.APQ3` vs `Shimmer.DDA`:** Se observa una relación positiva perfecta: DDA es exactamente el triple de APQ3.
+**`Shimmer.APQ3` vs `Shimmer.DDA`:** En la Figura \@ref(fig:dispersion-pares-seleccionados-4) se observa una relación positiva perfecta: DDA es exactamente el triple de APQ3.
 
-**`Shimmer` vs `HNR`:** Se observa una relación negativa muy fuerte: cuando el shimmer aumenta, HNR disminuye.
+**`Shimmer` vs `HNR`:** En la Figura \@ref(fig:dispersion-pares-seleccionados-5) se observa una relación negativa muy fuerte: cuando el shimmer aumenta, HNR disminuye.
 
-**`RPDE` vs `PPE`:** Se observa una relación positiva moderada: cuando RPDE aumenta, PPE tiende a aumentar.
+**`RPDE` vs `PPE`:** En la Figura \@ref(fig:dispersion-pares-seleccionados-6) se observa una relación positiva moderada: cuando RPDE aumenta, PPE tiende a aumentar.
 
 ### Matriz de correlaciones
 
@@ -499,7 +587,7 @@ as.data.frame(as.table(matriz_correlaciones)) %>%
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-Lo primero que salta a la vista en la matriz son dos bloques de color intenso: las cinco medidas de Jitter se correlacionan entre sí con valores de 0.79 a 1, y las seis de Shimmer con valores de 0.89 a 1. Esto es debido a que dentro de cada familia todas las variables miden lo mismo (la variación de la frecuencia en un caso y la de la amplitud en el otro), solo que con fórmulas y escalas distintas. Incluso hay dos pares con correlación exactamente igual a 1, porque `Jitter.DDP` y `Shimmer.DDA` no son más que el triple de `Jitter.RAP` y `Shimmer.APQ3`.
+Lo primero que salta a la vista en la matriz de la Figura \@ref(fig:matriz-correlaciones) son dos bloques de color intenso: las cinco medidas de Jitter se correlacionan entre sí con valores de 0.79 a 1, y las seis de Shimmer con valores de 0.89 a 1. Esto es debido a que dentro de cada familia todas las variables miden lo mismo (la variación de la frecuencia en un caso y la de la amplitud en el otro), solo que con fórmulas y escalas distintas. Incluso hay dos pares con correlación exactamente igual a 1, porque `Jitter.DDP` y `Shimmer.DDA` no son más que el triple de `Jitter.RAP` y `Shimmer.APQ3`.
 
 Fuera de esos bloques las relaciones son las esperables: las dos familias se asocian entre sí de forma moderada (0.59 a 0.73), `NHR` sube y `HNR` baja cuando la voz se vuelve más inestable, `PPE` acompaña sobre todo al jitter, y `DFA`, `age` y `test_time` apenas se relacionan con el resto.
 
@@ -524,6 +612,8 @@ p_cor6 <- grafico_dispersion("Jitter.PPQ5", "NHR", "Jitter:PPQ5 y NHR")
 
 (p_cor1 + p_cor2 + p_cor3) / (p_cor4 + p_cor5 + p_cor6)
 ```
+
+En la Figura \@ref(fig:dispersion-pares-correlacionados) se observan los seis pares:
 
 **`Jitter...` vs `Jitter.RAP`:** Relación positiva muy fuerte (r = 0.98): cuando una aumenta, la otra aumenta casi en la misma proporción.
 
@@ -563,19 +653,28 @@ data <- data %>%
 Para comprobar que los índices no pierden información, los correlacionamos con cada variable original (incluidas las dos excluidas) y entre sí.
 
 ```{r verificacion-caracteristicas}
-data %>%
-  summarise(across(c(Jitter..., Jitter.Abs., Jitter.RAP, Jitter.PPQ5, Jitter.DDP),
-                   ~ round(cor(.x, indice_jitter), 3)))
-
-data %>%
-  summarise(across(c(Shimmer, Shimmer.dB., Shimmer.APQ3, Shimmer.APQ5,
-                     Shimmer.APQ11, Shimmer.DDA),
-                   ~ round(cor(.x, indice_shimmer), 3)))
+bind_rows(
+  data %>%
+    summarise(across(c(Jitter..., Jitter.Abs., Jitter.RAP, Jitter.PPQ5, Jitter.DDP),
+                     ~ cor(.x, indice_jitter))) %>%
+    pivot_longer(everything(), names_to = "variable", values_to = "correlacion") %>%
+    mutate(indice = "indice_jitter"),
+  data %>%
+    summarise(across(c(Shimmer, Shimmer.dB., Shimmer.APQ3, Shimmer.APQ5,
+                       Shimmer.APQ11, Shimmer.DDA),
+                     ~ cor(.x, indice_shimmer))) %>%
+    pivot_longer(everything(), names_to = "variable", values_to = "correlacion") %>%
+    mutate(indice = "indice_shimmer")
+) %>%
+  select(indice, variable, correlacion) %>%
+  mutate(correlacion = round(correlacion, 3)) %>%
+  tabla("Correlación de cada índice con las variables originales de su familia.",
+        col.names = c("Índice", "Variable original", "Correlación"))
 
 cor(data$indice_jitter, data$indice_shimmer)
 ```
 
-El índice de jitter se correlaciona entre 0.91 y 0.99 con sus cinco variables, y el de shimmer entre 0.96 y 1 con sus seis: cada uno reproduce casi por completo a su familia. Entre ellos la correlación es 0.71, alta pero no tanto como para fundirlos: las voces inestables suelen serlo en frecuencia y amplitud a la vez, pero cada índice conserva información propia.
+En la Tabla \@ref(tab:verificacion-caracteristicas) se ve que el índice de jitter se correlaciona entre 0.91 y 0.99 con sus cinco variables, y el de shimmer entre 0.96 y 1 con sus seis: cada uno reproduce casi por completo a su familia. Entre ellos la correlación es 0.71, alta pero no tanto como para fundirlos: las voces inestables suelen serlo en frecuencia y amplitud a la vez, pero cada índice conserva información propia.
 
 ### Descripción de los índices
 
@@ -602,7 +701,10 @@ data %>%
     curtosis = kurtosis(valor)
   ) %>%
   mutate(across(-c(variable, n), ~ round(.x, 3))) %>%
-  as.data.frame()
+  tabla("Resumen estadístico de los índices de jitter y shimmer.",
+        col.names = c("Índice", "n", "Media", "Desviación estándar", "Mediana", "RIC",
+                      "Q1", "Q3", "Mínimo", "Máximo", "Asimetría", "Curtosis"),
+        ancha = TRUE)
 ```
 
 ```{r graficos-caracteristicas, fig.width=12, fig.height=8, fig.cap="Histogramas y diagramas de caja de los índices de jitter y shimmer."}
@@ -634,7 +736,7 @@ p_box_caracteristicas <- datos_caracteristicas %>%
 p_hist_caracteristicas + p_box_caracteristicas
 ```
 
-Para cuantificar lo que muestran los boxplots, contamos los atípicos con la regla de 1.5 veces el rango intercuartílico y calculamos los percentiles 90 y 99 de cada índice:
+Para cuantificar lo que muestran los boxplots de la Figura \@ref(fig:graficos-caracteristicas), contamos los atípicos con la regla de 1.5 veces el rango intercuartílico y calculamos los percentiles 90 y 99 de cada índice:
 
 ```{r atipicos-caracteristicas}
 datos_caracteristicas %>%
@@ -648,16 +750,18 @@ datos_caracteristicas %>%
     p99 = quantile(valor, 0.99)
   ) %>%
   mutate(across(where(is.numeric), ~ round(.x, 2))) %>%
-  as.data.frame()
+  tabla("Atípicos según la regla de 1.5 veces el rango intercuartílico y percentiles 90 y 99 de cada índice.",
+        col.names = c("Índice", "Límite superior", "Atípicos superiores", "Porcentaje (%)",
+                      "Atípicos inferiores", "Percentil 90", "Percentil 99"))
 ```
 
-**Índice de jitter.** Por construcción la media es 0 (desviación estándar 0.96). El 50 % de las grabaciones está por debajo de -0.23, y la mitad central cabe entre -0.46 y 0.12, un intervalo de apenas media desviación estándar. Pero mientras el mínimo es -0.92, el máximo llega a 13.35: unos pocos registros se alejan muchísimo por la derecha, y eso se refleja en una asimetría de 5.61 y una curtosis de 52: los valores atípicos son muy probables. El índice hereda la forma de las medidas de Jitter originales, que ya eran muy asimétricas.
+**Índice de jitter.** Según la Tabla \@ref(tab:resumen-caracteristicas), por construcción la media es 0 (desviación estándar de 0.96). El 50 % de las grabaciones está por debajo de -0.23 (rango intercuartílico de 0.58, apenas media desviación estándar); el 25 % queda por debajo de -0.46 y el 75 % por debajo de 0.12. Pero mientras el mínimo es -0.92, el máximo llega a 13.35: unos pocos registros se alejan muchísimo por la derecha, y eso se refleja en una asimetría de 5.61 y una curtosis de 52: los valores atípicos son muy probables. El índice hereda la forma de las medidas de Jitter originales, que ya eran muy asimétricas.
 
-En el histograma casi todo se concentra entre -1 y 0.5 y luego solo quedan registros aislados hasta 13. El boxplot lo confirma: caja compacta, ningún atípico por abajo y 416 registros (7.1 %) por encima del bigote superior de 0.99, en una cadena que llega a 13 desviaciones estándar. El 90 % de las grabaciones está por debajo de 0.67 y el 99 % por debajo de 4.41: la inestabilidad severa de la frecuencia es cosa de un grupo pequeño de grabaciones muy alejadas del resto.
+En el histograma de la Figura \@ref(fig:graficos-caracteristicas) casi todo se concentra entre -1 y 0.5 y luego solo quedan registros aislados hasta 13. El boxplot lo confirma y la Tabla \@ref(tab:atipicos-caracteristicas) lo cuantifica: caja compacta, ningún atípico por abajo y 416 registros (7.1 %) por encima del bigote superior de 0.99, en una cadena que llega a 13 desviaciones estándar. El 90 % de las grabaciones está por debajo de 0.67 y el 99 % por debajo de 4.41: la inestabilidad severa de la frecuencia es cosa de un grupo pequeño de grabaciones muy alejadas del resto.
 
-**Índice de shimmer.** También tiene media 0 (desviación estándar 0.98) y el 50 % de las grabaciones está por debajo de -0.25. El 50 % central va de -0.58 a 0.24, un rango intercuartílico de 0.82, más amplio que el del jitter: la variación de amplitud es más heterogénea entre grabaciones que la de frecuencia. Los valores van de -1.19 a 8.64, y la asimetría (3.17) y la curtosis (17.13), aunque altas, son bastante menores que las del jitter.
+**Índice de shimmer.** También tiene media 0 (desviación estándar de 0.98). El 50 % de las grabaciones está por debajo de -0.25 (rango intercuartílico de 0.82, más amplio que el del jitter): la variación de amplitud es más heterogénea entre grabaciones que la de frecuencia. El 25 % queda por debajo de -0.58 y el 75 % por debajo de 0.24, y los valores van de -1.19 a 8.64, y la asimetría (3.17) y la curtosis (17.13), aunque altas, son bastante menores que las del jitter.
 
-El histograma tiene su pico entre -0.75 y 0, baja de forma gradual hasta 2.5 y deja registros dispersos hasta 8.6. En el boxplot la caja es algo más ancha que la del jitter, sin atípicos por abajo y con 325 registros (5.5 %) por encima de 1.46. El 90 % de las grabaciones queda por debajo de 0.89 y el 99 % por debajo de 4.68: de nuevo, las alteraciones graves son pocas y están muy separadas del resto.
+En la Figura \@ref(fig:graficos-caracteristicas), el histograma del shimmer tiene su pico entre -0.75 y 0, baja de forma gradual hasta 2.5 y deja registros dispersos hasta 8.6. En el boxplot la caja es algo más ancha que la del jitter, sin atípicos por abajo y con 325 registros (5.5 %) por encima de 1.46. El 90 % de las grabaciones queda por debajo de 0.89 y el 99 % por debajo de 4.68: de nuevo, las alteraciones graves son pocas y están muy separadas del resto.
 
 ### Relación con la variable respuesta
 
@@ -674,8 +778,11 @@ data %>%
   rownames_to_column("variable") %>%
   select(variable, correlacion = motor_UPDRS) %>%
   filter(variable != "motor_UPDRS") %>%
-  arrange(desc(abs(correlacion)))
+  arrange(desc(abs(correlacion))) %>%
+  mutate(correlacion = round(correlacion, 3)) %>%
+  tabla("Correlación de cada variable final con motor_UPDRS.",
+        col.names = c("Variable", "Correlación con motor_UPDRS"))
 ```
 
-Las 16 medidas acústicas quedaron en 7 (los dos índices más `NHR`, `HNR`, `RPDE`, `DFA` y `PPE`) sin perder información apreciable. Ninguna se asocia con fuerza a `motor_UPDRS`: la mayor correlación es la de `age` (0.27), seguida de `PPE` (0.16), `HNR` (-0.16), `RPDE` (0.13) y `DFA` (-0.12); los índices de shimmer (0.11) y jitter (0.07) quedan aún más abajo. Es lo mismo que mostraban los gráficos de dispersión: registro a registro, la relación entre la voz y la severidad motora es débil. Por eso en la parte inferencial tiene más sentido comparar la severidad entre grupos de pacientes (sexo, edad, nivel de inestabilidad vocal) que apoyarse en estas correlaciones.
+Las 16 medidas acústicas quedaron en 7 (los dos índices más `NHR`, `HNR`, `RPDE`, `DFA` y `PPE`) sin perder información apreciable. Ninguna se asocia con fuerza a `motor_UPDRS` (Tabla \@ref(tab:correlacion-caracteristicas-respuesta)): la mayor correlación es la de `age` (0.27), seguida de `PPE` (0.16), `HNR` (-0.16), `RPDE` (0.13) y `DFA` (-0.12); los índices de shimmer (0.11) y jitter (0.07) quedan aún más abajo. Es lo mismo que mostraban los gráficos de dispersión: registro a registro, la relación entre la voz y la severidad motora es débil. Por eso en la parte inferencial tiene más sentido comparar la severidad entre grupos de pacientes (sexo, edad, nivel de inestabilidad vocal) que apoyarse en estas correlaciones.
 
