@@ -1,0 +1,2591 @@
+<!DOCTYPE html>
+<html lang="es" xml:lang="es">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Capítulo 3 Regresión lineal múltiple | Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo</title>
+  <meta name="description" content="Modelado exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI), orientado al estudio de la relación entre características demográficas, temporales y acústicas de la voz y la severidad motora en pacientes con enfermedad de Parkinson. Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
+  <meta name="generator" content="bookdown 0.47 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Capítulo 3 Regresión lineal múltiple | Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Modelado exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI), orientado al estudio de la relación entre características demográficas, temporales y acústicas de la voz y la severidad motora en pacientes con enfermedad de Parkinson. Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
+  <meta name="github-repo" content="DiegoxorG/libro_met_est" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Capítulo 3 Regresión lineal múltiple | Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo" />
+  
+  <meta name="twitter:description" content="Modelado exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI), orientado al estudio de la relación entre características demográficas, temporales y acústicas de la voz y la severidad motora en pacientes con enfermedad de Parkinson. Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
+  
+
+<meta name="author" content="Diego Payares y Salma Romero" />
+
+
+<meta name="date" content="2026-11-22" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="inferencial.html"/>
+<link rel="next" href="conclusiones.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<link href="libs/bsTable-3.3.7/bootstrapTable.min.css" rel="stylesheet" />
+<script src="libs/bsTable-3.3.7/bootstrapTable.js"></script>
+
+
+<style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Parkinson y telemonitoreo de la voz</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Contexto del problema</a></li>
+<li class="chapter" data-level="" data-path="objetivo-general.html"><a href="objetivo-general.html"><i class="fa fa-check"></i>Objetivo general</a></li>
+<li class="chapter" data-level="" data-path="objetivos-especificos.html"><a href="objetivos-especificos.html"><i class="fa fa-check"></i>Objetivos específicos</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Análisis exploratorio de datos</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#an%C3%A1lisis-exploratorio-de-motor_updrs-variable-respuesta"><i class="fa fa-check"></i><b>1.1</b> Análisis exploratorio de <code>motor_UPDRS</code> (variable respuesta)</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#resumen-estad%C3%ADstico-de-motor_updrs"><i class="fa fa-check"></i><b>1.1.1</b> Resumen estadístico de motor_UPDRS</a></li>
+<li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#histograma"><i class="fa fa-check"></i><b>1.1.2</b> Histograma</a></li>
+<li class="chapter" data-level="1.1.3" data-path="intro.html"><a href="intro.html#diagrama-de-caja"><i class="fa fa-check"></i><b>1.1.3</b> Diagrama de caja</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#variables-independientes-num%C3%A9ricas"><i class="fa fa-check"></i><b>1.2</b> Variables independientes numéricas</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="intro.html"><a href="intro.html#resumen-estad%C3%ADstico-por-variable"><i class="fa fa-check"></i><b>1.2.1</b> Resumen estadístico por variable</a></li>
+<li class="chapter" data-level="1.2.2" data-path="intro.html"><a href="intro.html#histogramas"><i class="fa fa-check"></i><b>1.2.2</b> Histogramas</a></li>
+<li class="chapter" data-level="1.2.3" data-path="intro.html"><a href="intro.html#dispersi%C3%B3n-frente-a-motor_updrs"><i class="fa fa-check"></i><b>1.2.3</b> Dispersión frente a <code>motor_UPDRS</code></a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#variable-independiente-categ%C3%B3rica-sex"><i class="fa fa-check"></i><b>1.3</b> Variable independiente categórica <code>sex</code></a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="intro.html"><a href="intro.html#distribuci%C3%B3n-por-registros-y-por-pacientes"><i class="fa fa-check"></i><b>1.3.1</b> Distribución por registros y por pacientes</a></li>
+<li class="chapter" data-level="1.3.2" data-path="intro.html"><a href="intro.html#severidad-motora-seg%C3%BAn-el-sexo"><i class="fa fa-check"></i><b>1.3.2</b> Severidad motora según el sexo</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#relaciones-entre-las-variables-independientes-num%C3%A9ricas"><i class="fa fa-check"></i><b>1.4</b> Relaciones entre las variables independientes numéricas</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="intro.html"><a href="intro.html#pares-seleccionados"><i class="fa fa-check"></i><b>1.4.1</b> Pares seleccionados</a></li>
+<li class="chapter" data-level="1.4.2" data-path="intro.html"><a href="intro.html#matriz-de-correlaciones"><i class="fa fa-check"></i><b>1.4.2</b> Matriz de correlaciones</a></li>
+<li class="chapter" data-level="1.4.3" data-path="intro.html"><a href="intro.html#pares-m%C3%A1s-correlacionados"><i class="fa fa-check"></i><b>1.4.3</b> Pares más correlacionados</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#ingenier%C3%ADa-de-caracter%C3%ADsticas"><i class="fa fa-check"></i><b>1.5</b> Ingeniería de características</a>
+<ul>
+<li class="chapter" data-level="1.5.1" data-path="intro.html"><a href="intro.html#construcci%C3%B3n-de-los-%C3%ADndices"><i class="fa fa-check"></i><b>1.5.1</b> Construcción de los índices</a></li>
+<li class="chapter" data-level="1.5.2" data-path="intro.html"><a href="intro.html#verificaci%C3%B3n-de-los-%C3%ADndices"><i class="fa fa-check"></i><b>1.5.2</b> Verificación de los índices</a></li>
+<li class="chapter" data-level="1.5.3" data-path="intro.html"><a href="intro.html#descripci%C3%B3n-de-los-%C3%ADndices"><i class="fa fa-check"></i><b>1.5.3</b> Descripción de los índices</a></li>
+<li class="chapter" data-level="1.5.4" data-path="intro.html"><a href="intro.html#relaci%C3%B3n-con-la-variable-respuesta"><i class="fa fa-check"></i><b>1.5.4</b> Relación con la variable respuesta</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="inferencial.html"><a href="inferencial.html"><i class="fa fa-check"></i><b>2</b> Estadística inferencial</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="inferencial.html"><a href="inferencial.html#unidad-de-an%C3%A1lisis-tabla-por-paciente"><i class="fa fa-check"></i><b>2.1</b> Unidad de análisis: tabla por paciente</a></li>
+<li class="chapter" data-level="2.2" data-path="inferencial.html"><a href="inferencial.html#severidad-motora-seg%C3%BAn-el-sexo-1"><i class="fa fa-check"></i><b>2.2</b> Severidad motora según el sexo</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio"><i class="fa fa-check"></i><b>2.2.1</b> Análisis exploratorio</a></li>
+<li class="chapter" data-level="2.2.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad"><i class="fa fa-check"></i><b>2.2.2</b> Supuesto de normalidad</a></li>
+<li class="chapter" data-level="2.2.3" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-homocedasticidad"><i class="fa fa-check"></i><b>2.2.3</b> Supuesto de homocedasticidad</a></li>
+<li class="chapter" data-level="2.2.4" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-t-de-student"><i class="fa fa-check"></i><b>2.2.4</b> Prueba de hipótesis: t de Student</a></li>
+<li class="chapter" data-level="2.2.5" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto"><i class="fa fa-check"></i><b>2.2.5</b> Tamaño del efecto</a></li>
+<li class="chapter" data-level="2.2.6" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n"><i class="fa fa-check"></i><b>2.2.6</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="inferencial.html"><a href="inferencial.html#severidad-motora-seg%C3%BAn-el-grupo-de-edad"><i class="fa fa-check"></i><b>2.3</b> Severidad motora según el grupo de edad</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio-1"><i class="fa fa-check"></i><b>2.3.1</b> Análisis exploratorio</a></li>
+<li class="chapter" data-level="2.3.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad-1"><i class="fa fa-check"></i><b>2.3.2</b> Supuesto de normalidad</a></li>
+<li class="chapter" data-level="2.3.3" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-homocedasticidad-1"><i class="fa fa-check"></i><b>2.3.3</b> Supuesto de homocedasticidad</a></li>
+<li class="chapter" data-level="2.3.4" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-anova-de-un-factor"><i class="fa fa-check"></i><b>2.3.4</b> Prueba de hipótesis: ANOVA de un factor</a></li>
+<li class="chapter" data-level="2.3.5" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-de-sensibilidad-kruskal-wallis-y-comparaciones-post-hoc"><i class="fa fa-check"></i><b>2.3.5</b> Análisis de sensibilidad: Kruskal-Wallis y comparaciones post hoc</a></li>
+<li class="chapter" data-level="2.3.6" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-1"><i class="fa fa-check"></i><b>2.3.6</b> Tamaño del efecto</a></li>
+<li class="chapter" data-level="2.3.7" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-1"><i class="fa fa-check"></i><b>2.3.7</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="inferencial.html"><a href="inferencial.html#severidad-motora-seg%C3%BAn-el-nivel-de-inestabilidad-vocal"><i class="fa fa-check"></i><b>2.4</b> Severidad motora según el nivel de inestabilidad vocal</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio-2"><i class="fa fa-check"></i><b>2.4.1</b> Análisis exploratorio</a></li>
+<li class="chapter" data-level="2.4.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad-2"><i class="fa fa-check"></i><b>2.4.2</b> Supuesto de normalidad</a></li>
+<li class="chapter" data-level="2.4.3" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-homocedasticidad-2"><i class="fa fa-check"></i><b>2.4.3</b> Supuesto de homocedasticidad</a></li>
+<li class="chapter" data-level="2.4.4" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-t-de-student-1"><i class="fa fa-check"></i><b>2.4.4</b> Prueba de hipótesis: t de Student</a></li>
+<li class="chapter" data-level="2.4.5" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-2"><i class="fa fa-check"></i><b>2.4.5</b> Tamaño del efecto</a></li>
+<li class="chapter" data-level="2.4.6" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-2"><i class="fa fa-check"></i><b>2.4.6</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="inferencial.html"><a href="inferencial.html#evoluci%C3%B3n-de-la-severidad-motora-durante-el-seguimiento"><i class="fa fa-check"></i><b>2.5</b> Evolución de la severidad motora durante el seguimiento</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio-3"><i class="fa fa-check"></i><b>2.5.1</b> Análisis exploratorio</a></li>
+<li class="chapter" data-level="2.5.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad-de-las-diferencias"><i class="fa fa-check"></i><b>2.5.2</b> Supuesto de normalidad de las diferencias</a></li>
+<li class="chapter" data-level="2.5.3" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-t-pareada"><i class="fa fa-check"></i><b>2.5.3</b> Prueba de hipótesis: t pareada</a></li>
+<li class="chapter" data-level="2.5.4" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-3"><i class="fa fa-check"></i><b>2.5.4</b> Tamaño del efecto</a></li>
+<li class="chapter" data-level="2.5.5" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-3"><i class="fa fa-check"></i><b>2.5.5</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.6" data-path="inferencial.html"><a href="inferencial.html#correlaci%C3%B3n-entre-las-caracter%C3%ADsticas-y-la-severidad-motora"><i class="fa fa-check"></i><b>2.6</b> Correlación entre las características y la severidad motora</a>
+<ul>
+<li class="chapter" data-level="2.6.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio-4"><i class="fa fa-check"></i><b>2.6.1</b> Análisis exploratorio</a></li>
+<li class="chapter" data-level="2.6.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad-3"><i class="fa fa-check"></i><b>2.6.2</b> Supuesto de normalidad</a></li>
+<li class="chapter" data-level="2.6.3" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-correlaci%C3%B3n-de-pearson-y-de-spearman"><i class="fa fa-check"></i><b>2.6.3</b> Prueba de hipótesis: correlación de Pearson y de Spearman</a></li>
+<li class="chapter" data-level="2.6.4" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-4"><i class="fa fa-check"></i><b>2.6.4</b> Tamaño del efecto</a></li>
+<li class="chapter" data-level="2.6.5" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-4"><i class="fa fa-check"></i><b>2.6.5</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.7" data-path="inferencial.html"><a href="inferencial.html#asociaci%C3%B3n-entre-el-nivel-de-severidad-motora-y-las-caracter%C3%ADsticas-categ%C3%B3ricas"><i class="fa fa-check"></i><b>2.7</b> Asociación entre el nivel de severidad motora y las características categóricas</a>
+<ul>
+<li class="chapter" data-level="2.7.1" data-path="inferencial.html"><a href="inferencial.html#tabla-de-contingencia"><i class="fa fa-check"></i><b>2.7.1</b> Tabla de contingencia</a></li>
+<li class="chapter" data-level="2.7.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-frecuencias-esperadas"><i class="fa fa-check"></i><b>2.7.2</b> Supuesto: frecuencias esperadas</a></li>
+<li class="chapter" data-level="2.7.3" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-chi-cuadrado-de-independencia"><i class="fa fa-check"></i><b>2.7.3</b> Prueba de hipótesis: chi-cuadrado de independencia</a></li>
+<li class="chapter" data-level="2.7.4" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-v-de-cramer"><i class="fa fa-check"></i><b>2.7.4</b> Tamaño del efecto: V de Cramer</a></li>
+<li class="chapter" data-level="2.7.5" data-path="inferencial.html"><a href="inferencial.html#segunda-tabla-sexo-y-nivel-de-severidad"><i class="fa fa-check"></i><b>2.7.5</b> Segunda tabla: sexo y nivel de severidad</a></li>
+<li class="chapter" data-level="2.7.6" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-5"><i class="fa fa-check"></i><b>2.7.6</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.8" data-path="inferencial.html"><a href="inferencial.html#s%C3%ADntesis-de-resultados"><i class="fa fa-check"></i><b>2.8</b> Síntesis de resultados</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="regresion.html"><a href="regresion.html"><i class="fa fa-check"></i><b>3</b> Regresión lineal múltiple</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="regresion.html"><a href="regresion.html#modelo-completo"><i class="fa fa-check"></i><b>3.1</b> Modelo completo</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="regresion.html"><a href="regresion.html#prueba-de-significancia-global"><i class="fa fa-check"></i><b>3.1.1</b> Prueba de significancia global</a></li>
+<li class="chapter" data-level="3.1.2" data-path="regresion.html"><a href="regresion.html#r%C2%B2-y-r%C2%B2-ajustado"><i class="fa fa-check"></i><b>3.1.2</b> R² y R² ajustado</a></li>
+<li class="chapter" data-level="3.1.3" data-path="regresion.html"><a href="regresion.html#multicolinealidad"><i class="fa fa-check"></i><b>3.1.3</b> Multicolinealidad</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="regresion.html"><a href="regresion.html#selecci%C3%B3n-del-mejor-modelo"><i class="fa fa-check"></i><b>3.2</b> Selección del mejor modelo</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="regresion.html"><a href="regresion.html#todas-las-regresiones-posibles"><i class="fa fa-check"></i><b>3.2.1</b> Todas las regresiones posibles</a></li>
+<li class="chapter" data-level="3.2.2" data-path="regresion.html"><a href="regresion.html#selecci%C3%B3n-secuencial"><i class="fa fa-check"></i><b>3.2.2</b> Selección secuencial</a></li>
+<li class="chapter" data-level="3.2.3" data-path="regresion.html"><a href="regresion.html#comparaci%C3%B3n-con-el-modelo-completo"><i class="fa fa-check"></i><b>3.2.3</b> Comparación con el modelo completo</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="regresion.html"><a href="regresion.html#modelo-seleccionado"><i class="fa fa-check"></i><b>3.3</b> Modelo seleccionado</a></li>
+<li class="chapter" data-level="3.4" data-path="regresion.html"><a href="regresion.html#an%C3%A1lisis-de-los-errores"><i class="fa fa-check"></i><b>3.4</b> Análisis de los errores</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="regresion.html"><a href="regresion.html#independencia"><i class="fa fa-check"></i><b>3.4.1</b> Independencia</a></li>
+<li class="chapter" data-level="3.4.2" data-path="regresion.html"><a href="regresion.html#normalidad"><i class="fa fa-check"></i><b>3.4.2</b> Normalidad</a></li>
+<li class="chapter" data-level="3.4.3" data-path="regresion.html"><a href="regresion.html#media-cero"><i class="fa fa-check"></i><b>3.4.3</b> Media cero</a></li>
+<li class="chapter" data-level="3.4.4" data-path="regresion.html"><a href="regresion.html#homocedasticidad"><i class="fa fa-check"></i><b>3.4.4</b> Homocedasticidad</a></li>
+<li class="chapter" data-level="3.4.5" data-path="regresion.html"><a href="regresion.html#valores-at%C3%ADpicos-e-influyentes"><i class="fa fa-check"></i><b>3.4.5</b> Valores atípicos e influyentes</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="regresion.html"><a href="regresion.html#modelo-con-variables-categ%C3%B3ricas"><i class="fa fa-check"></i><b>3.5</b> Modelo con variables categóricas</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="regresion.html"><a href="regresion.html#codificaci%C3%B3n-con-variables-indicadoras"><i class="fa fa-check"></i><b>3.5.1</b> Codificación con variables indicadoras</a></li>
+<li class="chapter" data-level="3.5.2" data-path="regresion.html"><a href="regresion.html#modelo-solo-con-las-variables-categ%C3%B3ricas"><i class="fa fa-check"></i><b>3.5.2</b> Modelo solo con las variables categóricas</a></li>
+<li class="chapter" data-level="3.5.3" data-path="regresion.html"><a href="regresion.html#modelo-seleccionado-con-las-variables-categ%C3%B3ricas"><i class="fa fa-check"></i><b>3.5.3</b> Modelo seleccionado con las variables categóricas</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="regresion.html"><a href="regresion.html#comparaci%C3%B3n-de-los-modelos"><i class="fa fa-check"></i><b>3.6</b> Comparación de los modelos</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="conclusiones.html"><a href="conclusiones.html"><i class="fa fa-check"></i><b>4</b> Conclusiones</a></li>
+<li class="chapter" data-level="" data-path="referencias.html"><a href="referencias.html"><i class="fa fa-check"></i>Referencias</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/DiegoxorG/libro_met_est" target="blank">Diego Payares & Salma Romero</a></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Publicado con bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="regresion" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Capítulo 3</span> Regresión lineal múltiple<a href="regresion.html#regresion" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Este capítulo cubre el objetivo específico 8. Hasta ahora miramos cada característica por separado: una prueba por grupo, una correlación por variable. Aquí las metemos juntas en un modelo de regresión lineal múltiple para ver cuánto de la severidad motora explican entre todas, si se cumplen los supuestos del modelo, cuál es la mejor combinación de variables y qué pasa cuando se agregan el sexo y el grupo de edad como variables categóricas.</p>
+<p>Seguimos trabajando con la tabla <code>pacientes</code> del capítulo 2 (un registro por paciente, n = 42), por la misma razón: los 5.863 registros no son independientes, y la regresión supone errores independientes. En todas las pruebas usamos <span class="math inline">\(\alpha = 0.05\)</span>.</p>
+<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="regresion.html#cb144-1" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
+<span id="cb144-2"><a href="regresion.html#cb144-2" tabindex="-1"></a><span class="fu">library</span>(olsrr)</span>
+<span id="cb144-3"><a href="regresion.html#cb144-3" tabindex="-1"></a></span>
+<span id="cb144-4"><a href="regresion.html#cb144-4" tabindex="-1"></a><span class="fu">options</span>(<span class="at">knitr.kable.NA =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<p>Para presentar los modelos usamos dos funciones: una con los coeficientes estimados y sus pruebas t, y otra con las medidas de ajuste (R², R² ajustado y la prueba F global).</p>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="regresion.html#cb145-1" tabindex="-1"></a>coeficientes_modelo <span class="ot">&lt;-</span> <span class="cf">function</span>(modelo) {</span>
+<span id="cb145-2"><a href="regresion.html#cb145-2" tabindex="-1"></a>  <span class="fu">summary</span>(modelo)<span class="sc">$</span>coefficients <span class="sc">%&gt;%</span></span>
+<span id="cb145-3"><a href="regresion.html#cb145-3" tabindex="-1"></a>    <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb145-4"><a href="regresion.html#cb145-4" tabindex="-1"></a>    <span class="fu">rownames_to_column</span>(<span class="st">&quot;termino&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb145-5"><a href="regresion.html#cb145-5" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span>
+<span id="cb145-6"><a href="regresion.html#cb145-6" tabindex="-1"></a>}</span>
+<span id="cb145-7"><a href="regresion.html#cb145-7" tabindex="-1"></a></span>
+<span id="cb145-8"><a href="regresion.html#cb145-8" tabindex="-1"></a>ajuste_modelo <span class="ot">&lt;-</span> <span class="cf">function</span>(modelo) {</span>
+<span id="cb145-9"><a href="regresion.html#cb145-9" tabindex="-1"></a>  resumen <span class="ot">&lt;-</span> <span class="fu">summary</span>(modelo)</span>
+<span id="cb145-10"><a href="regresion.html#cb145-10" tabindex="-1"></a>  f <span class="ot">&lt;-</span> resumen<span class="sc">$</span>fstatistic</span>
+<span id="cb145-11"><a href="regresion.html#cb145-11" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
+<span id="cb145-12"><a href="regresion.html#cb145-12" tabindex="-1"></a>    <span class="at">predictores =</span> <span class="fu">length</span>(<span class="fu">coef</span>(modelo)) <span class="sc">-</span> <span class="dv">1</span>,</span>
+<span id="cb145-13"><a href="regresion.html#cb145-13" tabindex="-1"></a>    <span class="at">R2 =</span> resumen<span class="sc">$</span>r.squared,</span>
+<span id="cb145-14"><a href="regresion.html#cb145-14" tabindex="-1"></a>    <span class="at">R2_ajustado =</span> resumen<span class="sc">$</span>adj.r.squared,</span>
+<span id="cb145-15"><a href="regresion.html#cb145-15" tabindex="-1"></a>    <span class="at">error_estandar =</span> resumen<span class="sc">$</span>sigma,</span>
+<span id="cb145-16"><a href="regresion.html#cb145-16" tabindex="-1"></a>    <span class="at">F =</span> f[[<span class="st">&quot;value&quot;</span>]],</span>
+<span id="cb145-17"><a href="regresion.html#cb145-17" tabindex="-1"></a>    <span class="at">gl_num =</span> f[[<span class="st">&quot;numdf&quot;</span>]],</span>
+<span id="cb145-18"><a href="regresion.html#cb145-18" tabindex="-1"></a>    <span class="at">gl_den =</span> f[[<span class="st">&quot;dendf&quot;</span>]],</span>
+<span id="cb145-19"><a href="regresion.html#cb145-19" tabindex="-1"></a>    <span class="at">p_valor =</span> <span class="fu">pf</span>(f[[<span class="st">&quot;value&quot;</span>]], f[[<span class="st">&quot;numdf&quot;</span>]], f[[<span class="st">&quot;dendf&quot;</span>]], <span class="at">lower.tail =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb145-20"><a href="regresion.html#cb145-20" tabindex="-1"></a>    <span class="at">AIC =</span> <span class="fu">AIC</span>(modelo)</span>
+<span id="cb145-21"><a href="regresion.html#cb145-21" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb145-22"><a href="regresion.html#cb145-22" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span>
+<span id="cb145-23"><a href="regresion.html#cb145-23" tabindex="-1"></a>}</span>
+<span id="cb145-24"><a href="regresion.html#cb145-24" tabindex="-1"></a></span>
+<span id="cb145-25"><a href="regresion.html#cb145-25" tabindex="-1"></a>columnas_coeficientes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Término&quot;</span>, <span class="st">&quot;Estimación&quot;</span>, <span class="st">&quot;Error estándar&quot;</span>, <span class="st">&quot;t&quot;</span>, <span class="st">&quot;p-valor&quot;</span>)</span>
+<span id="cb145-26"><a href="regresion.html#cb145-26" tabindex="-1"></a>columnas_ajuste <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Predictores&quot;</span>, <span class="st">&quot;R²&quot;</span>, <span class="st">&quot;R² ajustado&quot;</span>, <span class="st">&quot;Error estándar residual&quot;</span>,</span>
+<span id="cb145-27"><a href="regresion.html#cb145-27" tabindex="-1"></a>                     <span class="st">&quot;F&quot;</span>, <span class="st">&quot;gl numerador&quot;</span>, <span class="st">&quot;gl denominador&quot;</span>, <span class="st">&quot;p-valor&quot;</span>, <span class="st">&quot;AIC&quot;</span>)</span></code></pre></div>
+<div id="modelo-completo" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> Modelo completo<a href="regresion.html#modelo-completo" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Empezamos con las ocho características numéricas que quedaron tras la ingeniería de características, promediadas por paciente: la edad, los índices de jitter y shimmer, <code>NHR</code>, <code>HNR</code>, <code>RPDE</code>, <code>DFA</code> y <code>PPE</code>.</p>
+<p><span class="math display">\[\text{motor} = \beta_0 + \beta_1\,\text{age} + \beta_2\,\text{jitter} + \beta_3\,\text{shimmer} + \beta_4\,\text{NHR} + \beta_5\,\text{HNR} + \beta_6\,\text{RPDE} + \beta_7\,\text{DFA} + \beta_8\,\text{PPE} + \varepsilon\]</span></p>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="regresion.html#cb146-1" tabindex="-1"></a>modelo_completo <span class="ot">&lt;-</span> <span class="fu">lm</span>(motor <span class="sc">~</span> age <span class="sc">+</span> jitter <span class="sc">+</span> shimmer <span class="sc">+</span> NHR <span class="sc">+</span> HNR <span class="sc">+</span> RPDE <span class="sc">+</span> DFA <span class="sc">+</span> PPE,</span>
+<span id="cb146-2"><a href="regresion.html#cb146-2" tabindex="-1"></a>                      <span class="at">data =</span> pacientes)</span>
+<span id="cb146-3"><a href="regresion.html#cb146-3" tabindex="-1"></a></span>
+<span id="cb146-4"><a href="regresion.html#cb146-4" tabindex="-1"></a><span class="fu">coeficientes_modelo</span>(modelo_completo) <span class="sc">%&gt;%</span></span>
+<span id="cb146-5"><a href="regresion.html#cb146-5" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Coeficientes del modelo completo.&quot;</span>, <span class="at">etiqueta =</span> <span class="st">&quot;reg-completo-coef&quot;</span>,</span>
+<span id="cb146-6"><a href="regresion.html#cb146-6" tabindex="-1"></a>        <span class="at">col.names =</span> columnas_coeficientes)</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-completo-coef">Tabla 3.1: </span>Coeficientes del modelo completo.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Término
+</th>
+<th style="text-align:right;">
+Estimación
+</th>
+<th style="text-align:right;">
+Error estándar
+</th>
+<th style="text-align:right;">
+t
+</th>
+<th style="text-align:right;">
+p-valor
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+39.4621
+</td>
+<td style="text-align:right;">
+54.8916
+</td>
+<td style="text-align:right;">
+0.7189
+</td>
+<td style="text-align:right;">
+0.4773
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+age
+</td>
+<td style="text-align:right;">
+0.1597
+</td>
+<td style="text-align:right;">
+0.1469
+</td>
+<td style="text-align:right;">
+1.0869
+</td>
+<td style="text-align:right;">
+0.2849
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+jitter
+</td>
+<td style="text-align:right;">
+-1.7035
+</td>
+<td style="text-align:right;">
+10.4252
+</td>
+<td style="text-align:right;">
+-0.1634
+</td>
+<td style="text-align:right;">
+0.8712
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+shimmer
+</td>
+<td style="text-align:right;">
+-1.9965
+</td>
+<td style="text-align:right;">
+5.7326
+</td>
+<td style="text-align:right;">
+-0.3483
+</td>
+<td style="text-align:right;">
+0.7298
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NHR
+</td>
+<td style="text-align:right;">
+-13.6246
+</td>
+<td style="text-align:right;">
+125.8937
+</td>
+<td style="text-align:right;">
+-0.1082
+</td>
+<td style="text-align:right;">
+0.9145
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HNR
+</td>
+<td style="text-align:right;">
+-0.6164
+</td>
+<td style="text-align:right;">
+1.1425
+</td>
+<td style="text-align:right;">
+-0.5395
+</td>
+<td style="text-align:right;">
+0.5932
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RPDE
+</td>
+<td style="text-align:right;">
+1.4885
+</td>
+<td style="text-align:right;">
+29.7315
+</td>
+<td style="text-align:right;">
+0.0501
+</td>
+<td style="text-align:right;">
+0.9604
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DFA
+</td>
+<td style="text-align:right;">
+-41.5354
+</td>
+<td style="text-align:right;">
+30.9761
+</td>
+<td style="text-align:right;">
+-1.3409
+</td>
+<td style="text-align:right;">
+0.1891
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PPE
+</td>
+<td style="text-align:right;">
+51.9001
+</td>
+<td style="text-align:right;">
+59.3314
+</td>
+<td style="text-align:right;">
+0.8747
+</td>
+<td style="text-align:right;">
+0.3880
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="regresion.html#cb147-1" tabindex="-1"></a><span class="fu">ajuste_modelo</span>(modelo_completo) <span class="sc">%&gt;%</span></span>
+<span id="cb147-2"><a href="regresion.html#cb147-2" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Medidas de ajuste del modelo completo.&quot;</span>, <span class="at">etiqueta =</span> <span class="st">&quot;reg-completo-ajuste&quot;</span>,</span>
+<span id="cb147-3"><a href="regresion.html#cb147-3" tabindex="-1"></a>        <span class="at">col.names =</span> columnas_ajuste)</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-completo-ajuste">Tabla 3.2: </span>Medidas de ajuste del modelo completo.
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+Predictores
+</th>
+<th style="text-align:right;">
+R²
+</th>
+<th style="text-align:right;">
+R² ajustado
+</th>
+<th style="text-align:right;">
+Error estándar residual
+</th>
+<th style="text-align:right;">
+F
+</th>
+<th style="text-align:right;">
+gl numerador
+</th>
+<th style="text-align:right;">
+gl denominador
+</th>
+<th style="text-align:right;">
+p-valor
+</th>
+<th style="text-align:right;">
+AIC
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+0.2167
+</td>
+<td style="text-align:right;">
+0.0268
+</td>
+<td style="text-align:right;">
+7.7733
+</td>
+<td style="text-align:right;">
+1.1414
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+33
+</td>
+<td style="text-align:right;">
+0.3628
+</td>
+<td style="text-align:right;">
+301.32
+</td>
+</tr>
+</tbody>
+</table>
+<div id="prueba-de-significancia-global" class="section level3 hasAnchor" number="3.1.1">
+<h3><span class="header-section-number">3.1.1</span> Prueba de significancia global<a href="regresion.html#prueba-de-significancia-global" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span class="math display">\[H_0: \beta_1 = \beta_2 = \cdots = \beta_8 = 0 \qquad H_1: \text{al menos un } \beta_j \neq 0\]</span></p>
+<p>La Tabla <a href="regresion.html#tab:reg-completo-ajuste">3.2</a> da F = 1.14 con 8 y 33 grados de libertad y p = 0.363. No se rechaza <span class="math inline">\(H_0\)</span>: con las ocho características juntas, el modelo no explica la severidad motora mejor que su promedio. En la Tabla <a href="regresion.html#tab:reg-completo-coef">3.1</a> tampoco hay ningún coeficiente significativo por sí solo; el p-valor más bajo es el de <code>DFA</code> (0.189).</p>
+</div>
+<div id="r²-y-r²-ajustado" class="section level3 hasAnchor" number="3.1.2">
+<h3><span class="header-section-number">3.1.2</span> R² y R² ajustado<a href="regresion.html#r%C2%B2-y-r%C2%B2-ajustado" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>El R² es 0.217: las ocho variables juntas explican el 21.7 % de la variabilidad de la severidad motora entre pacientes. Pero el R² siempre sube al agregar variables, aunque no aporten nada, y por eso se corrige con el R² ajustado, que penaliza el número de predictores frente al tamaño de la muestra. Aquí cae a 0.027: con ocho predictores para 42 pacientes, la penalización se come casi todo lo que gana el R². Es la primera señal de que al modelo le sobran variables.</p>
+</div>
+<div id="multicolinealidad" class="section level3 hasAnchor" number="3.1.3">
+<h3><span class="header-section-number">3.1.3</span> Multicolinealidad<a href="regresion.html#multicolinealidad" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="regresion.html#cb148-1" tabindex="-1"></a><span class="fu">vif</span>(modelo_completo) <span class="sc">%&gt;%</span></span>
+<span id="cb148-2"><a href="regresion.html#cb148-2" tabindex="-1"></a>  <span class="fu">enframe</span>(<span class="st">&quot;variable&quot;</span>, <span class="st">&quot;VIF&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb148-3"><a href="regresion.html#cb148-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">VIF =</span> <span class="fu">round</span>(VIF, <span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb148-4"><a href="regresion.html#cb148-4" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(VIF)) <span class="sc">%&gt;%</span></span>
+<span id="cb148-5"><a href="regresion.html#cb148-5" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Factor de inflación de la varianza (VIF) de cada variable en el modelo completo.&quot;</span>,</span>
+<span id="cb148-6"><a href="regresion.html#cb148-6" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Variable&quot;</span>, <span class="st">&quot;VIF&quot;</span>))</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-completo-vif">Tabla 3.3: </span>Factor de inflación de la varianza (VIF) de cada variable en el modelo completo.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Variable
+</th>
+<th style="text-align:right;">
+VIF
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+jitter
+</td>
+<td style="text-align:right;">
+25.94
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NHR
+</td>
+<td style="text-align:right;">
+23.79
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+shimmer
+</td>
+<td style="text-align:right;">
+12.98
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HNR
+</td>
+<td style="text-align:right;">
+10.68
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PPE
+</td>
+<td style="text-align:right;">
+10.45
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RPDE
+</td>
+<td style="text-align:right;">
+3.23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DFA
+</td>
+<td style="text-align:right;">
+2.59
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+age
+</td>
+<td style="text-align:right;">
+1.25
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="regresion.html#cb149-1" tabindex="-1"></a><span class="fu">kappa</span>(modelo_completo)</span></code></pre></div>
+<pre><code>## [1] 5745.668</code></pre>
+<p>Cinco variables superan el umbral de 5 en la Tabla <a href="regresion.html#tab:reg-completo-vif">3.3</a>: el índice de jitter (25.94), <code>NHR</code> (23.79), el índice de shimmer (12.98), <code>HNR</code> (10.68) y <code>PPE</code> (10.45). El índice de condición (5745.67) también está muy por encima de 30. Hay multicolinealidad fuerte, algo esperable porque en el capítulo 1 ya vimos que las medidas de inestabilidad y de ruido de la voz se mueven juntas. Esto infla los errores estándar de los coeficientes, explica en parte que ninguno salga significativo y es otra razón para quedarnos con menos variables.</p>
+</div>
+</div>
+<div id="selección-del-mejor-modelo" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> Selección del mejor modelo<a href="regresion.html#selecci%C3%B3n-del-mejor-modelo" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="todas-las-regresiones-posibles" class="section level3 hasAnchor" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> Todas las regresiones posibles<a href="regresion.html#todas-las-regresiones-posibles" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Con ocho predictores hay <span class="math inline">\(2^8 - 1 = 255\)</span> modelos posibles. Los ajustamos todos y comparamos tres criterios: el R² ajustado (mientras más alto, mejor), el AIC y el <span class="math inline">\(C_p\)</span> de Mallows (mientras más bajos, mejor).</p>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="regresion.html#cb151-1" tabindex="-1"></a>todas <span class="ot">&lt;-</span> <span class="fu">ols_step_all_possible</span>(modelo_completo)</span>
+<span id="cb151-2"><a href="regresion.html#cb151-2" tabindex="-1"></a><span class="co"># según la versión de olsrr, la tabla viene directa o dentro de $result</span></span>
+<span id="cb151-3"><a href="regresion.html#cb151-3" tabindex="-1"></a>todas <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">is.data.frame</span>(todas)) todas <span class="cf">else</span> todas<span class="sc">$</span>result</span>
+<span id="cb151-4"><a href="regresion.html#cb151-4" tabindex="-1"></a></span>
+<span id="cb151-5"><a href="regresion.html#cb151-5" tabindex="-1"></a><span class="fu">nrow</span>(todas)</span></code></pre></div>
+<pre><code>## [1] 255</code></pre>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="regresion.html#cb153-1" tabindex="-1"></a>todas <span class="sc">%&gt;%</span></span>
+<span id="cb153-2"><a href="regresion.html#cb153-2" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(adjr)) <span class="sc">%&gt;%</span></span>
+<span id="cb153-3"><a href="regresion.html#cb153-3" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb153-4"><a href="regresion.html#cb153-4" tabindex="-1"></a>  <span class="fu">select</span>(n, predictors, rsquare, adjr, cp, aic) <span class="sc">%&gt;%</span></span>
+<span id="cb153-5"><a href="regresion.html#cb153-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(rsquare, adjr, cp, aic), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb153-6"><a href="regresion.html#cb153-6" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Los cinco modelos con mayor R² ajustado entre todas las regresiones posibles.&quot;</span>,</span>
+<span id="cb153-7"><a href="regresion.html#cb153-7" tabindex="-1"></a>        <span class="at">etiqueta =</span> <span class="st">&quot;reg-todas-adjr&quot;</span>,</span>
+<span id="cb153-8"><a href="regresion.html#cb153-8" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Predictores&quot;</span>, <span class="st">&quot;Variables&quot;</span>, <span class="st">&quot;R²&quot;</span>, <span class="st">&quot;R² ajustado&quot;</span>, <span class="st">&quot;Cp&quot;</span>, <span class="st">&quot;AIC&quot;</span>))</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-todas-adjr">Tabla 3.4: </span>Los cinco modelos con mayor R² ajustado entre todas las regresiones posibles.
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+Predictores
+</th>
+<th style="text-align:left;">
+Variables
+</th>
+<th style="text-align:right;">
+R²
+</th>
+<th style="text-align:right;">
+R² ajustado
+</th>
+<th style="text-align:right;">
+Cp
+</th>
+<th style="text-align:right;">
+AIC
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+age DFA PPE
+</td>
+<td style="text-align:right;">
+0.1840
+</td>
+<td style="text-align:right;">
+0.1196
+</td>
+<td style="text-align:right;">
+0.3785
+</td>
+<td style="text-align:right;">
+293.0388
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+age jitter DFA PPE
+</td>
+<td style="text-align:right;">
+0.2040
+</td>
+<td style="text-align:right;">
+0.1180
+</td>
+<td style="text-align:right;">
+1.5356
+</td>
+<td style="text-align:right;">
+293.9961
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+age NHR DFA PPE
+</td>
+<td style="text-align:right;">
+0.2028
+</td>
+<td style="text-align:right;">
+0.1166
+</td>
+<td style="text-align:right;">
+1.5867
+</td>
+<td style="text-align:right;">
+294.0601
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+jitter DFA PPE
+</td>
+<td style="text-align:right;">
+0.1766
+</td>
+<td style="text-align:right;">
+0.1116
+</td>
+<td style="text-align:right;">
+0.6892
+</td>
+<td style="text-align:right;">
+293.4167
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+age shimmer DFA PPE
+</td>
+<td style="text-align:right;">
+0.1958
+</td>
+<td style="text-align:right;">
+0.1089
+</td>
+<td style="text-align:right;">
+1.8802
+</td>
+<td style="text-align:right;">
+294.4256
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="regresion.html#cb154-1" tabindex="-1"></a>todas <span class="sc">%&gt;%</span></span>
+<span id="cb154-2"><a href="regresion.html#cb154-2" tabindex="-1"></a>  <span class="fu">arrange</span>(aic) <span class="sc">%&gt;%</span></span>
+<span id="cb154-3"><a href="regresion.html#cb154-3" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb154-4"><a href="regresion.html#cb154-4" tabindex="-1"></a>  <span class="fu">select</span>(n, predictors, rsquare, adjr, cp, aic) <span class="sc">%&gt;%</span></span>
+<span id="cb154-5"><a href="regresion.html#cb154-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(rsquare, adjr, cp, aic), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb154-6"><a href="regresion.html#cb154-6" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Los cinco modelos con menor AIC entre todas las regresiones posibles.&quot;</span>,</span>
+<span id="cb154-7"><a href="regresion.html#cb154-7" tabindex="-1"></a>        <span class="at">etiqueta =</span> <span class="st">&quot;reg-todas-aic&quot;</span>,</span>
+<span id="cb154-8"><a href="regresion.html#cb154-8" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Predictores&quot;</span>, <span class="st">&quot;Variables&quot;</span>, <span class="st">&quot;R²&quot;</span>, <span class="st">&quot;R² ajustado&quot;</span>, <span class="st">&quot;Cp&quot;</span>, <span class="st">&quot;AIC&quot;</span>))</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-todas-aic">Tabla 3.5: </span>Los cinco modelos con menor AIC entre todas las regresiones posibles.
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+Predictores
+</th>
+<th style="text-align:left;">
+Variables
+</th>
+<th style="text-align:right;">
+R²
+</th>
+<th style="text-align:right;">
+R² ajustado
+</th>
+<th style="text-align:right;">
+Cp
+</th>
+<th style="text-align:right;">
+AIC
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+age DFA PPE
+</td>
+<td style="text-align:right;">
+0.1840
+</td>
+<td style="text-align:right;">
+0.1196
+</td>
+<td style="text-align:right;">
+0.3785
+</td>
+<td style="text-align:right;">
+293.0388
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+DFA PPE
+</td>
+<td style="text-align:right;">
+0.1406
+</td>
+<td style="text-align:right;">
+0.0965
+</td>
+<td style="text-align:right;">
+0.2080
+</td>
+<td style="text-align:right;">
+293.2165
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+jitter DFA PPE
+</td>
+<td style="text-align:right;">
+0.1766
+</td>
+<td style="text-align:right;">
+0.1116
+</td>
+<td style="text-align:right;">
+0.6892
+</td>
+<td style="text-align:right;">
+293.4167
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+age PPE
+</td>
+<td style="text-align:right;">
+0.1335
+</td>
+<td style="text-align:right;">
+0.0890
+</td>
+<td style="text-align:right;">
+0.5086
+</td>
+<td style="text-align:right;">
+293.5637
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+NHR DFA PPE
+</td>
+<td style="text-align:right;">
+0.1736
+</td>
+<td style="text-align:right;">
+0.1084
+</td>
+<td style="text-align:right;">
+0.8151
+</td>
+<td style="text-align:right;">
+293.5687
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="regresion.html#cb155-1" tabindex="-1"></a>todas <span class="sc">%&gt;%</span></span>
+<span id="cb155-2"><a href="regresion.html#cb155-2" tabindex="-1"></a>  <span class="fu">arrange</span>(cp) <span class="sc">%&gt;%</span></span>
+<span id="cb155-3"><a href="regresion.html#cb155-3" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb155-4"><a href="regresion.html#cb155-4" tabindex="-1"></a>  <span class="fu">select</span>(n, predictors, rsquare, adjr, cp, aic) <span class="sc">%&gt;%</span></span>
+<span id="cb155-5"><a href="regresion.html#cb155-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(rsquare, adjr, cp, aic), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb155-6"><a href="regresion.html#cb155-6" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Los cinco modelos con menor Cp de Mallows entre todas las regresiones posibles.&quot;</span>,</span>
+<span id="cb155-7"><a href="regresion.html#cb155-7" tabindex="-1"></a>        <span class="at">etiqueta =</span> <span class="st">&quot;reg-todas-cp&quot;</span>,</span>
+<span id="cb155-8"><a href="regresion.html#cb155-8" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Predictores&quot;</span>, <span class="st">&quot;Variables&quot;</span>, <span class="st">&quot;R²&quot;</span>, <span class="st">&quot;R² ajustado&quot;</span>, <span class="st">&quot;Cp&quot;</span>, <span class="st">&quot;AIC&quot;</span>))</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-todas-cp">Tabla 3.6: </span>Los cinco modelos con menor Cp de Mallows entre todas las regresiones posibles.
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+Predictores
+</th>
+<th style="text-align:left;">
+Variables
+</th>
+<th style="text-align:right;">
+R²
+</th>
+<th style="text-align:right;">
+R² ajustado
+</th>
+<th style="text-align:right;">
+Cp
+</th>
+<th style="text-align:right;">
+AIC
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+DFA PPE
+</td>
+<td style="text-align:right;">
+0.1406
+</td>
+<td style="text-align:right;">
+0.0965
+</td>
+<td style="text-align:right;">
+0.2080
+</td>
+<td style="text-align:right;">
+293.2165
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+age
+</td>
+<td style="text-align:right;">
+0.0895
+</td>
+<td style="text-align:right;">
+0.0668
+</td>
+<td style="text-align:right;">
+0.3593
+</td>
+<td style="text-align:right;">
+293.6406
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+age DFA PPE
+</td>
+<td style="text-align:right;">
+0.1840
+</td>
+<td style="text-align:right;">
+0.1196
+</td>
+<td style="text-align:right;">
+0.3785
+</td>
+<td style="text-align:right;">
+293.0388
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+age PPE
+</td>
+<td style="text-align:right;">
+0.1335
+</td>
+<td style="text-align:right;">
+0.0890
+</td>
+<td style="text-align:right;">
+0.5086
+</td>
+<td style="text-align:right;">
+293.5637
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+age HNR
+</td>
+<td style="text-align:right;">
+0.1328
+</td>
+<td style="text-align:right;">
+0.0884
+</td>
+<td style="text-align:right;">
+0.5349
+</td>
+<td style="text-align:right;">
+293.5939
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="regresion.html#cb156-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb156-2"><a href="regresion.html#cb156-2" tabindex="-1"></a>todas <span class="sc">%&gt;%</span></span>
+<span id="cb156-3"><a href="regresion.html#cb156-3" tabindex="-1"></a>  <span class="fu">select</span>(n, rsquare, adjr) <span class="sc">%&gt;%</span></span>
+<span id="cb156-4"><a href="regresion.html#cb156-4" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>n, <span class="at">names_to =</span> <span class="st">&quot;medida&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;valor&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb156-5"><a href="regresion.html#cb156-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">medida =</span> <span class="fu">factor</span>(medida, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;rsquare&quot;</span>, <span class="st">&quot;adjr&quot;</span>),</span>
+<span id="cb156-6"><a href="regresion.html#cb156-6" tabindex="-1"></a>                         <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;R²&quot;</span>, <span class="st">&quot;R² ajustado&quot;</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb156-7"><a href="regresion.html#cb156-7" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(n), <span class="at">y =</span> valor)) <span class="sc">+</span></span>
+<span id="cb156-8"><a href="regresion.html#cb156-8" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.15</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">&quot;#C77D98&quot;</span>) <span class="sc">+</span></span>
+<span id="cb156-9"><a href="regresion.html#cb156-9" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> max, <span class="at">geom =</span> <span class="st">&quot;point&quot;</span>, <span class="at">shape =</span> <span class="dv">18</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">color =</span> <span class="st">&quot;#8E0038&quot;</span>) <span class="sc">+</span></span>
+<span id="cb156-10"><a href="regresion.html#cb156-10" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> medida) <span class="sc">+</span></span>
+<span id="cb156-11"><a href="regresion.html#cb156-11" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Todas las regresiones posibles&quot;</span>,</span>
+<span id="cb156-12"><a href="regresion.html#cb156-12" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Cada punto es un modelo; el rombo marca el mejor de cada tamaño&quot;</span>,</span>
+<span id="cb156-13"><a href="regresion.html#cb156-13" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Número de predictores&quot;</span>,</span>
+<span id="cb156-14"><a href="regresion.html#cb156-14" tabindex="-1"></a>       <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb156-15"><a href="regresion.html#cb156-15" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="figure"><span style="display:block;" id="fig:reg-todas-grafico"></span>
+<img src="parkinson-updrs_files/figure-html/reg-todas-grafico-1.png" alt="R² y R² ajustado de las 255 regresiones posibles según el número de predictores." width="960" />
+<p class="caption">
+Figura 3.1: R² y R² ajustado de las 255 regresiones posibles según el número de predictores.
+</p>
+</div>
+<p>Los criterios apuntan al mismo modelo. El que tiene <code>age</code>, <code>DFA</code> y <code>PPE</code> es el de mayor R² ajustado (0.1196, Tabla <a href="regresion.html#tab:reg-todas-adjr">3.4</a>) y el de menor AIC (293.04, Tabla <a href="regresion.html#tab:reg-todas-aic">3.5</a>). Con el <span class="math inline">\(C_p\)</span> de Mallows (Tabla <a href="regresion.html#tab:reg-todas-cp">3.6</a>) queda tercero (0.38), detrás de <code>DFA</code> + <code>PPE</code> (0.21) y de la edad sola (0.36). Pero los tres tienen un <span class="math inline">\(C_p\)</span> muy por debajo de su número de parámetros, así que ninguno tiene un sesgo importante y las diferencias entre ellos son mínimas.</p>
+<p>En la Figura <a href="regresion.html#fig:reg-todas-grafico">3.1</a> se observa por qué el R² no sirve para elegir: el mejor R² de cada tamaño siempre sube, de 0.09 con una variable a 0.22 con las ocho. El R² ajustado, en cambio, sube hasta los tres predictores (0.12) y después baja, porque a partir de ahí cada variable nueva aporta menos de lo que cuesta.</p>
+</div>
+<div id="selección-secuencial" class="section level3 hasAnchor" number="3.2.2">
+<h3><span class="header-section-number">3.2.2</span> Selección secuencial<a href="regresion.html#selecci%C3%B3n-secuencial" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Como segundo criterio usamos la selección secuencial con <code>stepAIC</code>, que agrega o quita variables mientras el AIC baje: hacia adelante (desde el modelo sin predictores), hacia atrás (desde el modelo completo) y en ambas direcciones.</p>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="regresion.html#cb157-1" tabindex="-1"></a>modelo_nulo <span class="ot">&lt;-</span> <span class="fu">lm</span>(motor <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> pacientes)</span>
+<span id="cb157-2"><a href="regresion.html#cb157-2" tabindex="-1"></a></span>
+<span id="cb157-3"><a href="regresion.html#cb157-3" tabindex="-1"></a>sel_forward <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">stepAIC</span>(modelo_nulo,</span>
+<span id="cb157-4"><a href="regresion.html#cb157-4" tabindex="-1"></a>                             <span class="at">scope =</span> <span class="fu">list</span>(<span class="at">lower =</span> modelo_nulo, <span class="at">upper =</span> modelo_completo),</span>
+<span id="cb157-5"><a href="regresion.html#cb157-5" tabindex="-1"></a>                             <span class="at">direction =</span> <span class="st">&quot;forward&quot;</span>, <span class="at">trace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb157-6"><a href="regresion.html#cb157-6" tabindex="-1"></a>sel_backward <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">stepAIC</span>(modelo_completo, <span class="at">direction =</span> <span class="st">&quot;backward&quot;</span>, <span class="at">trace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb157-7"><a href="regresion.html#cb157-7" tabindex="-1"></a>sel_both <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">stepAIC</span>(modelo_nulo,</span>
+<span id="cb157-8"><a href="regresion.html#cb157-8" tabindex="-1"></a>                          <span class="at">scope =</span> <span class="fu">list</span>(<span class="at">lower =</span> modelo_nulo, <span class="at">upper =</span> modelo_completo),</span>
+<span id="cb157-9"><a href="regresion.html#cb157-9" tabindex="-1"></a>                          <span class="at">direction =</span> <span class="st">&quot;both&quot;</span>, <span class="at">trace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb157-10"><a href="regresion.html#cb157-10" tabindex="-1"></a></span>
+<span id="cb157-11"><a href="regresion.html#cb157-11" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb157-12"><a href="regresion.html#cb157-12" tabindex="-1"></a>  <span class="at">procedimiento =</span> <span class="fu">c</span>(<span class="st">&quot;Hacia adelante&quot;</span>, <span class="st">&quot;Hacia atrás&quot;</span>, <span class="st">&quot;Ambas direcciones&quot;</span>),</span>
+<span id="cb157-13"><a href="regresion.html#cb157-13" tabindex="-1"></a>  <span class="at">modelo =</span> <span class="fu">sapply</span>(<span class="fu">list</span>(sel_forward, sel_backward, sel_both),</span>
+<span id="cb157-14"><a href="regresion.html#cb157-14" tabindex="-1"></a>                  <span class="cf">function</span>(m) <span class="fu">paste</span>(<span class="fu">attr</span>(<span class="fu">terms</span>(m), <span class="st">&quot;term.labels&quot;</span>), <span class="at">collapse =</span> <span class="st">&quot; + &quot;</span>)),</span>
+<span id="cb157-15"><a href="regresion.html#cb157-15" tabindex="-1"></a>  <span class="at">AIC =</span> <span class="fu">sapply</span>(<span class="fu">list</span>(sel_forward, sel_backward, sel_both), AIC)</span>
+<span id="cb157-16"><a href="regresion.html#cb157-16" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb157-17"><a href="regresion.html#cb157-17" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">AIC =</span> <span class="fu">round</span>(AIC, <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb157-18"><a href="regresion.html#cb157-18" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Modelo elegido por cada procedimiento de selección secuencial.&quot;</span>,</span>
+<span id="cb157-19"><a href="regresion.html#cb157-19" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Procedimiento&quot;</span>, <span class="st">&quot;Variables&quot;</span>, <span class="st">&quot;AIC&quot;</span>))</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-secuencial">Tabla 3.7: </span>Modelo elegido por cada procedimiento de selección secuencial.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Procedimiento
+</th>
+<th style="text-align:left;">
+Variables
+</th>
+<th style="text-align:right;">
+AIC
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Hacia adelante
+</td>
+<td style="text-align:left;">
+age + PPE + DFA
+</td>
+<td style="text-align:right;">
+293.0388
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hacia atrás
+</td>
+<td style="text-align:left;">
+age + DFA + PPE
+</td>
+<td style="text-align:right;">
+293.0388
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ambas direcciones
+</td>
+<td style="text-align:left;">
+age + PPE + DFA
+</td>
+<td style="text-align:right;">
+293.0388
+</td>
+</tr>
+</tbody>
+</table>
+<p>Los tres procedimientos llegan al mismo modelo, <code>age</code> + <code>DFA</code> + <code>PPE</code>, con AIC = 293.04 (Tabla <a href="regresion.html#tab:reg-secuencial">3.7</a>); el orden de las variables solo cambia por el orden en que se fueron agregando. Coincide con lo que dieron todas las regresiones posibles, así que ese es el modelo seleccionado.</p>
+</div>
+<div id="comparación-con-el-modelo-completo" class="section level3 hasAnchor" number="3.2.3">
+<h3><span class="header-section-number">3.2.3</span> Comparación con el modelo completo<a href="regresion.html#comparaci%C3%B3n-con-el-modelo-completo" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Para confirmar que las cinco variables que salen no hacen falta, comparamos el modelo seleccionado con el completo mediante la prueba F parcial:</p>
+<p><span class="math display">\[H_0: \beta_{\text{jitter}} = \beta_{\text{shimmer}} = \beta_{\text{NHR}} = \beta_{\text{HNR}} = \beta_{\text{RPDE}} = 0 \qquad H_1: \text{al menos uno es distinto de 0}\]</span></p>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="regresion.html#cb158-1" tabindex="-1"></a>modelo_seleccionado <span class="ot">&lt;-</span> <span class="fu">lm</span>(motor <span class="sc">~</span> age <span class="sc">+</span> DFA <span class="sc">+</span> PPE, <span class="at">data =</span> pacientes)</span>
+<span id="cb158-2"><a href="regresion.html#cb158-2" tabindex="-1"></a></span>
+<span id="cb158-3"><a href="regresion.html#cb158-3" tabindex="-1"></a><span class="fu">anova</span>(modelo_seleccionado, modelo_completo) <span class="sc">%&gt;%</span></span>
+<span id="cb158-4"><a href="regresion.html#cb158-4" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb158-5"><a href="regresion.html#cb158-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">modelo =</span> <span class="fu">c</span>(<span class="st">&quot;Seleccionado&quot;</span>, <span class="st">&quot;Completo&quot;</span>), <span class="at">.before =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb158-6"><a href="regresion.html#cb158-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb158-7"><a href="regresion.html#cb158-7" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Prueba F parcial: modelo seleccionado frente al modelo completo.&quot;</span>,</span>
+<span id="cb158-8"><a href="regresion.html#cb158-8" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Modelo&quot;</span>, <span class="st">&quot;gl residuales&quot;</span>, <span class="st">&quot;SC residual&quot;</span>, <span class="st">&quot;gl&quot;</span>, <span class="st">&quot;SC&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;p-valor&quot;</span>))</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-f-parcial">Tabla 3.8: </span>Prueba F parcial: modelo seleccionado frente al modelo completo.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Modelo
+</th>
+<th style="text-align:right;">
+gl residuales
+</th>
+<th style="text-align:right;">
+SC residual
+</th>
+<th style="text-align:right;">
+gl
+</th>
+<th style="text-align:right;">
+SC
+</th>
+<th style="text-align:right;">
+F
+</th>
+<th style="text-align:right;">
+p-valor
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Seleccionado
+</td>
+<td style="text-align:right;">
+38
+</td>
+<td style="text-align:right;">
+2077.272
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Completo
+</td>
+<td style="text-align:right;">
+33
+</td>
+<td style="text-align:right;">
+1993.978
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+83.2941
+</td>
+<td style="text-align:right;">
+0.2757
+</td>
+<td style="text-align:right;">
+0.9231
+</td>
+</tr>
+</tbody>
+</table>
+<p>La prueba da F = 0.28 con 5 y 33 grados de libertad y p = 0.923 (Tabla <a href="regresion.html#tab:reg-f-parcial">3.8</a>), así que no se rechaza <span class="math inline">\(H_0\)</span>. Quitar el jitter, el shimmer, <code>NHR</code>, <code>HNR</code> y <code>RPDE</code> solo aumenta la suma de cuadrados residual en 83.29, y esa diferencia no es significativa: esas cinco variables no aportan nada que no esté ya en las otras tres.</p>
+</div>
+</div>
+<div id="modelo-seleccionado" class="section level2 hasAnchor" number="3.3">
+<h2><span class="header-section-number">3.3</span> Modelo seleccionado<a href="regresion.html#modelo-seleccionado" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><span class="math display">\[\text{motor} = \beta_0 + \beta_1\,\text{age} + \beta_2\,\text{DFA} + \beta_3\,\text{PPE} + \varepsilon\]</span></p>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="regresion.html#cb159-1" tabindex="-1"></a><span class="fu">coeficientes_modelo</span>(modelo_seleccionado) <span class="sc">%&gt;%</span></span>
+<span id="cb159-2"><a href="regresion.html#cb159-2" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Coeficientes del modelo seleccionado.&quot;</span>, <span class="at">etiqueta =</span> <span class="st">&quot;reg-seleccionado-coef&quot;</span>,</span>
+<span id="cb159-3"><a href="regresion.html#cb159-3" tabindex="-1"></a>        <span class="at">col.names =</span> columnas_coeficientes)</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-seleccionado-coef">Tabla 3.9: </span>Coeficientes del modelo seleccionado.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Término
+</th>
+<th style="text-align:right;">
+Estimación
+</th>
+<th style="text-align:right;">
+Error estándar
+</th>
+<th style="text-align:right;">
+t
+</th>
+<th style="text-align:right;">
+p-valor
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+21.2554
+</td>
+<td style="text-align:right;">
+15.6238
+</td>
+<td style="text-align:right;">
+1.3604
+</td>
+<td style="text-align:right;">
+0.1817
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+age
+</td>
+<td style="text-align:right;">
+0.1841
+</td>
+<td style="text-align:right;">
+0.1295
+</td>
+<td style="text-align:right;">
+1.4221
+</td>
+<td style="text-align:right;">
+0.1632
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DFA
+</td>
+<td style="text-align:right;">
+-32.0695
+</td>
+<td style="text-align:right;">
+20.8998
+</td>
+<td style="text-align:right;">
+-1.5344
+</td>
+<td style="text-align:right;">
+0.1332
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PPE
+</td>
+<td style="text-align:right;">
+40.1518
+</td>
+<td style="text-align:right;">
+20.1935
+</td>
+<td style="text-align:right;">
+1.9884
+</td>
+<td style="text-align:right;">
+0.0540
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="regresion.html#cb160-1" tabindex="-1"></a><span class="fu">confint</span>(modelo_seleccionado) <span class="sc">%&gt;%</span></span>
+<span id="cb160-2"><a href="regresion.html#cb160-2" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb160-3"><a href="regresion.html#cb160-3" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">&quot;termino&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb160-4"><a href="regresion.html#cb160-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb160-5"><a href="regresion.html#cb160-5" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Intervalos de confianza del 95 % para los coeficientes del modelo seleccionado.&quot;</span>,</span>
+<span id="cb160-6"><a href="regresion.html#cb160-6" tabindex="-1"></a>        <span class="at">etiqueta =</span> <span class="st">&quot;reg-seleccionado-ic&quot;</span>,</span>
+<span id="cb160-7"><a href="regresion.html#cb160-7" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Término&quot;</span>, <span class="st">&quot;Límite inferior&quot;</span>, <span class="st">&quot;Límite superior&quot;</span>))</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-seleccionado-ic">Tabla 3.10: </span>Intervalos de confianza del 95 % para los coeficientes del modelo seleccionado.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Término
+</th>
+<th style="text-align:right;">
+Límite inferior
+</th>
+<th style="text-align:right;">
+Límite superior
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+-10.3734
+</td>
+<td style="text-align:right;">
+52.8842
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+age
+</td>
+<td style="text-align:right;">
+-0.0780
+</td>
+<td style="text-align:right;">
+0.4462
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DFA
+</td>
+<td style="text-align:right;">
+-74.3790
+</td>
+<td style="text-align:right;">
+10.2400
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PPE
+</td>
+<td style="text-align:right;">
+-0.7278
+</td>
+<td style="text-align:right;">
+81.0314
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="regresion.html#cb161-1" tabindex="-1"></a><span class="fu">ajuste_modelo</span>(modelo_seleccionado) <span class="sc">%&gt;%</span></span>
+<span id="cb161-2"><a href="regresion.html#cb161-2" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Medidas de ajuste del modelo seleccionado.&quot;</span>, <span class="at">etiqueta =</span> <span class="st">&quot;reg-seleccionado-ajuste&quot;</span>,</span>
+<span id="cb161-3"><a href="regresion.html#cb161-3" tabindex="-1"></a>        <span class="at">col.names =</span> columnas_ajuste)</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-seleccionado-ajuste">Tabla 3.11: </span>Medidas de ajuste del modelo seleccionado.
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+Predictores
+</th>
+<th style="text-align:right;">
+R²
+</th>
+<th style="text-align:right;">
+R² ajustado
+</th>
+<th style="text-align:right;">
+Error estándar residual
+</th>
+<th style="text-align:right;">
+F
+</th>
+<th style="text-align:right;">
+gl numerador
+</th>
+<th style="text-align:right;">
+gl denominador
+</th>
+<th style="text-align:right;">
+p-valor
+</th>
+<th style="text-align:right;">
+AIC
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0.184
+</td>
+<td style="text-align:right;">
+0.1196
+</td>
+<td style="text-align:right;">
+7.3936
+</td>
+<td style="text-align:right;">
+2.8564
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+38
+</td>
+<td style="text-align:right;">
+0.0497
+</td>
+<td style="text-align:right;">
+293.0388
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="regresion.html#cb162-1" tabindex="-1"></a><span class="fu">vif</span>(modelo_seleccionado)</span></code></pre></div>
+<pre><code>##      age      DFA      PPE 
+## 1.073440 1.302564 1.337780</code></pre>
+<p>El modelo estimado es</p>
+<p><span class="math display">\[\widehat{\text{motor}} = 21.26 + 0.18\,\text{age} - 32.07\,\text{DFA} + 40.15\,\text{PPE}\]</span></p>
+<p>Según la Tabla <a href="regresion.html#tab:reg-seleccionado-ajuste">3.11</a>, la prueba F global da F = 2.86 con 3 y 38 grados de libertad y p = 0.0497. Queda justo por debajo de 0.05, así que se rechaza <span class="math inline">\(H_0\)</span>: al menos una de las tres variables se relaciona con la severidad motora.</p>
+<p>El R² es 0.184 y el R² ajustado 0.12. El modelo explica el 18.4 % de la variabilidad entre pacientes, y al corregir por el número de variables queda en 12 %, mucho más que el 2.7 % del modelo completo con menos de la mitad de las variables. Aun así, es un ajuste bajo: el error estándar residual (7.39 puntos) es casi tan grande como la desviación estándar de la severidad por paciente (7.88, Tabla <a href="inferencial.html#tab:inf-pacientes-motor">2.2</a>). La mayor parte de las diferencias entre pacientes no la explican la edad ni la voz.</p>
+<p>Los coeficientes de la Tabla <a href="regresion.html#tab:reg-seleccionado-coef">3.9</a> se leen manteniendo fijas las otras dos variables:</p>
+<ul>
+<li><strong><code>age</code>:</strong> cada año más de edad suma 0.18 puntos a la severidad esperada (p = 0.163).</li>
+<li><strong><code>DFA</code>:</strong> el coeficiente es -32.07 (p = 0.133). Como <code>DFA</code> se mueve en décimas, es más fácil leerlo así: un aumento de 0.1 en <code>DFA</code> se asocia con 3.2 puntos menos de severidad.</li>
+<li><strong><code>PPE</code>:</strong> el coeficiente es 40.15 (p = 0.054); un aumento de 0.1 en <code>PPE</code> se asocia con 4 puntos más de severidad.</li>
+<li><strong>Intercepto (21.26):</strong> no tiene una lectura práctica, porque correspondería a un paciente de 0 años con <code>DFA</code> y <code>PPE</code> iguales a 0.</li>
+</ul>
+<p>Ninguno es significativo por separado con <span class="math inline">\(\alpha = 0.05\)</span> (<code>PPE</code> queda en el límite), y los intervalos de confianza del 95 % de la Tabla <a href="regresion.html#tab:reg-seleccionado-ic">3.10</a> incluyen al 0 en los tres casos. Eso no contradice la prueba global: las tres variables juntas sí explican algo, pero con 42 pacientes no alcanza para separar el aporte de cada una. Los signos coinciden con las correlaciones del capítulo 2: a más edad y más <code>PPE</code>, más severidad; a más <code>DFA</code>, menos.</p>
+<p>En este modelo ya no hay multicolinealidad: los VIF van de 1.07 a 1.34.</p>
+</div>
+<div id="análisis-de-los-errores" class="section level2 hasAnchor" number="3.4">
+<h2><span class="header-section-number">3.4</span> Análisis de los errores<a href="regresion.html#an%C3%A1lisis-de-los-errores" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>El modelo supone que los errores son independientes, tienen media cero, siguen una distribución normal y tienen varianza constante. Lo revisamos con los residuales del modelo seleccionado, primero de forma gráfica y luego con pruebas formales.</p>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="regresion.html#cb164-1" tabindex="-1"></a>residuales <span class="ot">&lt;-</span> <span class="fu">residuals</span>(modelo_seleccionado)</span>
+<span id="cb164-2"><a href="regresion.html#cb164-2" tabindex="-1"></a></span>
+<span id="cb164-3"><a href="regresion.html#cb164-3" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb164-4"><a href="regresion.html#cb164-4" tabindex="-1"></a><span class="fu">plot</span>(modelo_seleccionado, <span class="at">which =</span> <span class="dv">1</span>, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">&quot;#C77D98&quot;</span>, <span class="at">pch =</span> <span class="dv">19</span>)</span>
+<span id="cb164-5"><a href="regresion.html#cb164-5" tabindex="-1"></a><span class="fu">plot</span>(modelo_seleccionado, <span class="at">which =</span> <span class="dv">3</span>, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">&quot;#C77D98&quot;</span>, <span class="at">pch =</span> <span class="dv">19</span>)</span>
+<span id="cb164-6"><a href="regresion.html#cb164-6" tabindex="-1"></a><span class="fu">qqPlot</span>(residuales, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">&quot;#C77D98&quot;</span>, <span class="at">col.lines =</span> <span class="st">&quot;#8E0038&quot;</span>,</span>
+<span id="cb164-7"><a href="regresion.html#cb164-7" tabindex="-1"></a>       <span class="at">ylab =</span> <span class="st">&quot;Residuales&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;Cuantiles de la normal&quot;</span>, <span class="at">id =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb164-8"><a href="regresion.html#cb164-8" tabindex="-1"></a><span class="fu">acf</span>(residuales, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">main =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<div class="figure"><span style="display:block;" id="fig:reg-residuales-graficos"></span>
+<img src="parkinson-updrs_files/figure-html/reg-residuales-graficos-1.png" alt="Análisis gráfico de los residuales del modelo seleccionado: residuales frente a valores ajustados, escala-localización, QQ-plot de normalidad y autocorrelación." width="960" />
+<p class="caption">
+Figura 3.2: Análisis gráfico de los residuales del modelo seleccionado: residuales frente a valores ajustados, escala-localización, QQ-plot de normalidad y autocorrelación.
+</p>
+</div>
+<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="regresion.html#cb165-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code></pre></div>
+<p>En la Figura <a href="regresion.html#fig:reg-residuales-graficos">3.2</a> se observa lo siguiente:</p>
+<ul>
+<li><strong>Residuales frente a valores ajustados (arriba a la izquierda):</strong> los puntos se reparten alrededor de 0 sin un patrón claro. La línea roja se curva un poco en los extremos, pero ahí hay muy pocos pacientes.</li>
+<li><strong>Escala-localización (arriba a la derecha):</strong> la dispersión de los residuales es parecida a lo largo de los valores ajustados, sin forma de embudo, lo que apunta a varianza constante.</li>
+<li><strong>QQ-plot (abajo a la izquierda):</strong> los residuales siguen la recta y casi todos quedan dentro de la banda de confianza.</li>
+<li><strong>Autocorrelación (abajo a la derecha):</strong> las barras de los rezagos 2 y 4 apenas cruzan la banda. El orden de los pacientes es solo su número de identificación, así que no hay una secuencia en el tiempo que pueda producir dependencia, y la prueba de Durbin-Watson lo confirma.</li>
+</ul>
+<div id="independencia" class="section level3 hasAnchor" number="3.4.1">
+<h3><span class="header-section-number">3.4.1</span> Independencia<a href="regresion.html#independencia" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span class="math display">\[H_0: \text{los errores son independientes} \qquad H_1: \text{los errores están autocorrelacionados}\]</span></p>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="regresion.html#cb166-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb166-2"><a href="regresion.html#cb166-2" tabindex="-1"></a><span class="fu">durbinWatsonTest</span>(modelo_seleccionado)</span></code></pre></div>
+<pre><code>##  lag Autocorrelation D-W Statistic p-value
+##    1      -0.2291228      2.428826   0.142
+##  Alternative hypothesis: rho != 0</code></pre>
+<p>D-W = 2.43 y p = 0.142: no se rechaza <span class="math inline">\(H_0\)</span>, los errores son independientes. El p-valor de <code>durbinWatsonTest</code> se calcula por simulación, por eso fijamos una semilla para que el resultado no cambie cada vez que se compila el libro.</p>
+</div>
+<div id="normalidad" class="section level3 hasAnchor" number="3.4.2">
+<h3><span class="header-section-number">3.4.2</span> Normalidad<a href="regresion.html#normalidad" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span class="math display">\[H_0: \text{los errores siguen una distribución normal} \qquad H_1: \text{no la siguen}\]</span></p>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="regresion.html#cb168-1" tabindex="-1"></a><span class="fu">shapiro.test</span>(residuales)</span></code></pre></div>
+<pre><code>## 
+##  Shapiro-Wilk normality test
+## 
+## data:  residuales
+## W = 0.95464, p-value = 0.09481</code></pre>
+<p>W = 0.955 y p = 0.095: no se rechaza la normalidad de los errores, aunque el p-valor no está muy lejos de 0.05. Coincide con lo que se veía en el QQ-plot.</p>
+</div>
+<div id="media-cero" class="section level3 hasAnchor" number="3.4.3">
+<h3><span class="header-section-number">3.4.3</span> Media cero<a href="regresion.html#media-cero" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span class="math display">\[H_0: \mu_{\varepsilon} = 0 \qquad H_1: \mu_{\varepsilon} \neq 0\]</span></p>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="regresion.html#cb170-1" tabindex="-1"></a><span class="fu">t.test</span>(residuales, <span class="at">mu =</span> <span class="dv">0</span>)</span></code></pre></div>
+<pre><code>## 
+##  One Sample t-test
+## 
+## data:  residuales
+## t = 2.7938e-16, df = 41, p-value = 1
+## alternative hypothesis: true mean is not equal to 0
+## 95 percent confidence interval:
+##  -2.218108  2.218108
+## sample estimates:
+##    mean of x 
+## 3.068499e-16</code></pre>
+<p>p = 1: la media de los residuales es prácticamente 0 (del orden de 10⁻¹⁶), como corresponde a un modelo con intercepto.</p>
+</div>
+<div id="homocedasticidad" class="section level3 hasAnchor" number="3.4.4">
+<h3><span class="header-section-number">3.4.4</span> Homocedasticidad<a href="regresion.html#homocedasticidad" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span class="math display">\[H_0: \text{la varianza de los errores es constante} \qquad H_1: \text{no es constante}\]</span></p>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="regresion.html#cb172-1" tabindex="-1"></a><span class="fu">bptest</span>(modelo_seleccionado)</span></code></pre></div>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  modelo_seleccionado
+## BP = 0.41219, df = 3, p-value = 0.9377</code></pre>
+<p>BP = 0.41 con 3 grados de libertad y p = 0.938: no se rechaza la homocedasticidad. La varianza de los errores es constante, igual que se veía en el gráfico de escala-localización.</p>
+</div>
+<div id="valores-atípicos-e-influyentes" class="section level3 hasAnchor" number="3.4.5">
+<h3><span class="header-section-number">3.4.5</span> Valores atípicos e influyentes<a href="regresion.html#valores-at%C3%ADpicos-e-influyentes" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Un paciente es atípico si su residual estudentizado queda fuera de (-3, 3), y es influyente si su distancia de Cook supera <span class="math inline">\(4/(n - p - 2)\)</span>, con <span class="math inline">\(p\)</span> el número de coeficientes del modelo.</p>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="regresion.html#cb174-1" tabindex="-1"></a>residuales_estudentizados <span class="ot">&lt;-</span> <span class="fu">rstudent</span>(modelo_seleccionado)</span>
+<span id="cb174-2"><a href="regresion.html#cb174-2" tabindex="-1"></a><span class="fu">range</span>(residuales_estudentizados)</span></code></pre></div>
+<pre><code>## [1] -1.972418  2.049834</code></pre>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="regresion.html#cb176-1" tabindex="-1"></a><span class="fu">which</span>(residuales_estudentizados <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">3</span> <span class="sc">|</span> residuales_estudentizados <span class="sc">&gt;</span> <span class="dv">3</span>)</span></code></pre></div>
+<pre><code>## named integer(0)</code></pre>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="regresion.html#cb178-1" tabindex="-1"></a><span class="fu">outlierTest</span>(modelo_seleccionado, <span class="at">n.max =</span> <span class="dv">5</span>)</span></code></pre></div>
+<pre><code>## No Studentized residuals with Bonferroni p &lt; 0.05
+## Largest |rstudent|:
+##    rstudent unadjusted p-value Bonferroni p
+## 35 2.049834           0.047518           NA</code></pre>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="regresion.html#cb180-1" tabindex="-1"></a>distancia_cook <span class="ot">&lt;-</span> <span class="fu">cooks.distance</span>(modelo_seleccionado)</span>
+<span id="cb180-2"><a href="regresion.html#cb180-2" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(pacientes)</span>
+<span id="cb180-3"><a href="regresion.html#cb180-3" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">coef</span>(modelo_seleccionado))</span>
+<span id="cb180-4"><a href="regresion.html#cb180-4" tabindex="-1"></a>umbral_cook <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="sc">/</span> (n <span class="sc">-</span> p <span class="sc">-</span> <span class="dv">2</span>)</span>
+<span id="cb180-5"><a href="regresion.html#cb180-5" tabindex="-1"></a>umbral_cook</span></code></pre></div>
+<pre><code>## [1] 0.1111111</code></pre>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb182-1"><a href="regresion.html#cb182-1" tabindex="-1"></a><span class="fu">which</span>(distancia_cook <span class="sc">&gt;</span> umbral_cook)</span></code></pre></div>
+<pre><code>## 36 
+## 36</code></pre>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="regresion.html#cb184-1" tabindex="-1"></a><span class="fu">round</span>(distancia_cook[distancia_cook <span class="sc">&gt;</span> umbral_cook], <span class="dv">4</span>)</span></code></pre></div>
+<pre><code>##     36 
+## 0.2346</code></pre>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="regresion.html#cb186-1" tabindex="-1"></a>pacientes <span class="sc">%&gt;%</span></span>
+<span id="cb186-2"><a href="regresion.html#cb186-2" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="fu">which</span>(distancia_cook <span class="sc">&gt;</span> umbral_cook)) <span class="sc">%&gt;%</span></span>
+<span id="cb186-3"><a href="regresion.html#cb186-3" tabindex="-1"></a>  <span class="fu">select</span>(subject., sex, age, motor, DFA, PPE) <span class="sc">%&gt;%</span></span>
+<span id="cb186-4"><a href="regresion.html#cb186-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">3</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb186-5"><a href="regresion.html#cb186-5" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Paciente con distancia de Cook por encima del umbral.&quot;</span>,</span>
+<span id="cb186-6"><a href="regresion.html#cb186-6" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Paciente&quot;</span>, <span class="st">&quot;Sexo&quot;</span>, <span class="st">&quot;Edad&quot;</span>, <span class="st">&quot;Motor UPDRS promedio&quot;</span>, <span class="st">&quot;DFA&quot;</span>, <span class="st">&quot;PPE&quot;</span>))</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-atipicos">Tabla 3.12: </span>Paciente con distancia de Cook por encima del umbral.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Paciente
+</th>
+<th style="text-align:left;">
+Sexo
+</th>
+<th style="text-align:right;">
+Edad
+</th>
+<th style="text-align:right;">
+Motor UPDRS promedio
+</th>
+<th style="text-align:right;">
+DFA
+</th>
+<th style="text-align:right;">
+PPE
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+36
+</td>
+<td style="text-align:left;">
+Femenino
+</td>
+<td style="text-align:right;">
+62
+</td>
+<td style="text-align:right;">
+23.395
+</td>
+<td style="text-align:right;">
+0.602
+</td>
+<td style="text-align:right;">
+0.412
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="regresion.html#cb187-1" tabindex="-1"></a><span class="fu">influenceIndexPlot</span>(modelo_seleccionado, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;Cook&quot;</span>, <span class="st">&quot;Studentized&quot;</span>),</span>
+<span id="cb187-2"><a href="regresion.html#cb187-2" tabindex="-1"></a>                   <span class="at">las =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">&quot;#C77D98&quot;</span>, <span class="at">main =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<div class="figure"><span style="display:block;" id="fig:reg-influencia-grafico"></span>
+<img src="parkinson-updrs_files/figure-html/reg-influencia-grafico-1.png" alt="Distancia de Cook y residuales estudentizados de cada paciente en el modelo seleccionado." width="960" />
+<p class="caption">
+Figura 3.3: Distancia de Cook y residuales estudentizados de cada paciente en el modelo seleccionado.
+</p>
+</div>
+<p>Ningún paciente es atípico: los residuales estudentizados van de -1.97 a 2.05, lejos de ±3. La prueba de Bonferroni tampoco encuentra ninguno; el mayor, el del paciente 35, tiene un p-valor sin ajustar de 0.048, que deja de ser significativo al corregir por las 42 pruebas.</p>
+<p>Con la distancia de Cook el umbral es 0.111, y solo lo supera el paciente 36 (0.235). En la Figura <a href="regresion.html#fig:reg-influencia-grafico">3.3</a> se observa que su barra se separa claramente del resto, aunque su residual estudentizado es moderado. Es decir, el modelo no lo predice mal, pero su combinación de valores pesa mucho en la estimación de los coeficientes; en la Tabla <a href="regresion.html#tab:reg-atipicos">3.12</a> se ve que tiene un <code>PPE</code> de 0.412. No hay razón para sacarlo: es un paciente real del estudio, y el modelo cumple los supuestos con él incluido.</p>
+<p>En resumen, el modelo seleccionado cumple los cuatro supuestos sobre los errores (independencia, normalidad, media cero y varianza constante) y no tiene atípicos.</p>
+</div>
+</div>
+<div id="modelo-con-variables-categóricas" class="section level2 hasAnchor" number="3.5">
+<h2><span class="header-section-number">3.5</span> Modelo con variables categóricas<a href="regresion.html#modelo-con-variables-categ%C3%B3ricas" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="codificación-con-variables-indicadoras" class="section level3 hasAnchor" number="3.5.1">
+<h3><span class="header-section-number">3.5.1</span> Codificación con variables indicadoras<a href="regresion.html#codificaci%C3%B3n-con-variables-indicadoras" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>El sexo y el grupo de edad entran al modelo como variables indicadoras (dummy), que valen 1 si el paciente pertenece a la categoría y 0 si no. Cada variable categórica con <span class="math inline">\(k\)</span> categorías genera <span class="math inline">\(k - 1\)</span> indicadoras; la que queda por fuera es la categoría de referencia, y cada coeficiente se interpreta como la diferencia en la severidad motora promedio frente a ella. Aquí las referencias son los hombres y los menores de 60 años.</p>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="regresion.html#cb188-1" tabindex="-1"></a><span class="fu">model.matrix</span>(<span class="sc">~</span> sex <span class="sc">+</span> grupo_edad, <span class="at">data =</span> pacientes) <span class="sc">%&gt;%</span></span>
+<span id="cb188-2"><a href="regresion.html#cb188-2" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb188-3"><a href="regresion.html#cb188-3" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb188-4"><a href="regresion.html#cb188-4" tabindex="-1"></a>  <span class="fu">bind_cols</span>(pacientes <span class="sc">%&gt;%</span> <span class="fu">select</span>(sex, grupo_edad), .) <span class="sc">%&gt;%</span></span>
+<span id="cb188-5"><a href="regresion.html#cb188-5" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb188-6"><a href="regresion.html#cb188-6" tabindex="-1"></a>  <span class="fu">arrange</span>(sex, grupo_edad) <span class="sc">%&gt;%</span></span>
+<span id="cb188-7"><a href="regresion.html#cb188-7" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Codificación del sexo y del grupo de edad con variables indicadoras.&quot;</span>,</span>
+<span id="cb188-8"><a href="regresion.html#cb188-8" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Sexo&quot;</span>, <span class="st">&quot;Grupo de edad&quot;</span>, <span class="st">&quot;sexFemenino&quot;</span>, <span class="st">&quot;grupo_edad60 a 70&quot;</span>,</span>
+<span id="cb188-9"><a href="regresion.html#cb188-9" tabindex="-1"></a>                      <span class="st">&quot;grupo_edadMayor de 70&quot;</span>))</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-dummies">Tabla 3.13: </span>Codificación del sexo y del grupo de edad con variables indicadoras.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Sexo
+</th>
+<th style="text-align:left;">
+Grupo de edad
+</th>
+<th style="text-align:right;">
+sexFemenino
+</th>
+<th style="text-align:right;">
+grupo_edad60 a 70
+</th>
+<th style="text-align:right;">
+grupo_edadMayor de 70
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Masculino
+</td>
+<td style="text-align:left;">
+Menor de 60
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Masculino
+</td>
+<td style="text-align:left;">
+60 a 70
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Masculino
+</td>
+<td style="text-align:left;">
+Mayor de 70
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Femenino
+</td>
+<td style="text-align:left;">
+Menor de 60
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Femenino
+</td>
+<td style="text-align:left;">
+60 a 70
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Femenino
+</td>
+<td style="text-align:left;">
+Mayor de 70
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+</tbody>
+</table>
+<p>La Tabla <a href="regresion.html#tab:reg-dummies">3.13</a> muestra las seis combinaciones posibles. El sexo, con dos categorías, genera una sola indicadora, y el grupo de edad, con tres, genera dos. Un hombre menor de 60 años tiene las tres en 0, así que su severidad esperada es el intercepto; una mujer mayor de 70 tiene <code>sexFemenino</code> = 1 y <code>grupo_edadMayor de 70</code> = 1.</p>
+</div>
+<div id="modelo-solo-con-las-variables-categóricas" class="section level3 hasAnchor" number="3.5.2">
+<h3><span class="header-section-number">3.5.2</span> Modelo solo con las variables categóricas<a href="regresion.html#modelo-solo-con-las-variables-categ%C3%B3ricas" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span class="math display">\[\text{motor} = \beta_0 + \beta_1\,\text{sexFemenino} + \beta_2\,\text{grupo\_edad60 a 70} + \beta_3\,\text{grupo\_edadMayor de 70} + \varepsilon\]</span></p>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="regresion.html#cb189-1" tabindex="-1"></a>modelo_categorico <span class="ot">&lt;-</span> <span class="fu">lm</span>(motor <span class="sc">~</span> sex <span class="sc">+</span> grupo_edad, <span class="at">data =</span> pacientes)</span>
+<span id="cb189-2"><a href="regresion.html#cb189-2" tabindex="-1"></a></span>
+<span id="cb189-3"><a href="regresion.html#cb189-3" tabindex="-1"></a><span class="fu">coeficientes_modelo</span>(modelo_categorico) <span class="sc">%&gt;%</span></span>
+<span id="cb189-4"><a href="regresion.html#cb189-4" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Coeficientes del modelo con sexo y grupo de edad.&quot;</span>, <span class="at">etiqueta =</span> <span class="st">&quot;reg-categorico-coef&quot;</span>,</span>
+<span id="cb189-5"><a href="regresion.html#cb189-5" tabindex="-1"></a>        <span class="at">col.names =</span> columnas_coeficientes)</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-categorico-coef">Tabla 3.14: </span>Coeficientes del modelo con sexo y grupo de edad.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Término
+</th>
+<th style="text-align:right;">
+Estimación
+</th>
+<th style="text-align:right;">
+Error estándar
+</th>
+<th style="text-align:right;">
+t
+</th>
+<th style="text-align:right;">
+p-valor
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+18.4604
+</td>
+<td style="text-align:right;">
+2.3072
+</td>
+<td style="text-align:right;">
+8.0011
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sexFemenino
+</td>
+<td style="text-align:right;">
+-0.5237
+</td>
+<td style="text-align:right;">
+2.5236
+</td>
+<td style="text-align:right;">
+-0.2075
+</td>
+<td style="text-align:right;">
+0.8367
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+grupo_edad60 a 70
+</td>
+<td style="text-align:right;">
+1.6388
+</td>
+<td style="text-align:right;">
+2.8631
+</td>
+<td style="text-align:right;">
+0.5724
+</td>
+<td style="text-align:right;">
+0.5704
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+grupo_edadMayor de 70
+</td>
+<td style="text-align:right;">
+6.7237
+</td>
+<td style="text-align:right;">
+2.9529
+</td>
+<td style="text-align:right;">
+2.2770
+</td>
+<td style="text-align:right;">
+0.0285
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="regresion.html#cb190-1" tabindex="-1"></a><span class="fu">ajuste_modelo</span>(modelo_categorico) <span class="sc">%&gt;%</span></span>
+<span id="cb190-2"><a href="regresion.html#cb190-2" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Medidas de ajuste del modelo con sexo y grupo de edad.&quot;</span>,</span>
+<span id="cb190-3"><a href="regresion.html#cb190-3" tabindex="-1"></a>        <span class="at">etiqueta =</span> <span class="st">&quot;reg-categorico-ajuste&quot;</span>, <span class="at">col.names =</span> columnas_ajuste)</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-categorico-ajuste">Tabla 3.15: </span>Medidas de ajuste del modelo con sexo y grupo de edad.
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+Predictores
+</th>
+<th style="text-align:right;">
+R²
+</th>
+<th style="text-align:right;">
+R² ajustado
+</th>
+<th style="text-align:right;">
+Error estándar residual
+</th>
+<th style="text-align:right;">
+F
+</th>
+<th style="text-align:right;">
+gl numerador
+</th>
+<th style="text-align:right;">
+gl denominador
+</th>
+<th style="text-align:right;">
+p-valor
+</th>
+<th style="text-align:right;">
+AIC
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0.132
+</td>
+<td style="text-align:right;">
+0.0635
+</td>
+<td style="text-align:right;">
+7.6256
+</td>
+<td style="text-align:right;">
+1.926
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+38
+</td>
+<td style="text-align:right;">
+0.1418
+</td>
+<td style="text-align:right;">
+295.6346
+</td>
+</tr>
+</tbody>
+</table>
+<p>Los coeficientes de la Tabla <a href="regresion.html#tab:reg-categorico-coef">3.14</a> se leen así:</p>
+<ul>
+<li><strong>Intercepto (18.46):</strong> es la severidad promedio estimada de un hombre menor de 60 años.</li>
+<li><strong><code>sexFemenino</code> (-0.52, p = 0.837):</strong> a igual grupo de edad, las mujeres tienen medio punto menos que los hombres, una diferencia que no es significativa. Es lo mismo que dio la prueba t por sexo del capítulo 2.</li>
+<li><strong><code>grupo_edad60 a 70</code> (1.64, p = 0.57):</strong> a igual sexo, el grupo intermedio tiene 1.64 puntos más que los menores de 60, sin diferencia significativa.</li>
+<li><strong><code>grupo_edadMayor de 70</code> (6.72, p = 0.029):</strong> a igual sexo, los mayores de 70 tienen 6.72 puntos más que los menores de 60, y esta diferencia sí es significativa.</li>
+</ul>
+<p>Es la misma diferencia de casi 7 puntos que encontramos con el ANOVA del capítulo 2. Allá la prueba de Tukey no la declaró significativa (p ajustado = 0.062) porque corrige por las tres comparaciones entre grupos; la prueba t del coeficiente no hace esa corrección.</p>
+<p>Según la Tabla <a href="regresion.html#tab:reg-categorico-ajuste">3.15</a>, el modelo en conjunto no es significativo (F = 1.93, p = 0.142), con un R² de 0.132 y un R² ajustado de 0.063.</p>
+</div>
+<div id="modelo-seleccionado-con-las-variables-categóricas" class="section level3 hasAnchor" number="3.5.3">
+<h3><span class="header-section-number">3.5.3</span> Modelo seleccionado con las variables categóricas<a href="regresion.html#modelo-seleccionado-con-las-variables-categ%C3%B3ricas" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Por último, agregamos el sexo y el grupo de edad a las dos variables acústicas del modelo seleccionado. El grupo de edad reemplaza a la edad numérica, porque las dos miden lo mismo.</p>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="regresion.html#cb191-1" tabindex="-1"></a>modelo_mixto <span class="ot">&lt;-</span> <span class="fu">lm</span>(motor <span class="sc">~</span> DFA <span class="sc">+</span> PPE <span class="sc">+</span> sex <span class="sc">+</span> grupo_edad, <span class="at">data =</span> pacientes)</span>
+<span id="cb191-2"><a href="regresion.html#cb191-2" tabindex="-1"></a></span>
+<span id="cb191-3"><a href="regresion.html#cb191-3" tabindex="-1"></a><span class="fu">coeficientes_modelo</span>(modelo_mixto) <span class="sc">%&gt;%</span></span>
+<span id="cb191-4"><a href="regresion.html#cb191-4" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Coeficientes del modelo con DFA, PPE, sexo y grupo de edad.&quot;</span>,</span>
+<span id="cb191-5"><a href="regresion.html#cb191-5" tabindex="-1"></a>        <span class="at">etiqueta =</span> <span class="st">&quot;reg-mixto-coef&quot;</span>, <span class="at">col.names =</span> columnas_coeficientes)</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-mixto-coef">Tabla 3.16: </span>Coeficientes del modelo con DFA, PPE, sexo y grupo de edad.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Término
+</th>
+<th style="text-align:right;">
+Estimación
+</th>
+<th style="text-align:right;">
+Error estándar
+</th>
+<th style="text-align:right;">
+t
+</th>
+<th style="text-align:right;">
+p-valor
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+32.9648
+</td>
+<td style="text-align:right;">
+13.4785
+</td>
+<td style="text-align:right;">
+2.4457
+</td>
+<td style="text-align:right;">
+0.0195
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DFA
+</td>
+<td style="text-align:right;">
+-34.0834
+</td>
+<td style="text-align:right;">
+21.9814
+</td>
+<td style="text-align:right;">
+-1.5506
+</td>
+<td style="text-align:right;">
+0.1298
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PPE
+</td>
+<td style="text-align:right;">
+42.9473
+</td>
+<td style="text-align:right;">
+21.1756
+</td>
+<td style="text-align:right;">
+2.0282
+</td>
+<td style="text-align:right;">
+0.0500
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sexFemenino
+</td>
+<td style="text-align:right;">
+-0.8034
+</td>
+<td style="text-align:right;">
+2.5112
+</td>
+<td style="text-align:right;">
+-0.3199
+</td>
+<td style="text-align:right;">
+0.7509
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+grupo_edad60 a 70
+</td>
+<td style="text-align:right;">
+-0.7606
+</td>
+<td style="text-align:right;">
+2.9973
+</td>
+<td style="text-align:right;">
+-0.2538
+</td>
+<td style="text-align:right;">
+0.8011
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+grupo_edadMayor de 70
+</td>
+<td style="text-align:right;">
+4.4994
+</td>
+<td style="text-align:right;">
+3.0526
+</td>
+<td style="text-align:right;">
+1.4740
+</td>
+<td style="text-align:right;">
+0.1492
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="regresion.html#cb192-1" tabindex="-1"></a><span class="fu">ajuste_modelo</span>(modelo_mixto) <span class="sc">%&gt;%</span></span>
+<span id="cb192-2"><a href="regresion.html#cb192-2" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Medidas de ajuste del modelo con DFA, PPE, sexo y grupo de edad.&quot;</span>,</span>
+<span id="cb192-3"><a href="regresion.html#cb192-3" tabindex="-1"></a>        <span class="at">etiqueta =</span> <span class="st">&quot;reg-mixto-ajuste&quot;</span>, <span class="at">col.names =</span> columnas_ajuste)</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-mixto-ajuste">Tabla 3.17: </span>Medidas de ajuste del modelo con DFA, PPE, sexo y grupo de edad.
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+Predictores
+</th>
+<th style="text-align:right;">
+R²
+</th>
+<th style="text-align:right;">
+R² ajustado
+</th>
+<th style="text-align:right;">
+Error estándar residual
+</th>
+<th style="text-align:right;">
+F
+</th>
+<th style="text-align:right;">
+gl numerador
+</th>
+<th style="text-align:right;">
+gl denominador
+</th>
+<th style="text-align:right;">
+p-valor
+</th>
+<th style="text-align:right;">
+AIC
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0.2283
+</td>
+<td style="text-align:right;">
+0.1211
+</td>
+<td style="text-align:right;">
+7.3874
+</td>
+<td style="text-align:right;">
+2.1295
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+36
+</td>
+<td style="text-align:right;">
+0.0841
+</td>
+<td style="text-align:right;">
+294.6973
+</td>
+</tr>
+</tbody>
+</table>
+<p>Para saber si el sexo y el grupo de edad aportan en conjunto, comparamos con la prueba F parcial el modelo mixto frente al que solo tiene <code>DFA</code> y <code>PPE</code>:</p>
+<p><span class="math display">\[H_0: \beta_{\text{sexFemenino}} = \beta_{\text{60 a 70}} = \beta_{\text{Mayor de 70}} = 0 \qquad H_1: \text{al menos uno es distinto de 0}\]</span></p>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="regresion.html#cb193-1" tabindex="-1"></a>modelo_acustico <span class="ot">&lt;-</span> <span class="fu">lm</span>(motor <span class="sc">~</span> DFA <span class="sc">+</span> PPE, <span class="at">data =</span> pacientes)</span>
+<span id="cb193-2"><a href="regresion.html#cb193-2" tabindex="-1"></a></span>
+<span id="cb193-3"><a href="regresion.html#cb193-3" tabindex="-1"></a><span class="fu">anova</span>(modelo_acustico, modelo_mixto) <span class="sc">%&gt;%</span></span>
+<span id="cb193-4"><a href="regresion.html#cb193-4" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb193-5"><a href="regresion.html#cb193-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">modelo =</span> <span class="fu">c</span>(<span class="st">&quot;DFA + PPE&quot;</span>, <span class="st">&quot;DFA + PPE + sexo + grupo de edad&quot;</span>), <span class="at">.before =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb193-6"><a href="regresion.html#cb193-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb193-7"><a href="regresion.html#cb193-7" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Prueba F parcial: aporte conjunto del sexo y el grupo de edad.&quot;</span>,</span>
+<span id="cb193-8"><a href="regresion.html#cb193-8" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Modelo&quot;</span>, <span class="st">&quot;gl residuales&quot;</span>, <span class="st">&quot;SC residual&quot;</span>, <span class="st">&quot;gl&quot;</span>, <span class="st">&quot;SC&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;p-valor&quot;</span>))</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-mixto-f-parcial">Tabla 3.18: </span>Prueba F parcial: aporte conjunto del sexo y el grupo de edad.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Modelo
+</th>
+<th style="text-align:right;">
+gl residuales
+</th>
+<th style="text-align:right;">
+SC residual
+</th>
+<th style="text-align:right;">
+gl
+</th>
+<th style="text-align:right;">
+SC
+</th>
+<th style="text-align:right;">
+F
+</th>
+<th style="text-align:right;">
+p-valor
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+DFA + PPE
+</td>
+<td style="text-align:right;">
+39
+</td>
+<td style="text-align:right;">
+2187.819
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DFA + PPE + sexo + grupo de edad
+</td>
+<td style="text-align:right;">
+36
+</td>
+<td style="text-align:right;">
+1964.634
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+223.185
+</td>
+<td style="text-align:right;">
+1.3632
+</td>
+<td style="text-align:right;">
+0.2695
+</td>
+</tr>
+</tbody>
+</table>
+<p>En la Tabla <a href="regresion.html#tab:reg-mixto-coef">3.16</a>, al controlar por <code>DFA</code> y <code>PPE</code>, la diferencia de los mayores de 70 frente a los menores de 60 baja a 4.5 puntos y deja de ser significativa (p = 0.149). El sexo sigue sin aportar (p = 0.751) y <code>PPE</code> queda justo en el límite (p = 0.05). Según la Tabla <a href="regresion.html#tab:reg-mixto-ajuste">3.17</a>, el R² sube a 0.228 y el R² ajustado a 0.121, casi igual al del modelo seleccionado, pero el modelo en conjunto no es significativo (p = 0.084).</p>
+<p>La prueba F parcial da F = 1.36 con 3 y 36 grados de libertad y p = 0.27 (Tabla <a href="regresion.html#tab:reg-mixto-f-parcial">3.18</a>), así que no se rechaza <span class="math inline">\(H_0\)</span>: agregar el sexo y el grupo de edad a <code>DFA</code> y <code>PPE</code> no mejora el modelo de forma significativa.</p>
+</div>
+</div>
+<div id="comparación-de-los-modelos" class="section level2 hasAnchor" number="3.6">
+<h2><span class="header-section-number">3.6</span> Comparación de los modelos<a href="regresion.html#comparaci%C3%B3n-de-los-modelos" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="regresion.html#cb194-1" tabindex="-1"></a><span class="fu">list</span>(</span>
+<span id="cb194-2"><a href="regresion.html#cb194-2" tabindex="-1"></a>  <span class="st">&quot;Completo&quot;</span> <span class="ot">=</span> modelo_completo,</span>
+<span id="cb194-3"><a href="regresion.html#cb194-3" tabindex="-1"></a>  <span class="st">&quot;Seleccionado (age + DFA + PPE)&quot;</span> <span class="ot">=</span> modelo_seleccionado,</span>
+<span id="cb194-4"><a href="regresion.html#cb194-4" tabindex="-1"></a>  <span class="st">&quot;Solo categóricas (sexo + grupo de edad)&quot;</span> <span class="ot">=</span> modelo_categorico,</span>
+<span id="cb194-5"><a href="regresion.html#cb194-5" tabindex="-1"></a>  <span class="st">&quot;Mixto (DFA + PPE + sexo + grupo de edad)&quot;</span> <span class="ot">=</span> modelo_mixto</span>
+<span id="cb194-6"><a href="regresion.html#cb194-6" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb194-7"><a href="regresion.html#cb194-7" tabindex="-1"></a>  <span class="fu">map_dfr</span>(ajuste_modelo, <span class="at">.id =</span> <span class="st">&quot;modelo&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb194-8"><a href="regresion.html#cb194-8" tabindex="-1"></a>  <span class="fu">select</span>(modelo, predictores, R2, R2_ajustado, error_estandar, p_valor, AIC) <span class="sc">%&gt;%</span></span>
+<span id="cb194-9"><a href="regresion.html#cb194-9" tabindex="-1"></a>  <span class="fu">tabla</span>(<span class="st">&quot;Comparación de los modelos ajustados.&quot;</span>,</span>
+<span id="cb194-10"><a href="regresion.html#cb194-10" tabindex="-1"></a>        <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Modelo&quot;</span>, <span class="st">&quot;Predictores&quot;</span>, <span class="st">&quot;R²&quot;</span>, <span class="st">&quot;R² ajustado&quot;</span>, <span class="st">&quot;Error estándar residual&quot;</span>,</span>
+<span id="cb194-11"><a href="regresion.html#cb194-11" tabindex="-1"></a>                      <span class="st">&quot;p-valor (F global)&quot;</span>, <span class="st">&quot;AIC&quot;</span>))</span></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:reg-comparacion">Tabla 3.19: </span>Comparación de los modelos ajustados.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Modelo
+</th>
+<th style="text-align:right;">
+Predictores
+</th>
+<th style="text-align:right;">
+R²
+</th>
+<th style="text-align:right;">
+R² ajustado
+</th>
+<th style="text-align:right;">
+Error estándar residual
+</th>
+<th style="text-align:right;">
+p-valor (F global)
+</th>
+<th style="text-align:right;">
+AIC
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Completo
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+0.2167
+</td>
+<td style="text-align:right;">
+0.0268
+</td>
+<td style="text-align:right;">
+7.7733
+</td>
+<td style="text-align:right;">
+0.3628
+</td>
+<td style="text-align:right;">
+301.3200
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Seleccionado (age + DFA + PPE)
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0.1840
+</td>
+<td style="text-align:right;">
+0.1196
+</td>
+<td style="text-align:right;">
+7.3936
+</td>
+<td style="text-align:right;">
+0.0497
+</td>
+<td style="text-align:right;">
+293.0388
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Solo categóricas (sexo + grupo de edad)
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0.1320
+</td>
+<td style="text-align:right;">
+0.0635
+</td>
+<td style="text-align:right;">
+7.6256
+</td>
+<td style="text-align:right;">
+0.1418
+</td>
+<td style="text-align:right;">
+295.6346
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mixto (DFA + PPE + sexo + grupo de edad)
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0.2283
+</td>
+<td style="text-align:right;">
+0.1211
+</td>
+<td style="text-align:right;">
+7.3874
+</td>
+<td style="text-align:right;">
+0.0841
+</td>
+<td style="text-align:right;">
+294.6973
+</td>
+</tr>
+</tbody>
+</table>
+<p>En la Tabla <a href="regresion.html#tab:reg-comparacion">3.19</a>, el modelo seleccionado (<code>age</code> + <code>DFA</code> + <code>PPE</code>) es el único con la prueba F global significativa (p = 0.0497) y el de menor AIC (293.04). El modelo mixto tiene un R² ajustado apenas mayor (0.1211 frente a 0.1196), pero usa cinco predictores en vez de tres, tiene un AIC más alto (294.7) y su prueba global no es significativa. Con una diferencia tan pequeña preferimos el modelo más simple. El modelo completo es el peor en R² ajustado y en AIC, y el de solo categóricas queda en medio.</p>
+<p>El mejor modelo es, entonces, el seleccionado. Explica el 18.4 % de la variabilidad de la severidad motora entre pacientes (12 % con el R² ajustado), cumple los supuestos y no tiene multicolinealidad. Pero es un ajuste bajo: la edad y la voz explican una parte pequeña de la severidad, y el resto depende de cosas que no están en estos datos.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="inferencial.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="conclusiones.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/DiegoxorG/libro_met_est/edit/main/03-regresion.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
