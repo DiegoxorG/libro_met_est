@@ -43,6 +43,8 @@ Modelar exploratoria e inferencialmente las características demográficas, temp
 
 7. Cuantificar la magnitud de las diferencias y correlaciones encontradas mediante medidas de tamaño del efecto apropiadas según el tipo de prueba utilizada (d de Cohen, el coeficiente de correlación o la V de Cramer), con el propósito de complementar la significancia estadística con una medida de relevancia práctica.
 
+8. Ajustar, a nivel de paciente, modelos de regresión lineal múltiple que expliquen la severidad motora a partir de las características demográficas y acústicas, evaluando su ajuste mediante el R² y el R² ajustado, verificando los supuestos mediante el análisis de los errores, seleccionando el mejor modelo e incorporando el sexo y el grupo de edad como variables categóricas.
+
 ```{r bibliografia-paquetes, include=FALSE}
 # automatically create a bib database for R packages
 knitr::write_bib(c(
