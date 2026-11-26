@@ -23,7 +23,6 @@
 <meta name="author" content="Diego Payares y Salma Romero" />
 
 
-<meta name="date" content="2026-11-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -293,6 +292,7 @@ div.csl-indent {
 <li class="chapter" data-level="3.6" data-path="regresion.html"><a href="regresion.html#comparaci%C3%B3n-de-los-modelos"><i class="fa fa-check"></i><b>3.6</b> Comparación de los modelos</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="conclusiones.html"><a href="conclusiones.html"><i class="fa fa-check"></i><b>4</b> Conclusiones</a></li>
+<li class="chapter" data-level="5" data-path="divulgacion.html"><a href="divulgacion.html"><i class="fa fa-check"></i><b>5</b> Divulgación de resultados</a></li>
 <li class="chapter" data-level="" data-path="referencias.html"><a href="referencias.html"><i class="fa fa-check"></i>Referencias</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/DiegoxorG/libro_met_est" target="blank">Diego Payares & Salma Romero</a></li>
@@ -321,6 +321,36 @@ div.csl-indent {
 <p>You may want to try searching to find the page's new location, or use
 the table of contents to find the page you are looking for.</p>
 </div>
+<script>
+// Pliega cada bloque de código R detrás de un botón "Ver código";
+// las salidas (tablas y gráficos) siguen visibles.
+(function () {
+  function plegarCodigo() {
+    document.querySelectorAll("div.sourceCode").forEach(function (bloque) {
+      if (bloque.parentElement.tagName === "DETAILS") return;
+      if (!bloque.querySelector("pre.sourceCode.r")) return;
+      var detalle = document.createElement("details");
+      detalle.className = "codigo-plegable";
+      var resumen = document.createElement("summary");
+      resumen.textContent = "Ver código";
+      bloque.parentNode.insertBefore(detalle, bloque);
+      detalle.appendChild(resumen);
+      detalle.appendChild(bloque);
+      detalle.addEventListener("toggle", function () {
+        resumen.textContent = detalle.open ? "Ocultar código" : "Ver código";
+      });
+    });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", plegarCodigo);
+  } else {
+    plegarCodigo();
+  }
+  if (window.gitbook && window.gitbook.events) {
+    window.gitbook.events.bind("page.change", plegarCodigo);
+  }
+})();
+</script>
             </section>
 
           </div>

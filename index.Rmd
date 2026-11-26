@@ -1,7 +1,8 @@
 --- 
 title: "Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo"
+subtitle: "Curso de Métodos Estadísticos, Universidad del Norte"
 author: "Diego Payares y Salma Romero"
-date: "`r Sys.Date()`"
+date: "`r meses <- c('enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'); paste(as.integer(format(Sys.Date(), '%d')), 'de', meses[as.integer(format(Sys.Date(), '%m'))], 'de', format(Sys.Date(), '%Y'))`"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
 documentclass: book
@@ -16,6 +17,27 @@ description: "Modelado exploratorio e inferencial del conjunto de datos Parkinso
 ---
 
 # Contexto del problema {-}
+
+```{r portada, echo=FALSE, results='asis'}
+if (knitr::is_html_output()) {
+  cat('
+<div class="portada">
+<p class="portada-lema">¿Qué tanto dice la voz sobre la severidad motora del Parkinson?</p>
+<div class="cifras">
+<div class="cifra"><span class="numero">42</span><span class="etiqueta">pacientes en etapa temprana</span></div>
+<div class="cifra"><span class="numero">5.875</span><span class="etiqueta">grabaciones de voz</span></div>
+<div class="cifra"><span class="numero">16</span><span class="etiqueta">medidas acústicas</span></div>
+<div class="cifra"><span class="numero">6</span><span class="etiqueta">meses de seguimiento</span></div>
+</div>
+<a class="video-tarjeta" href="divulgacion.html">
+<img src="https://i.ytimg.com/vi/x-2O3e0kKj8/hqdefault.jpg" alt="Miniatura del video de divulgación del estudio">
+<span class="video-texto"><strong>Video de divulgación</strong><br>
+¿Se puede oír el Parkinson? Análisis estadístico de la voz en 42 pacientes. Una presentación del estudio y sus resultados en lenguaje sencillo.</span>
+</a>
+</div>
+')
+}
+```
 
 La enfermedad de Parkinson es un trastorno neurodegenerativo que puede afectar diferentes aspectos del movimiento y del habla. La evaluación estándar de la severidad del síntoma se realiza mediante la escala unificada de calificación de la enfermedad de Parkinson (UPDRS). El monitoreo de la progresión de sus síntomas requiere evaluaciones periódicas, por lo que las técnicas de telemonitorización pueden constituir una alternativa para obtener información de manera remota y no invasiva.
 

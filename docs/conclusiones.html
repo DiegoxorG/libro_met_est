@@ -23,7 +23,6 @@
 <meta name="author" content="Diego Payares y Salma Romero" />
 
 
-<meta name="date" content="2026-11-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -31,7 +30,7 @@
   
   
 <link rel="prev" href="regresion.html"/>
-<link rel="next" href="referencias.html"/>
+<link rel="next" href="divulgacion.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -293,6 +292,7 @@ div.csl-indent {
 <li class="chapter" data-level="3.6" data-path="regresion.html"><a href="regresion.html#comparaci%C3%B3n-de-los-modelos"><i class="fa fa-check"></i><b>3.6</b> Comparación de los modelos</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="conclusiones.html"><a href="conclusiones.html"><i class="fa fa-check"></i><b>4</b> Conclusiones</a></li>
+<li class="chapter" data-level="5" data-path="divulgacion.html"><a href="divulgacion.html"><i class="fa fa-check"></i><b>5</b> Divulgación de resultados</a></li>
 <li class="chapter" data-level="" data-path="referencias.html"><a href="referencias.html"><i class="fa fa-check"></i>Referencias</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/DiegoxorG/libro_met_est" target="blank">Diego Payares & Salma Romero</a></li>
@@ -318,28 +318,58 @@ div.csl-indent {
 <div id="conclusiones" class="section level1 hasAnchor" number="4">
 <h1><span class="header-section-number">Capítulo 4</span> Conclusiones<a href="conclusiones.html#conclusiones" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>El objetivo era ver qué tanto se relacionan las características demográficas, temporales y acústicas de la voz con la severidad motora de 42 pacientes con Parkinson en etapa temprana, a partir de 5.863 grabaciones de telemonitoreo. Esto es lo que encontramos.</p>
-<p><strong>Sobre los datos.</strong> La severidad motora (<code>motor_UPDRS</code>) cubre casi toda la escala, de 5 a 40 puntos, con una distribución bimodal que no responde a dos tipos de pacientes sino a que cada persona aporta unas 140 grabaciones con puntuaciones muy parecidas. Las 16 medidas acústicas están fuertemente sesgadas hacia la derecha: la mayoría de las grabaciones tiene voces relativamente estables y unas pocas concentran las alteraciones graves. Además, las medidas de jitter y de shimmer son redundantes entre sí (correlaciones de 0.79 a 1, con dos pares que son múltiplos exactos), por lo que se resumieron en dos índices que conservan la información de sus familias con correlaciones superiores a 0.9.</p>
-<p><strong>Sobre la relación con la severidad motora.</strong> Registro a registro, ninguna característica de la voz se asocia linealmente de forma fuerte con <code>motor_UPDRS</code>; la mayor correlación es la de la edad (0.27). A nivel de paciente, que es la unidad correcta para las pruebas de hipótesis, los resultados fueron:</p>
+<p><strong>Sobre los datos.</strong> La severidad motora (la puntuación motor UPDRS) cubre casi toda la escala, de 5 a 40 puntos, con una distribución bimodal que no responde a dos tipos de pacientes sino a que cada persona aporta unas 140 grabaciones con puntuaciones muy parecidas. Las 16 medidas acústicas están fuertemente sesgadas hacia la derecha: la mayoría de las grabaciones tiene voces relativamente estables y unas pocas concentran las alteraciones graves. Además, las medidas de jitter y de shimmer son redundantes entre sí (correlaciones de 0.79 a 1, con dos pares que son múltiplos exactos), por lo que se resumieron en dos índices que conservan la información de sus familias con correlaciones superiores a 0.9.</p>
+<p><strong>Sobre la relación con la severidad motora.</strong> Registro a registro, ninguna característica de la voz se asocia linealmente de forma fuerte con la puntuación motor UPDRS; la mayor correlación es la de la edad (0.27). A nivel de paciente, que es la unidad correcta para las pruebas de hipótesis, los resultados fueron:</p>
 <ul>
-<li>El sexo no marca diferencia (t = 0.36, p = 0.721, d = 0.12).</li>
-<li>La edad sí parece importar: los mayores de 70 años promedian casi 7 puntos más que los menores de 60, con un tamaño del efecto grande entre esos dos grupos (d de Cohen = 0.96). El ANOVA queda justo por encima del umbral (p = 0.065) y Kruskal-Wallis justo por debajo (p = 0.049), señal de que con 42 pacientes falta potencia, no relación.</li>
-<li>La inestabilidad vocal no separa grupos de severidad: ni el shimmer (d = 0.19) ni el jitter (d = 0.44, p = 0.163), aunque este último muestra 3.4 puntos más en el grupo alto y merecería una muestra mayor.</li>
-<li>Las pruebas de correlación van en la misma línea: la edad se correlaciona con la severidad de forma débil (r = 0.3; Spearman p = 0.026, Pearson p = 0.054). Entre las medidas acústicas solo <code>NHR</code> alcanza la significancia, y únicamente con Spearman (ρ = 0.32, p = 0.038), porque unos pocos pacientes con mucho ruido en la voz distorsionan su correlación de Pearson; las demás quedan en correlaciones débiles o muy débiles, no significativas con 42 pacientes.</li>
-<li>En versión categórica (severidad alta o baja por grupo de edad) el chi-cuadrado tampoco alcanza la significancia (χ² = 3.13, p = 0.209; V de Cramer = 0.27), aunque la proporción de pacientes con severidad alta sube del 36 % en los menores de 60 al 69 % en los mayores de 70. Con el sexo la asociación es nula (V = 0).</li>
-<li>La severidad motora aumenta a lo largo del seguimiento: 2.08 puntos en promedio en unos seis meses (t pareada, p = 0.037), un efecto pequeño y desigual, porque cerca de un tercio de los pacientes mejora.</li>
+<li>El sexo no marca diferencia (t(40) = 0.36, p-valor = 0.721, d = 0.12).</li>
+<li>La edad sí parece importar: los mayores de 70 años promedian 25.02 puntos (desviación estándar de 6.81) y los menores de 60, 18.24 (desviación estándar de 7.33), casi 7 puntos de diferencia, con un tamaño del efecto grande entre esos dos grupos (d de Cohen = 0.96). El ANOVA queda justo por encima del umbral (F(2, 39) = 2.94, p-valor = 0.065) y Kruskal-Wallis justo por debajo (<span class="math inline">\(\chi^2\)</span>(2) = 6.02, p-valor = 0.049), señal de que con 42 pacientes falta potencia, no relación.</li>
+<li>La inestabilidad vocal no separa grupos de severidad: ni el shimmer (t(40) = 0.62, p-valor = 0.541, d = 0.19) ni el jitter (t(40) = 1.42, p-valor = 0.163, d = 0.44), aunque este último muestra 3.4 puntos más en el grupo alto y merecería una muestra mayor.</li>
+<li>Las pruebas de correlación van en la misma línea: la edad se correlaciona con la severidad de forma débil (r = 0.3; Spearman, p-valor = 0.026; Pearson, p-valor = 0.054). Entre las medidas acústicas solo NHR alcanza la significancia, y únicamente con Spearman (ρ = 0.32, p-valor = 0.038), porque unos pocos pacientes con mucho ruido en la voz distorsionan su correlación de Pearson; las demás quedan en correlaciones débiles o muy débiles, no significativas con 42 pacientes.</li>
+<li>En versión categórica (severidad alta o baja por grupo de edad) el chi-cuadrado tampoco alcanza la significancia (χ²(2) = 3.13, p-valor = 0.209; V de Cramer = 0.27), aunque la proporción de pacientes con severidad alta sube del 36 % en los menores de 60 al 69 % en los mayores de 70. Con el sexo la asociación es nula (V = 0).</li>
+<li>La severidad motora aumenta a lo largo del seguimiento: 2.08 puntos en promedio (desviación estándar de 6.23) en unos seis meses (t pareada, t(41) = 2.16, p-valor = 0.037), un efecto pequeño y desigual, porque cerca de un tercio de los pacientes mejora.</li>
 </ul>
-<p><strong>Sobre el modelo de regresión.</strong> Al meter las ocho características juntas en una regresión lineal múltiple, el modelo completo no resulta significativo (p = 0.363) y su R² ajustado es casi nulo (0.027), porque varias medidas de la voz están fuertemente correlacionadas entre sí (VIF de hasta 25.94). Tanto con todas las regresiones posibles como con la selección secuencial, el mejor modelo es el que usa la edad, <code>DFA</code> y <code>PPE</code>: es significativo en conjunto (p = 0.0497), cumple los supuestos sobre los errores y explica el 18.4 % de la variabilidad de la severidad entre pacientes (12 % con el R² ajustado). Agregar el sexo y el grupo de edad como variables indicadoras no lo mejora (F parcial, p = 0.27).</p>
-<p><strong>En síntesis</strong>, la edad y el paso del tiempo son los factores más claramente vinculados con la severidad motora en esta muestra, mientras que las medidas acústicas, tomadas de forma individual o resumidas en índices, guardan con ella una relación débil. Incluso combinadas en un modelo de regresión, la edad y la voz explican menos de una quinta parte de las diferencias de severidad entre pacientes. Esto no contradice el uso de la voz para telemonitoreo: los estudios originales del dataset trabajan sobre todas las grabaciones y con modelos más flexibles, mientras que aquí, para respetar la independencia de las observaciones, resumimos cada paciente en un solo valor.</p>
+<p><strong>Sobre el modelo de regresión.</strong> Al meter las ocho características juntas en una regresión lineal múltiple, el modelo completo no resulta significativo (F(8, 33) = 1.14, p-valor = 0.363) y su R² ajustado es casi nulo (0.027), porque varias medidas de la voz están fuertemente correlacionadas entre sí (VIF de hasta 25.94). Tanto con todas las regresiones posibles como con la selección secuencial, el mejor modelo es el que usa la edad, DFA y PPE: es significativo en conjunto (F(3, 38) = 2.86, p-valor = 0.0497), cumple los supuestos sobre los errores y explica el 18.4 % de la variabilidad de la severidad entre pacientes (12 % con el R² ajustado). Agregar el sexo y el grupo de edad como variables indicadoras no lo mejora (F parcial, F(3, 36) = 1.36, p-valor = 0.27).</p>
+<p><strong>En síntesis</strong>, la edad y el paso del tiempo son los factores más claramente vinculados con la severidad motora en esta muestra (vinculados en el sentido de asociados: un estudio observacional como este no permite afirmar relaciones de causa y efecto), mientras que las medidas acústicas, tomadas de forma individual o resumidas en índices, guardan con ella una relación débil. Incluso combinadas en un modelo de regresión, la edad y la voz explican menos de una quinta parte de las diferencias de severidad entre pacientes. Esto no contradice el uso de la voz para telemonitoreo: los estudios originales del dataset trabajan sobre todas las grabaciones y con modelos más flexibles, mientras que aquí, para respetar la independencia de las observaciones, resumimos cada paciente en un solo valor.</p>
 <p><strong>Limitaciones.</strong> La muestra es pequeña para las pruebas por paciente (42 personas, 14 mujeres), las puntuaciones UPDRS están interpoladas entre visitas clínicas y no medidas en cada grabación, la clasificación alto/bajo (partir a los pacientes por la mitad) pierde información de los índices, y el seguimiento es de solo seis meses en pacientes en etapa temprana, donde la progresión es lenta. Con 42 pacientes, un modelo de regresión tiene poco margen para incluir muchas variables sin perder ajuste. Un paso natural sería aprovechar las grabaciones repetidas de cada paciente con modelos que tengan en cuenta que no son independientes.</p>
 
 </div>
+<script>
+// Pliega cada bloque de código R detrás de un botón "Ver código";
+// las salidas (tablas y gráficos) siguen visibles.
+(function () {
+  function plegarCodigo() {
+    document.querySelectorAll("div.sourceCode").forEach(function (bloque) {
+      if (bloque.parentElement.tagName === "DETAILS") return;
+      if (!bloque.querySelector("pre.sourceCode.r")) return;
+      var detalle = document.createElement("details");
+      detalle.className = "codigo-plegable";
+      var resumen = document.createElement("summary");
+      resumen.textContent = "Ver código";
+      bloque.parentNode.insertBefore(detalle, bloque);
+      detalle.appendChild(resumen);
+      detalle.appendChild(bloque);
+      detalle.addEventListener("toggle", function () {
+        resumen.textContent = detalle.open ? "Ocultar código" : "Ver código";
+      });
+    });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", plegarCodigo);
+  } else {
+    plegarCodigo();
+  }
+  if (window.gitbook && window.gitbook.events) {
+    window.gitbook.events.bind("page.change", plegarCodigo);
+  }
+})();
+</script>
             </section>
 
           </div>
         </div>
       </div>
 <a href="regresion.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="referencias.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="divulgacion.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

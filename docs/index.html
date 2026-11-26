@@ -23,7 +23,6 @@
 <meta name="author" content="Diego Payares y Salma Romero" />
 
 
-<meta name="date" content="2026-11-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -293,6 +292,7 @@ div.csl-indent {
 <li class="chapter" data-level="3.6" data-path="regresion.html"><a href="regresion.html#comparaci%C3%B3n-de-los-modelos"><i class="fa fa-check"></i><b>3.6</b> Comparación de los modelos</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="conclusiones.html"><a href="conclusiones.html"><i class="fa fa-check"></i><b>4</b> Conclusiones</a></li>
+<li class="chapter" data-level="5" data-path="divulgacion.html"><a href="divulgacion.html"><i class="fa fa-check"></i><b>5</b> Divulgación de resultados</a></li>
 <li class="chapter" data-level="" data-path="referencias.html"><a href="referencias.html"><i class="fa fa-check"></i>Referencias</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/DiegoxorG/libro_met_est" target="blank">Diego Payares & Salma Romero</a></li>
@@ -317,15 +317,70 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="header">
 <h1 class="title">Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo</h1>
+<h2 class="subtitle"><em>Curso de Métodos Estadísticos, Universidad del Norte</em></h2>
 <p class="author"><em>Diego Payares y Salma Romero</em></p>
-<p class="date"><em>2026-11-22</em></p>
+<p class="date"><em>25 de noviembre de 2026</em></p>
 </div>
 <div id="contexto-del-problema" class="section level1 unnumbered hasAnchor">
 <h1>Contexto del problema<a href="index.html#contexto-del-problema" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div class="portada">
+<p class="portada-lema">
+¿Qué tanto dice la voz sobre la severidad motora del Parkinson?
+</p>
+<div class="cifras">
+<div class="cifra">
+<span class="numero">42</span><span class="etiqueta">pacientes en etapa temprana</span>
+</div>
+<div class="cifra">
+<span class="numero">5.875</span><span class="etiqueta">grabaciones de voz</span>
+</div>
+<div class="cifra">
+<span class="numero">16</span><span class="etiqueta">medidas acústicas</span>
+</div>
+<div class="cifra">
+<span class="numero">6</span><span class="etiqueta">meses de seguimiento</span>
+</div>
+</div>
+<p><a class="video-tarjeta" href="divulgacion.html">
+<img src="https://i.ytimg.com/vi/x-2O3e0kKj8/hqdefault.jpg" alt="Miniatura del video de divulgación del estudio">
+<span class="video-texto"><strong>Video de divulgación</strong><br>
+¿Se puede oír el Parkinson? Análisis estadístico de la voz en 42 pacientes. Una presentación del estudio y sus resultados en lenguaje sencillo.</span>
+</a></p>
+</div>
 <p>La enfermedad de Parkinson es un trastorno neurodegenerativo que puede afectar diferentes aspectos del movimiento y del habla. La evaluación estándar de la severidad del síntoma se realiza mediante la escala unificada de calificación de la enfermedad de Parkinson (UPDRS). El monitoreo de la progresión de sus síntomas requiere evaluaciones periódicas, por lo que las técnicas de telemonitorización pueden constituir una alternativa para obtener información de manera remota y no invasiva.</p>
 <p>El conjunto de datos a analizar, Parkinsons Telemonitoring <span class="citation">(<a href="referencias.html#ref-tsanas2010">Tsanas et al. 2010</a>)</span>, contiene mediciones biomédicas de la voz obtenidas de 42 personas con enfermedad de Parkinson en etapa temprana, quienes participaron en una prueba de seis meses de un dispositivo de telemonitorización. Las grabaciones fueron realizadas en los domicilios de los pacientes. El conjunto contiene 5.875 registros de voz, correspondientes a múltiples grabaciones realizadas a estos participantes (alrededor de 140 por paciente).</p>
 <p>Para cada registro se dispone de información demográfica y temporal, como la edad, el sexo y el tiempo transcurrido desde el reclutamiento, además de 16 medidas biomédicas relacionadas con características de la voz <span class="citation">(<a href="referencias.html#ref-little2009">Little et al. 2009</a>)</span>. También se registran las puntuaciones motor_UPDRS y total_UPDRS, correspondientes a medidas clínicas de la sintomatología de la enfermedad. En este trabajo la variable respuesta es motor_UPDRS, la puntuación de la parte motora de la escala. Como las grabaciones de un mismo paciente se parecen mucho entre sí, el análisis exploratorio se hace sobre los registros y las pruebas de hipótesis sobre un valor resumen por paciente.</p>
 </div>
+<script>
+// Pliega cada bloque de código R detrás de un botón "Ver código";
+// las salidas (tablas y gráficos) siguen visibles.
+(function () {
+  function plegarCodigo() {
+    document.querySelectorAll("div.sourceCode").forEach(function (bloque) {
+      if (bloque.parentElement.tagName === "DETAILS") return;
+      if (!bloque.querySelector("pre.sourceCode.r")) return;
+      var detalle = document.createElement("details");
+      detalle.className = "codigo-plegable";
+      var resumen = document.createElement("summary");
+      resumen.textContent = "Ver código";
+      bloque.parentNode.insertBefore(detalle, bloque);
+      detalle.appendChild(resumen);
+      detalle.appendChild(bloque);
+      detalle.addEventListener("toggle", function () {
+        resumen.textContent = detalle.open ? "Ocultar código" : "Ver código";
+      });
+    });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", plegarCodigo);
+  } else {
+    plegarCodigo();
+  }
+  if (window.gitbook && window.gitbook.events) {
+    window.gitbook.events.bind("page.change", plegarCodigo);
+  }
+})();
+</script>
             </section>
 
           </div>

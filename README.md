@@ -17,7 +17,9 @@ y las puntuaciones clínicas `motor_UPDRS` (variable respuesta) y `total_UPDRS`.
 | `index.Rmd` | Contexto del problema, objetivo general y objetivos específicos |
 | `01-intro.Rmd` | Análisis exploratorio de datos (EDA) e ingeniería de características |
 | `02-inferencial.Rmd` | Estadística inferencial: supuestos, pruebas de hipótesis y tamaños del efecto (a nivel de paciente) |
-| `03-conclusiones.Rmd` | Conclusiones y limitaciones |
+| `03-regresion.Rmd` | Regresión lineal múltiple: selección del modelo, supuestos y variables categóricas |
+| `04-conclusiones.Rmd` | Conclusiones |
+| `05-divulgacion.Rmd` | Divulgación de resultados |
 | `06-references.Rmd` | Referencias |
 | `data/parkinsons_updrs.data` | Datos (CSV) |
 | `data/parkinsons_updrs.names` | Diccionario de variables |

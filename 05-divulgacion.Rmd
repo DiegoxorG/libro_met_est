@@ -1,0 +1,20 @@
+# Divulgación de resultados {#divulgacion}
+
+Un análisis estadístico cumple su propósito cuando sus resultados llegan a quienes pueden usarlos. Por eso, además de este libro, preparamos un video en el que presentamos el estudio en un lenguaje accesible para un público no especializado: el problema de la enfermedad de Parkinson y su seguimiento a distancia, los datos de telemonitoreo de la voz de los 42 pacientes y los principales hallazgos de los capítulos anteriores.
+
+```{r video-divulgacion, echo=FALSE, results='asis'}
+if (knitr::is_html_output()) {
+  cat('<div class="video-contenedor">',
+      '<iframe src="https://www.youtube.com/embed/x-2O3e0kKj8"',
+      'title="¿Se puede oír el Parkinson? Análisis estadístico de la voz en 42 pacientes"',
+      'frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"',
+      'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+      '</div>')
+} else {
+  cat("Video: <https://youtu.be/x-2O3e0kKj8>")
+}
+```
+
+**Título:** ¿Se puede oír el Parkinson? Análisis estadístico de la voz en 42 pacientes
+
+**Autores:** Diego Payares y Salma Romero

@@ -1,7 +1,11 @@
 bookdown::gitbook:
   split_bib: false
   css: style.css
+  includes:
+    after_body: codigo-plegable.html
   config:
+    fontsettings:
+      family: sans
     toc:
       before: |
         <li><a href="./">Parkinson y telemonitoreo de la voz</a></li>

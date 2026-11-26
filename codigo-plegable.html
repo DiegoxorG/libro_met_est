@@ -1,0 +1,30 @@
+<script>
+// Pliega cada bloque de código R detrás de un botón "Ver código";
+// las salidas (tablas y gráficos) siguen visibles.
+(function () {
+  function plegarCodigo() {
+    document.querySelectorAll("div.sourceCode").forEach(function (bloque) {
+      if (bloque.parentElement.tagName === "DETAILS") return;
+      if (!bloque.querySelector("pre.sourceCode.r")) return;
+      var detalle = document.createElement("details");
+      detalle.className = "codigo-plegable";
+      var resumen = document.createElement("summary");
+      resumen.textContent = "Ver código";
+      bloque.parentNode.insertBefore(detalle, bloque);
+      detalle.appendChild(resumen);
+      detalle.appendChild(bloque);
+      detalle.addEventListener("toggle", function () {
+        resumen.textContent = detalle.open ? "Ocultar código" : "Ver código";
+      });
+    });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", plegarCodigo);
+  } else {
+    plegarCodigo();
+  }
+  if (window.gitbook && window.gitbook.events) {
+    window.gitbook.events.bind("page.change", plegarCodigo);
+  }
+})();
+</script>

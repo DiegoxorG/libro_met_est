@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es" xml:lang="es">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Capítulo 5 Divulgación de resultados | Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo</title>
+  <meta name="description" content="Modelado exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI), orientado al estudio de la relación entre características demográficas, temporales y acústicas de la voz y la severidad motora en pacientes con enfermedad de Parkinson. Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
+  <meta name="generator" content="bookdown 0.47 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Capítulo 5 Divulgación de resultados | Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Modelado exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI), orientado al estudio de la relación entre características demográficas, temporales y acústicas de la voz y la severidad motora en pacientes con enfermedad de Parkinson. Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
+  <meta name="github-repo" content="DiegoxorG/libro_met_est" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Capítulo 5 Divulgación de resultados | Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo" />
+  
+  <meta name="twitter:description" content="Modelado exploratorio e inferencial del conjunto de datos Parkinsons Telemonitoring (UCI), orientado al estudio de la relación entre características demográficas, temporales y acústicas de la voz y la severidad motora en pacientes con enfermedad de Parkinson. Trabajo del curso Métodos Estadísticos, Universidad del Norte." />
+  
+
+<meta name="author" content="Diego Payares y Salma Romero" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="conclusiones.html"/>
+<link rel="next" href="referencias.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<link href="libs/bsTable-3.3.7/bootstrapTable.min.css" rel="stylesheet" />
+<script src="libs/bsTable-3.3.7/bootstrapTable.js"></script>
+
+
+<style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Parkinson y telemonitoreo de la voz</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Contexto del problema</a></li>
+<li class="chapter" data-level="" data-path="objetivo-general.html"><a href="objetivo-general.html"><i class="fa fa-check"></i>Objetivo general</a></li>
+<li class="chapter" data-level="" data-path="objetivos-especificos.html"><a href="objetivos-especificos.html"><i class="fa fa-check"></i>Objetivos específicos</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Análisis exploratorio de datos</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#an%C3%A1lisis-exploratorio-de-motor_updrs-variable-respuesta"><i class="fa fa-check"></i><b>1.1</b> Análisis exploratorio de <code>motor_UPDRS</code> (variable respuesta)</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#resumen-estad%C3%ADstico-de-motor_updrs"><i class="fa fa-check"></i><b>1.1.1</b> Resumen estadístico de motor_UPDRS</a></li>
+<li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#histograma"><i class="fa fa-check"></i><b>1.1.2</b> Histograma</a></li>
+<li class="chapter" data-level="1.1.3" data-path="intro.html"><a href="intro.html#diagrama-de-caja"><i class="fa fa-check"></i><b>1.1.3</b> Diagrama de caja</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#variables-independientes-num%C3%A9ricas"><i class="fa fa-check"></i><b>1.2</b> Variables independientes numéricas</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="intro.html"><a href="intro.html#resumen-estad%C3%ADstico-por-variable"><i class="fa fa-check"></i><b>1.2.1</b> Resumen estadístico por variable</a></li>
+<li class="chapter" data-level="1.2.2" data-path="intro.html"><a href="intro.html#histogramas"><i class="fa fa-check"></i><b>1.2.2</b> Histogramas</a></li>
+<li class="chapter" data-level="1.2.3" data-path="intro.html"><a href="intro.html#dispersi%C3%B3n-frente-a-motor_updrs"><i class="fa fa-check"></i><b>1.2.3</b> Dispersión frente a <code>motor_UPDRS</code></a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#variable-independiente-categ%C3%B3rica-sex"><i class="fa fa-check"></i><b>1.3</b> Variable independiente categórica <code>sex</code></a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="intro.html"><a href="intro.html#distribuci%C3%B3n-por-registros-y-por-pacientes"><i class="fa fa-check"></i><b>1.3.1</b> Distribución por registros y por pacientes</a></li>
+<li class="chapter" data-level="1.3.2" data-path="intro.html"><a href="intro.html#severidad-motora-seg%C3%BAn-el-sexo"><i class="fa fa-check"></i><b>1.3.2</b> Severidad motora según el sexo</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#relaciones-entre-las-variables-independientes-num%C3%A9ricas"><i class="fa fa-check"></i><b>1.4</b> Relaciones entre las variables independientes numéricas</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="intro.html"><a href="intro.html#pares-seleccionados"><i class="fa fa-check"></i><b>1.4.1</b> Pares seleccionados</a></li>
+<li class="chapter" data-level="1.4.2" data-path="intro.html"><a href="intro.html#matriz-de-correlaciones"><i class="fa fa-check"></i><b>1.4.2</b> Matriz de correlaciones</a></li>
+<li class="chapter" data-level="1.4.3" data-path="intro.html"><a href="intro.html#pares-m%C3%A1s-correlacionados"><i class="fa fa-check"></i><b>1.4.3</b> Pares más correlacionados</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#ingenier%C3%ADa-de-caracter%C3%ADsticas"><i class="fa fa-check"></i><b>1.5</b> Ingeniería de características</a>
+<ul>
+<li class="chapter" data-level="1.5.1" data-path="intro.html"><a href="intro.html#construcci%C3%B3n-de-los-%C3%ADndices"><i class="fa fa-check"></i><b>1.5.1</b> Construcción de los índices</a></li>
+<li class="chapter" data-level="1.5.2" data-path="intro.html"><a href="intro.html#verificaci%C3%B3n-de-los-%C3%ADndices"><i class="fa fa-check"></i><b>1.5.2</b> Verificación de los índices</a></li>
+<li class="chapter" data-level="1.5.3" data-path="intro.html"><a href="intro.html#descripci%C3%B3n-de-los-%C3%ADndices"><i class="fa fa-check"></i><b>1.5.3</b> Descripción de los índices</a></li>
+<li class="chapter" data-level="1.5.4" data-path="intro.html"><a href="intro.html#relaci%C3%B3n-con-la-variable-respuesta"><i class="fa fa-check"></i><b>1.5.4</b> Relación con la variable respuesta</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="inferencial.html"><a href="inferencial.html"><i class="fa fa-check"></i><b>2</b> Estadística inferencial</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="inferencial.html"><a href="inferencial.html#unidad-de-an%C3%A1lisis-tabla-por-paciente"><i class="fa fa-check"></i><b>2.1</b> Unidad de análisis: tabla por paciente</a></li>
+<li class="chapter" data-level="2.2" data-path="inferencial.html"><a href="inferencial.html#severidad-motora-seg%C3%BAn-el-sexo-1"><i class="fa fa-check"></i><b>2.2</b> Severidad motora según el sexo</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio"><i class="fa fa-check"></i><b>2.2.1</b> Análisis exploratorio</a></li>
+<li class="chapter" data-level="2.2.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad"><i class="fa fa-check"></i><b>2.2.2</b> Supuesto de normalidad</a></li>
+<li class="chapter" data-level="2.2.3" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-homocedasticidad"><i class="fa fa-check"></i><b>2.2.3</b> Supuesto de homocedasticidad</a></li>
+<li class="chapter" data-level="2.2.4" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-t-de-student"><i class="fa fa-check"></i><b>2.2.4</b> Prueba de hipótesis: t de Student</a></li>
+<li class="chapter" data-level="2.2.5" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto"><i class="fa fa-check"></i><b>2.2.5</b> Tamaño del efecto</a></li>
+<li class="chapter" data-level="2.2.6" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n"><i class="fa fa-check"></i><b>2.2.6</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="inferencial.html"><a href="inferencial.html#severidad-motora-seg%C3%BAn-el-grupo-de-edad"><i class="fa fa-check"></i><b>2.3</b> Severidad motora según el grupo de edad</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio-1"><i class="fa fa-check"></i><b>2.3.1</b> Análisis exploratorio</a></li>
+<li class="chapter" data-level="2.3.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad-1"><i class="fa fa-check"></i><b>2.3.2</b> Supuesto de normalidad</a></li>
+<li class="chapter" data-level="2.3.3" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-homocedasticidad-1"><i class="fa fa-check"></i><b>2.3.3</b> Supuesto de homocedasticidad</a></li>
+<li class="chapter" data-level="2.3.4" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-anova-de-un-factor"><i class="fa fa-check"></i><b>2.3.4</b> Prueba de hipótesis: ANOVA de un factor</a></li>
+<li class="chapter" data-level="2.3.5" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-de-sensibilidad-kruskal-wallis-y-comparaciones-post-hoc"><i class="fa fa-check"></i><b>2.3.5</b> Análisis de sensibilidad: Kruskal-Wallis y comparaciones post hoc</a></li>
+<li class="chapter" data-level="2.3.6" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-1"><i class="fa fa-check"></i><b>2.3.6</b> Tamaño del efecto</a></li>
+<li class="chapter" data-level="2.3.7" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-1"><i class="fa fa-check"></i><b>2.3.7</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="inferencial.html"><a href="inferencial.html#severidad-motora-seg%C3%BAn-el-nivel-de-inestabilidad-vocal"><i class="fa fa-check"></i><b>2.4</b> Severidad motora según el nivel de inestabilidad vocal</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio-2"><i class="fa fa-check"></i><b>2.4.1</b> Análisis exploratorio</a></li>
+<li class="chapter" data-level="2.4.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad-2"><i class="fa fa-check"></i><b>2.4.2</b> Supuesto de normalidad</a></li>
+<li class="chapter" data-level="2.4.3" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-homocedasticidad-2"><i class="fa fa-check"></i><b>2.4.3</b> Supuesto de homocedasticidad</a></li>
+<li class="chapter" data-level="2.4.4" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-t-de-student-1"><i class="fa fa-check"></i><b>2.4.4</b> Prueba de hipótesis: t de Student</a></li>
+<li class="chapter" data-level="2.4.5" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-2"><i class="fa fa-check"></i><b>2.4.5</b> Tamaño del efecto</a></li>
+<li class="chapter" data-level="2.4.6" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-2"><i class="fa fa-check"></i><b>2.4.6</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="inferencial.html"><a href="inferencial.html#evoluci%C3%B3n-de-la-severidad-motora-durante-el-seguimiento"><i class="fa fa-check"></i><b>2.5</b> Evolución de la severidad motora durante el seguimiento</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio-3"><i class="fa fa-check"></i><b>2.5.1</b> Análisis exploratorio</a></li>
+<li class="chapter" data-level="2.5.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad-de-las-diferencias"><i class="fa fa-check"></i><b>2.5.2</b> Supuesto de normalidad de las diferencias</a></li>
+<li class="chapter" data-level="2.5.3" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-t-pareada"><i class="fa fa-check"></i><b>2.5.3</b> Prueba de hipótesis: t pareada</a></li>
+<li class="chapter" data-level="2.5.4" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-3"><i class="fa fa-check"></i><b>2.5.4</b> Tamaño del efecto</a></li>
+<li class="chapter" data-level="2.5.5" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-3"><i class="fa fa-check"></i><b>2.5.5</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.6" data-path="inferencial.html"><a href="inferencial.html#correlaci%C3%B3n-entre-las-caracter%C3%ADsticas-y-la-severidad-motora"><i class="fa fa-check"></i><b>2.6</b> Correlación entre las características y la severidad motora</a>
+<ul>
+<li class="chapter" data-level="2.6.1" data-path="inferencial.html"><a href="inferencial.html#an%C3%A1lisis-exploratorio-4"><i class="fa fa-check"></i><b>2.6.1</b> Análisis exploratorio</a></li>
+<li class="chapter" data-level="2.6.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-de-normalidad-3"><i class="fa fa-check"></i><b>2.6.2</b> Supuesto de normalidad</a></li>
+<li class="chapter" data-level="2.6.3" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-correlaci%C3%B3n-de-pearson-y-de-spearman"><i class="fa fa-check"></i><b>2.6.3</b> Prueba de hipótesis: correlación de Pearson y de Spearman</a></li>
+<li class="chapter" data-level="2.6.4" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-4"><i class="fa fa-check"></i><b>2.6.4</b> Tamaño del efecto</a></li>
+<li class="chapter" data-level="2.6.5" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-4"><i class="fa fa-check"></i><b>2.6.5</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.7" data-path="inferencial.html"><a href="inferencial.html#asociaci%C3%B3n-entre-el-nivel-de-severidad-motora-y-las-caracter%C3%ADsticas-categ%C3%B3ricas"><i class="fa fa-check"></i><b>2.7</b> Asociación entre el nivel de severidad motora y las características categóricas</a>
+<ul>
+<li class="chapter" data-level="2.7.1" data-path="inferencial.html"><a href="inferencial.html#tabla-de-contingencia"><i class="fa fa-check"></i><b>2.7.1</b> Tabla de contingencia</a></li>
+<li class="chapter" data-level="2.7.2" data-path="inferencial.html"><a href="inferencial.html#supuesto-frecuencias-esperadas"><i class="fa fa-check"></i><b>2.7.2</b> Supuesto: frecuencias esperadas</a></li>
+<li class="chapter" data-level="2.7.3" data-path="inferencial.html"><a href="inferencial.html#prueba-de-hip%C3%B3tesis-chi-cuadrado-de-independencia"><i class="fa fa-check"></i><b>2.7.3</b> Prueba de hipótesis: chi-cuadrado de independencia</a></li>
+<li class="chapter" data-level="2.7.4" data-path="inferencial.html"><a href="inferencial.html#tama%C3%B1o-del-efecto-v-de-cramer"><i class="fa fa-check"></i><b>2.7.4</b> Tamaño del efecto: V de Cramer</a></li>
+<li class="chapter" data-level="2.7.5" data-path="inferencial.html"><a href="inferencial.html#segunda-tabla-sexo-y-nivel-de-severidad"><i class="fa fa-check"></i><b>2.7.5</b> Segunda tabla: sexo y nivel de severidad</a></li>
+<li class="chapter" data-level="2.7.6" data-path="inferencial.html"><a href="inferencial.html#conclusi%C3%B3n-5"><i class="fa fa-check"></i><b>2.7.6</b> Conclusión</a></li>
+</ul></li>
+<li class="chapter" data-level="2.8" data-path="inferencial.html"><a href="inferencial.html#s%C3%ADntesis-de-resultados"><i class="fa fa-check"></i><b>2.8</b> Síntesis de resultados</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="regresion.html"><a href="regresion.html"><i class="fa fa-check"></i><b>3</b> Regresión lineal múltiple</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="regresion.html"><a href="regresion.html#modelo-completo"><i class="fa fa-check"></i><b>3.1</b> Modelo completo</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="regresion.html"><a href="regresion.html#prueba-de-significancia-global"><i class="fa fa-check"></i><b>3.1.1</b> Prueba de significancia global</a></li>
+<li class="chapter" data-level="3.1.2" data-path="regresion.html"><a href="regresion.html#r%C2%B2-y-r%C2%B2-ajustado"><i class="fa fa-check"></i><b>3.1.2</b> R² y R² ajustado</a></li>
+<li class="chapter" data-level="3.1.3" data-path="regresion.html"><a href="regresion.html#multicolinealidad"><i class="fa fa-check"></i><b>3.1.3</b> Multicolinealidad</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="regresion.html"><a href="regresion.html#selecci%C3%B3n-del-mejor-modelo"><i class="fa fa-check"></i><b>3.2</b> Selección del mejor modelo</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="regresion.html"><a href="regresion.html#todas-las-regresiones-posibles"><i class="fa fa-check"></i><b>3.2.1</b> Todas las regresiones posibles</a></li>
+<li class="chapter" data-level="3.2.2" data-path="regresion.html"><a href="regresion.html#selecci%C3%B3n-secuencial"><i class="fa fa-check"></i><b>3.2.2</b> Selección secuencial</a></li>
+<li class="chapter" data-level="3.2.3" data-path="regresion.html"><a href="regresion.html#comparaci%C3%B3n-con-el-modelo-completo"><i class="fa fa-check"></i><b>3.2.3</b> Comparación con el modelo completo</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="regresion.html"><a href="regresion.html#modelo-seleccionado"><i class="fa fa-check"></i><b>3.3</b> Modelo seleccionado</a></li>
+<li class="chapter" data-level="3.4" data-path="regresion.html"><a href="regresion.html#an%C3%A1lisis-de-los-errores"><i class="fa fa-check"></i><b>3.4</b> Análisis de los errores</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="regresion.html"><a href="regresion.html#independencia"><i class="fa fa-check"></i><b>3.4.1</b> Independencia</a></li>
+<li class="chapter" data-level="3.4.2" data-path="regresion.html"><a href="regresion.html#normalidad"><i class="fa fa-check"></i><b>3.4.2</b> Normalidad</a></li>
+<li class="chapter" data-level="3.4.3" data-path="regresion.html"><a href="regresion.html#media-cero"><i class="fa fa-check"></i><b>3.4.3</b> Media cero</a></li>
+<li class="chapter" data-level="3.4.4" data-path="regresion.html"><a href="regresion.html#homocedasticidad"><i class="fa fa-check"></i><b>3.4.4</b> Homocedasticidad</a></li>
+<li class="chapter" data-level="3.4.5" data-path="regresion.html"><a href="regresion.html#valores-at%C3%ADpicos-e-influyentes"><i class="fa fa-check"></i><b>3.4.5</b> Valores atípicos e influyentes</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="regresion.html"><a href="regresion.html#modelo-con-variables-categ%C3%B3ricas"><i class="fa fa-check"></i><b>3.5</b> Modelo con variables categóricas</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="regresion.html"><a href="regresion.html#codificaci%C3%B3n-con-variables-indicadoras"><i class="fa fa-check"></i><b>3.5.1</b> Codificación con variables indicadoras</a></li>
+<li class="chapter" data-level="3.5.2" data-path="regresion.html"><a href="regresion.html#modelo-solo-con-las-variables-categ%C3%B3ricas"><i class="fa fa-check"></i><b>3.5.2</b> Modelo solo con las variables categóricas</a></li>
+<li class="chapter" data-level="3.5.3" data-path="regresion.html"><a href="regresion.html#modelo-seleccionado-con-las-variables-categ%C3%B3ricas"><i class="fa fa-check"></i><b>3.5.3</b> Modelo seleccionado con las variables categóricas</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="regresion.html"><a href="regresion.html#comparaci%C3%B3n-de-los-modelos"><i class="fa fa-check"></i><b>3.6</b> Comparación de los modelos</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="conclusiones.html"><a href="conclusiones.html"><i class="fa fa-check"></i><b>4</b> Conclusiones</a></li>
+<li class="chapter" data-level="5" data-path="divulgacion.html"><a href="divulgacion.html"><i class="fa fa-check"></i><b>5</b> Divulgación de resultados</a></li>
+<li class="chapter" data-level="" data-path="referencias.html"><a href="referencias.html"><i class="fa fa-check"></i>Referencias</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/DiegoxorG/libro_met_est" target="blank">Diego Payares & Salma Romero</a></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Publicado con bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Modelado de la severidad motora en la enfermedad de Parkinson mediante características acústicas de telemonitoreo</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="divulgacion" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">Capítulo 5</span> Divulgación de resultados<a href="divulgacion.html#divulgacion" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Un análisis estadístico cumple su propósito cuando sus resultados llegan a quienes pueden usarlos. Por eso, además de este libro, preparamos un video en el que presentamos el estudio en un lenguaje accesible para un público no especializado: el problema de la enfermedad de Parkinson y su seguimiento a distancia, los datos de telemonitoreo de la voz de los 42 pacientes y los principales hallazgos de los capítulos anteriores.</p>
+<div class="video-contenedor">
+<iframe src="https://www.youtube.com/embed/x-2O3e0kKj8" title="¿Se puede oír el Parkinson? Análisis estadístico de la voz en 42 pacientes" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+<p><strong>Título:</strong> ¿Se puede oír el Parkinson? Análisis estadístico de la voz en 42 pacientes</p>
+<p><strong>Autores:</strong> Diego Payares y Salma Romero</p>
+
+</div>
+<script>
+// Pliega cada bloque de código R detrás de un botón "Ver código";
+// las salidas (tablas y gráficos) siguen visibles.
+(function () {
+  function plegarCodigo() {
+    document.querySelectorAll("div.sourceCode").forEach(function (bloque) {
+      if (bloque.parentElement.tagName === "DETAILS") return;
+      if (!bloque.querySelector("pre.sourceCode.r")) return;
+      var detalle = document.createElement("details");
+      detalle.className = "codigo-plegable";
+      var resumen = document.createElement("summary");
+      resumen.textContent = "Ver código";
+      bloque.parentNode.insertBefore(detalle, bloque);
+      detalle.appendChild(resumen);
+      detalle.appendChild(bloque);
+      detalle.addEventListener("toggle", function () {
+        resumen.textContent = detalle.open ? "Ocultar código" : "Ver código";
+      });
+    });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", plegarCodigo);
+  } else {
+    plegarCodigo();
+  }
+  if (window.gitbook && window.gitbook.events) {
+    window.gitbook.events.bind("page.change", plegarCodigo);
+  }
+})();
+</script>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="conclusiones.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="referencias.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/DiegoxorG/libro_met_est/edit/main/05-divulgacion.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

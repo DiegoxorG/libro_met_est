@@ -18,7 +18,8 @@ coeficientes_modelo <- function(modelo) {
   summary(modelo)$coefficients %>%
     as.data.frame() %>%
     rownames_to_column("termino") %>%
-    mutate(across(where(is.numeric), ~ round(.x, 4)))
+    mutate(`Pr(>|t|)` = formato_p(`Pr(>|t|)`, 4),
+           across(where(is.numeric), ~ round(.x, 4)))
 }
 
 ajuste_modelo <- function(modelo) {
@@ -35,7 +36,8 @@ ajuste_modelo <- function(modelo) {
     p_valor = pf(f[["value"]], f[["numdf"]], f[["dendf"]], lower.tail = FALSE),
     AIC = AIC(modelo)
   ) %>%
-    mutate(across(where(is.numeric), ~ round(.x, 4)))
+    mutate(p_valor = formato_p(p_valor, 4),
+           across(where(is.numeric), ~ round(.x, 4)))
 }
 
 columnas_coeficientes <- c("Término", "Estimación", "Error estándar", "t", "p-valor")
@@ -64,9 +66,11 @@ ajuste_modelo(modelo_completo) %>%
 
 ### Prueba de significancia global
 
+::: {.hipotesis}
 $$H_0: \beta_1 = \beta_2 = \cdots = \beta_8 = 0 \qquad H_1: \text{al menos un } \beta_j \neq 0$$
+:::
 
-La Tabla \@ref(tab:reg-completo-ajuste) da F = 1.14 con 8 y 33 grados de libertad y p = 0.363. No se rechaza $H_0$: con las ocho características juntas, el modelo no explica la severidad motora mejor que su promedio. En la Tabla \@ref(tab:reg-completo-coef) tampoco hay ningún coeficiente significativo por sí solo; el p-valor más bajo es el de `DFA` (0.189).
+La Tabla \@ref(tab:reg-completo-ajuste) da F(8, 33) = 1.14, p-valor = 0.363. No se rechaza $H_0$: con las ocho características juntas, el modelo no explica la severidad motora mejor que su promedio. En la Tabla \@ref(tab:reg-completo-coef) tampoco hay ningún coeficiente significativo por sí solo; el p-valor más bajo es el de DFA (0.189).
 
 ### R² y R² ajustado
 
@@ -82,10 +86,12 @@ vif(modelo_completo) %>%
   tabla("Factor de inflación de la varianza (VIF) de cada variable en el modelo completo.",
         col.names = c("Variable", "VIF"))
 
-kappa(modelo_completo)
+tibble(medida = "Índice de condición", valor = round(kappa(modelo_completo), 2)) %>%
+  tabla("Índice de condición del modelo completo.", etiqueta = "reg-completo-kappa",
+        col.names = c("Medida", "Valor"))
 ```
 
-Cinco variables superan el umbral de 5 en la Tabla \@ref(tab:reg-completo-vif): el índice de jitter (25.94), `NHR` (23.79), el índice de shimmer (12.98), `HNR` (10.68) y `PPE` (10.45). El índice de condición (5745.67) también está muy por encima de 30. Hay multicolinealidad fuerte, algo esperable porque en el capítulo 1 ya vimos que las medidas de inestabilidad y de ruido de la voz se mueven juntas. Esto infla los errores estándar de los coeficientes, explica en parte que ninguno salga significativo y es otra razón para quedarnos con menos variables.
+Cinco variables superan el umbral de 5 en la Tabla \@ref(tab:reg-completo-vif): el índice de jitter (25.94), NHR (23.79), el índice de shimmer (12.98), HNR (10.68) y PPE (10.45). El índice de condición (5745.67, Tabla \@ref(tab:reg-completo-kappa)) también está muy por encima de 30. Hay multicolinealidad fuerte, algo esperable porque en el capítulo 1 ya vimos que las medidas de inestabilidad y de ruido de la voz se mueven juntas. Esto infla los errores estándar de los coeficientes, explica en parte que ninguno salga significativo y es otra razón para quedarnos con menos variables.
 
 ## Selección del mejor modelo
 
@@ -97,8 +103,6 @@ Con ocho predictores hay $2^8 - 1 = 255$ modelos posibles. Los ajustamos todos y
 todas <- ols_step_all_possible(modelo_completo)
 # según la versión de olsrr, la tabla viene directa o dentro de $result
 todas <- if (is.data.frame(todas)) todas else todas$result
-
-nrow(todas)
 
 todas %>%
   arrange(desc(adjr)) %>%
@@ -136,17 +140,16 @@ todas %>%
   mutate(medida = factor(medida, levels = c("rsquare", "adjr"),
                          labels = c("R²", "R² ajustado"))) %>%
   ggplot(aes(x = factor(n), y = valor)) +
-  geom_jitter(width = 0.15, alpha = 0.5, color = "#C77D98") +
-  stat_summary(fun = max, geom = "point", shape = 18, size = 4, color = "#8E0038") +
+  geom_jitter(width = 0.15, alpha = 0.5, color = paleta[["rosa_medio"]]) +
+  stat_summary(fun = max, geom = "point", shape = 18, size = 4, color = paleta[["vino"]]) +
   facet_wrap(~ medida) +
   labs(title = "Todas las regresiones posibles",
        subtitle = "Cada punto es un modelo; el rombo marca el mejor de cada tamaño",
        x = "Número de predictores",
-       y = NULL) +
-  theme_minimal()
+       y = NULL)
 ```
 
-Los criterios apuntan al mismo modelo. El que tiene `age`, `DFA` y `PPE` es el de mayor R² ajustado (0.1196, Tabla \@ref(tab:reg-todas-adjr)) y el de menor AIC (293.04, Tabla \@ref(tab:reg-todas-aic)). Con el $C_p$ de Mallows (Tabla \@ref(tab:reg-todas-cp)) queda tercero (0.38), detrás de `DFA` + `PPE` (0.21) y de la edad sola (0.36). Pero los tres tienen un $C_p$ muy por debajo de su número de parámetros, así que ninguno tiene un sesgo importante y las diferencias entre ellos son mínimas.
+Se ajustaron los `r nrow(todas)` modelos posibles. Los criterios apuntan al mismo modelo. El que tiene la edad, DFA y PPE es el de mayor R² ajustado (0.1196, Tabla \@ref(tab:reg-todas-adjr)) y el de menor AIC (293.04, Tabla \@ref(tab:reg-todas-aic)). Con el $C_p$ de Mallows (Tabla \@ref(tab:reg-todas-cp)) queda tercero (0.38), detrás de DFA + PPE (0.21) y de la edad sola (0.36). Pero los tres tienen un $C_p$ muy por debajo de su número de parámetros, así que ninguno tiene un sesgo importante y las diferencias entre ellos son mínimas.
 
 En la Figura \@ref(fig:reg-todas-grafico) se observa por qué el R² no sirve para elegir: el mejor R² de cada tamaño siempre sube, de 0.09 con una variable a 0.22 con las ocho. El R² ajustado, en cambio, sube hasta los tres predictores (0.12) y después baja, porque a partir de ahí cada variable nueva aporta menos de lo que cuesta.
 
@@ -176,13 +179,15 @@ tibble(
         col.names = c("Procedimiento", "Variables", "AIC"))
 ```
 
-Los tres procedimientos llegan al mismo modelo, `age` + `DFA` + `PPE`, con AIC = 293.04 (Tabla \@ref(tab:reg-secuencial)); el orden de las variables solo cambia por el orden en que se fueron agregando. Coincide con lo que dieron todas las regresiones posibles, así que ese es el modelo seleccionado.
+Los tres procedimientos llegan al mismo modelo, edad + DFA + PPE, con AIC = 293.04 (Tabla \@ref(tab:reg-secuencial)); el orden de las variables solo cambia por el orden en que se fueron agregando. Coincide con lo que dieron todas las regresiones posibles, así que ese es el modelo seleccionado.
 
 ### Comparación con el modelo completo
 
 Para confirmar que las cinco variables que salen no hacen falta, comparamos el modelo seleccionado con el completo mediante la prueba F parcial:
 
+::: {.hipotesis}
 $$H_0: \beta_{\text{jitter}} = \beta_{\text{shimmer}} = \beta_{\text{NHR}} = \beta_{\text{HNR}} = \beta_{\text{RPDE}} = 0 \qquad H_1: \text{al menos uno es distinto de 0}$$
+:::
 
 ```{r reg-f-parcial}
 modelo_seleccionado <- lm(motor ~ age + DFA + PPE, data = pacientes)
@@ -190,12 +195,13 @@ modelo_seleccionado <- lm(motor ~ age + DFA + PPE, data = pacientes)
 anova(modelo_seleccionado, modelo_completo) %>%
   as.data.frame() %>%
   mutate(modelo = c("Seleccionado", "Completo"), .before = 1) %>%
-  mutate(across(where(is.numeric), ~ round(.x, 4))) %>%
+  mutate(`Pr(>F)` = if_else(is.na(`Pr(>F)`), NA_character_, formato_p(`Pr(>F)`, 4)),
+         across(where(is.numeric), ~ round(.x, 4))) %>%
   tabla("Prueba F parcial: modelo seleccionado frente al modelo completo.",
         col.names = c("Modelo", "gl residuales", "SC residual", "gl", "SC", "F", "p-valor"))
 ```
 
-La prueba da F = 0.28 con 5 y 33 grados de libertad y p = 0.923 (Tabla \@ref(tab:reg-f-parcial)), así que no se rechaza $H_0$. Quitar el jitter, el shimmer, `NHR`, `HNR` y `RPDE` solo aumenta la suma de cuadrados residual en 83.29, y esa diferencia no es significativa: esas cinco variables no aportan nada que no esté ya en las otras tres.
+La prueba da F(5, 33) = 0.28, p-valor = 0.923 (Tabla \@ref(tab:reg-f-parcial)), así que no se rechaza $H_0$. Quitar el jitter, el shimmer, NHR, HNR y RPDE solo aumenta la suma de cuadrados residual en 83.29, y esa diferencia no es significativa: esas cinco variables no aportan nada que no esté ya en las otras tres.
 
 ## Modelo seleccionado
 
@@ -218,91 +224,175 @@ ajuste_modelo(modelo_seleccionado) %>%
   tabla("Medidas de ajuste del modelo seleccionado.", etiqueta = "reg-seleccionado-ajuste",
         col.names = columnas_ajuste)
 
-vif(modelo_seleccionado)
+vif(modelo_seleccionado) %>%
+  enframe("variable", "VIF") %>%
+  mutate(VIF = round(VIF, 2)) %>%
+  tabla("Factor de inflación de la varianza (VIF) de cada variable en el modelo seleccionado.",
+        etiqueta = "reg-seleccionado-vif", col.names = c("Variable", "VIF"))
 ```
 
 El modelo estimado es
 
 $$\widehat{\text{motor}} = 21.26 + 0.18\,\text{age} - 32.07\,\text{DFA} + 40.15\,\text{PPE}$$
 
-Según la Tabla \@ref(tab:reg-seleccionado-ajuste), la prueba F global da F = 2.86 con 3 y 38 grados de libertad y p = 0.0497. Queda justo por debajo de 0.05, así que se rechaza $H_0$: al menos una de las tres variables se relaciona con la severidad motora.
+Según la Tabla \@ref(tab:reg-seleccionado-ajuste), la prueba F global da F(3, 38) = 2.86, p-valor = 0.0497. Queda justo por debajo de 0.05, así que se rechaza $H_0$: al menos una de las tres variables se relaciona con la severidad motora.
 
 El R² es 0.184 y el R² ajustado 0.12. El modelo explica el 18.4 % de la variabilidad entre pacientes, y al corregir por el número de variables queda en 12 %, mucho más que el 2.7 % del modelo completo con menos de la mitad de las variables. Aun así, es un ajuste bajo: el error estándar residual (7.39 puntos) es casi tan grande como la desviación estándar de la severidad por paciente (7.88, Tabla \@ref(tab:inf-pacientes-motor)). La mayor parte de las diferencias entre pacientes no la explican la edad ni la voz.
 
 Los coeficientes de la Tabla \@ref(tab:reg-seleccionado-coef) se leen manteniendo fijas las otras dos variables:
 
-- **`age`:** cada año más de edad suma 0.18 puntos a la severidad esperada (p = 0.163).
-- **`DFA`:** el coeficiente es -32.07 (p = 0.133). Como `DFA` se mueve en décimas, es más fácil leerlo así: un aumento de 0.1 en `DFA` se asocia con 3.2 puntos menos de severidad.
-- **`PPE`:** el coeficiente es 40.15 (p = 0.054); un aumento de 0.1 en `PPE` se asocia con 4 puntos más de severidad.
-- **Intercepto (21.26):** no tiene una lectura práctica, porque correspondería a un paciente de 0 años con `DFA` y `PPE` iguales a 0.
+- **Edad:** cada año más de edad suma 0.18 puntos a la severidad esperada, manteniendo constantes DFA y PPE (t(38) = 1.42, p-valor = 0.163).
+- **DFA:** el coeficiente es -32.07 (t(38) = -1.53, p-valor = 0.133). Como DFA se mueve en décimas, es más fácil leerlo así: un aumento de 0.1 en DFA se asocia con 3.2 puntos menos de severidad.
+- **PPE:** el coeficiente es 40.15 (t(38) = 1.99, p-valor = 0.054); un aumento de 0.1 en PPE se asocia con 4 puntos más de severidad.
+- **Intercepto (21.26):** no tiene una lectura práctica, porque correspondería a un paciente de 0 años con DFA y PPE iguales a 0.
 
-Ninguno es significativo por separado con $\alpha = 0.05$ (`PPE` queda en el límite), y los intervalos de confianza del 95 % de la Tabla \@ref(tab:reg-seleccionado-ic) incluyen al 0 en los tres casos. Eso no contradice la prueba global: las tres variables juntas sí explican algo, pero con 42 pacientes no alcanza para separar el aporte de cada una. Los signos coinciden con las correlaciones del capítulo 2: a más edad y más `PPE`, más severidad; a más `DFA`, menos.
+Ninguno es significativo por separado con $\alpha = 0.05$ (PPE queda en el límite), y los intervalos de confianza del 95 % de la Tabla \@ref(tab:reg-seleccionado-ic) incluyen al 0 en los tres casos. Eso no contradice la prueba global: las tres variables juntas sí explican algo, pero con 42 pacientes no alcanza para separar el aporte de cada una. Los signos coinciden con las correlaciones del capítulo 2: a más edad y más PPE, más severidad; a más DFA, menos. Como en las correlaciones, estos coeficientes describen asociaciones y no relaciones de causa y efecto: el modelo dice cuánto cambia en promedio la severidad esperada entre pacientes que difieren en edad, DFA o PPE, no que cambiar esas variables cambie la severidad de un paciente.
 
-En este modelo ya no hay multicolinealidad: los VIF van de 1.07 a 1.34.
+En este modelo ya no hay multicolinealidad: los VIF van de 1.07 a 1.34 (Tabla \@ref(tab:reg-seleccionado-vif)).
 
 ## Análisis de los errores
 
 El modelo supone que los errores son independientes, tienen media cero, siguen una distribución normal y tienen varianza constante. Lo revisamos con los residuales del modelo seleccionado, primero de forma gráfica y luego con pruebas formales.
 
-```{r reg-residuales-graficos, fig.width=10, fig.height=8, fig.cap="Análisis gráfico de los residuales del modelo seleccionado: residuales frente a valores ajustados, escala-localización, QQ-plot de normalidad y autocorrelación."}
+```{r reg-residuales-graficos, fig.width=10, fig.height=8, fig.cap="Análisis gráfico de los residuales del modelo seleccionado: residuales frente a valores ajustados, escala-localización, QQ-plot de normalidad con banda de confianza del 95 % y autocorrelación."}
 residuales <- residuals(modelo_seleccionado)
 
-par(mfrow = c(2, 2))
-plot(modelo_seleccionado, which = 1, las = 1, col = "#C77D98", pch = 19)
-plot(modelo_seleccionado, which = 3, las = 1, col = "#C77D98", pch = 19)
-qqPlot(residuales, las = 1, col = "#C77D98", col.lines = "#8E0038",
-       ylab = "Residuales", xlab = "Cuantiles de la normal", id = FALSE)
-acf(residuales, las = 1, main = "")
-par(mfrow = c(1, 1))
+diagnostico <- tibble(
+  ajustados = fitted(modelo_seleccionado),
+  residuales = residuales,
+  raiz_estandarizados = sqrt(abs(rstandard(modelo_seleccionado)))
+)
+
+p_ajustados <- ggplot(diagnostico, aes(x = ajustados, y = residuales)) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  geom_point(color = paleta[["rosa_medio"]], size = 2.2) +
+  geom_smooth(method = "loess", formula = y ~ x, se = FALSE,
+              color = paleta[["vino"]], linewidth = 0.9) +
+  labs(title = "Residuales frente a valores ajustados",
+       x = "Valores ajustados", y = "Residuales")
+
+p_escala <- ggplot(diagnostico, aes(x = ajustados, y = raiz_estandarizados)) +
+  geom_point(color = paleta[["rosa_medio"]], size = 2.2) +
+  geom_smooth(method = "loess", formula = y ~ x, se = FALSE,
+              color = paleta[["vino"]], linewidth = 0.9) +
+  labs(title = "Escala-localización",
+       x = "Valores ajustados", y = "√|Residuales estandarizados|")
+
+# QQ-plot con la misma banda de confianza punto a punto que usa car::qqPlot
+n_res <- length(residuales)
+probabilidades <- ppoints(n_res)
+cuantiles_normal <- qnorm(probabilidades)
+cuartiles_res <- quantile(residuales, c(0.25, 0.75))
+pendiente <- diff(cuartiles_res) / diff(qnorm(c(0.25, 0.75)))
+intercepto <- cuartiles_res[[1]] - pendiente * qnorm(0.25)
+error_qq <- (pendiente / dnorm(cuantiles_normal)) *
+  sqrt(probabilidades * (1 - probabilidades) / n_res)
+
+datos_qq <- tibble(
+  teorico = cuantiles_normal,
+  observado = sort(residuales),
+  recta = intercepto + pendiente * cuantiles_normal,
+  inferior = recta - qnorm(0.975) * error_qq,
+  superior = recta + qnorm(0.975) * error_qq
+)
+
+p_qq <- ggplot(datos_qq, aes(x = teorico)) +
+  geom_ribbon(aes(ymin = inferior, ymax = superior), fill = paleta[["azul_claro"]], alpha = 0.5) +
+  geom_line(aes(y = recta), color = paleta[["vino"]], linewidth = 0.9) +
+  geom_point(aes(y = observado), color = paleta[["rosa_medio"]], size = 2.2) +
+  labs(title = "QQ-plot de normalidad",
+       x = "Cuantiles de la normal", y = "Residuales")
+
+autocorrelacion <- acf(residuales, plot = FALSE)
+datos_acf <- tibble(rezago = as.vector(autocorrelacion$lag),
+                    valor = as.vector(autocorrelacion$acf))
+banda_acf <- qnorm(0.975) / sqrt(n_res)
+
+p_acf <- ggplot(datos_acf, aes(x = rezago, y = valor)) +
+  geom_hline(yintercept = 0, color = "gray50") +
+  geom_hline(yintercept = c(-banda_acf, banda_acf), linetype = "dashed",
+             color = paleta[["fucsia"]]) +
+  geom_segment(aes(xend = rezago, yend = 0), color = paleta[["rosa_medio"]], linewidth = 1.2) +
+  labs(title = "Autocorrelación de los residuales",
+       x = "Rezago", y = "Autocorrelación")
+
+(p_ajustados + p_escala) / (p_qq + p_acf)
 ```
 
 En la Figura \@ref(fig:reg-residuales-graficos) se observa lo siguiente:
 
-- **Residuales frente a valores ajustados (arriba a la izquierda):** los puntos se reparten alrededor de 0 sin un patrón claro. La línea roja se curva un poco en los extremos, pero ahí hay muy pocos pacientes.
+- **Residuales frente a valores ajustados (arriba a la izquierda):** los puntos se reparten alrededor de 0 sin un patrón claro. La línea de tendencia se curva un poco en los extremos, pero ahí hay muy pocos pacientes.
 - **Escala-localización (arriba a la derecha):** la dispersión de los residuales es parecida a lo largo de los valores ajustados, sin forma de embudo, lo que apunta a varianza constante.
 - **QQ-plot (abajo a la izquierda):** los residuales siguen la recta y casi todos quedan dentro de la banda de confianza.
-- **Autocorrelación (abajo a la derecha):** las barras de los rezagos 2 y 4 apenas cruzan la banda. El orden de los pacientes es solo su número de identificación, así que no hay una secuencia en el tiempo que pueda producir dependencia, y la prueba de Durbin-Watson lo confirma.
+- **Autocorrelación (abajo a la derecha):** las barras de los rezagos 2 y 4 apenas cruzan las líneas punteadas de la banda. El orden de los pacientes es solo su número de identificación, así que no hay una secuencia en el tiempo que pueda producir dependencia, y la prueba de Durbin-Watson lo confirma.
 
 ### Independencia
 
+::: {.hipotesis}
 $$H_0: \text{los errores son independientes} \qquad H_1: \text{los errores están autocorrelacionados}$$
+:::
 
 ```{r reg-independencia}
 set.seed(2026)
-durbinWatsonTest(modelo_seleccionado)
+prueba_dw <- durbinWatsonTest(modelo_seleccionado)
+
+tibble(prueba = "Durbin-Watson",
+       autocorrelacion = round(prueba_dw$r, 3),
+       estadistico = round(prueba_dw$dw, 3),
+       p_valor = formato_p(prueba_dw$p)) %>%
+  tabla("Prueba de Durbin-Watson para la independencia de los errores del modelo seleccionado.",
+        col.names = c("Prueba", "Autocorrelación de rezago 1", "D-W", "p-valor"))
 ```
 
-D-W = 2.43 y p = 0.142: no se rechaza $H_0$, los errores son independientes. El p-valor de `durbinWatsonTest` se calcula por simulación, por eso fijamos una semilla para que el resultado no cambie cada vez que se compila el libro.
+D-W = 2.43, p-valor = 0.142 (Tabla \@ref(tab:reg-independencia)): no se rechaza $H_0$, los errores son independientes. El p-valor de `durbinWatsonTest` se calcula por simulación, por eso fijamos una semilla para que el resultado no cambie cada vez que se compila el libro.
 
 ### Normalidad
 
+::: {.hipotesis}
 $$H_0: \text{los errores siguen una distribución normal} \qquad H_1: \text{no la siguen}$$
+:::
 
 ```{r reg-normalidad}
-shapiro.test(residuales)
+list("Shapiro-Wilk" = shapiro.test(residuales)) %>%
+  tabla_pruebas("Prueba de Shapiro-Wilk sobre los residuales del modelo seleccionado.")
 ```
 
-W = 0.955 y p = 0.095: no se rechaza la normalidad de los errores, aunque el p-valor no está muy lejos de 0.05. Coincide con lo que se veía en el QQ-plot.
+W = 0.955, p-valor = 0.095 (Tabla \@ref(tab:reg-normalidad)): no se rechaza la normalidad de los errores, aunque el p-valor no está muy lejos de 0.05. Coincide con lo que se veía en el QQ-plot.
 
 ### Media cero
 
+::: {.hipotesis}
 $$H_0: \mu_{\varepsilon} = 0 \qquad H_1: \mu_{\varepsilon} \neq 0$$
+:::
 
 ```{r reg-media-cero}
-t.test(residuales, mu = 0)
+prueba_media_cero <- t.test(residuales, mu = 0)
+
+tibble(prueba = "t para una muestra",
+       estadistico = format(signif(prueba_media_cero$statistic, 3), scientific = TRUE),
+       gl = prueba_media_cero$parameter,
+       p_valor = formato_p(prueba_media_cero$p.value),
+       media = format(signif(mean(residuales), 3), scientific = TRUE),
+       desviacion = round(sd(residuales), 3)) %>%
+  tabla("Prueba t de media cero sobre los residuales del modelo seleccionado.",
+        col.names = c("Prueba", "t", "Grados de libertad", "p-valor", "Media de los residuales",
+                      "Desviación estándar de los residuales"))
 ```
 
-p = 1: la media de los residuales es prácticamente 0 (del orden de 10⁻¹⁶), como corresponde a un modelo con intercepto.
+t(41) ≈ 0, p-valor = 1 (Tabla \@ref(tab:reg-media-cero)): la media de los residuales es prácticamente 0 (del orden de 10⁻¹⁶; desviación estándar de `r round(sd(residuales), 2)`), como corresponde a un modelo con intercepto.
 
 ### Homocedasticidad
 
+::: {.hipotesis}
 $$H_0: \text{la varianza de los errores es constante} \qquad H_1: \text{no es constante}$$
+:::
 
 ```{r reg-homocedasticidad}
-bptest(modelo_seleccionado)
+list("Breusch-Pagan" = bptest(modelo_seleccionado)) %>%
+  tabla_pruebas("Prueba de Breusch-Pagan para la homocedasticidad de los errores del modelo seleccionado.")
 ```
 
-BP = 0.41 con 3 grados de libertad y p = 0.938: no se rechaza la homocedasticidad. La varianza de los errores es constante, igual que se veía en el gráfico de escala-localización.
+BP(3) = 0.41, p-valor = 0.938 (Tabla \@ref(tab:reg-homocedasticidad)): no se rechaza la homocedasticidad. La varianza de los errores es constante, igual que se veía en el gráfico de escala-localización.
 
 ### Valores atípicos e influyentes
 
@@ -310,35 +400,66 @@ Un paciente es atípico si su residual estudentizado queda fuera de (-3, 3), y e
 
 ```{r reg-atipicos}
 residuales_estudentizados <- rstudent(modelo_seleccionado)
-range(residuales_estudentizados)
-which(residuales_estudentizados < -3 | residuales_estudentizados > 3)
-
-outlierTest(modelo_seleccionado, n.max = 5)
+prueba_bonferroni <- outlierTest(modelo_seleccionado, n.max = 5)
 
 distancia_cook <- cooks.distance(modelo_seleccionado)
 n <- nrow(pacientes)
 p <- length(coef(modelo_seleccionado))
 umbral_cook <- 4 / (n - p - 2)
-umbral_cook
-which(distancia_cook > umbral_cook)
-round(distancia_cook[distancia_cook > umbral_cook], 4)
+
+tibble(
+  medida = c("Residual estudentizado mínimo", "Residual estudentizado máximo",
+             "Pacientes con residual estudentizado fuera de (-3, 3)",
+             "Paciente con el mayor residual estudentizado (Bonferroni)",
+             "p-valor sin ajustar de ese paciente", "p-valor ajustado por Bonferroni",
+             "Umbral de la distancia de Cook", "Pacientes por encima del umbral de Cook"),
+  valor = c(round(min(residuales_estudentizados), 3),
+            round(max(residuales_estudentizados), 3),
+            sum(abs(residuales_estudentizados) > 3),
+            names(prueba_bonferroni$rstudent)[1],
+            formato_p(prueba_bonferroni$p[1]),
+            formato_p(min(1, n * prueba_bonferroni$p[1])),
+            round(umbral_cook, 3),
+            paste(which(distancia_cook > umbral_cook), collapse = ", "))
+) %>%
+  tabla("Valores atípicos e influyentes en el modelo seleccionado.", etiqueta = "reg-atipicos-resumen",
+        col.names = c("Medida", "Valor"))
 
 pacientes %>%
+  mutate(cook = distancia_cook) %>%
   slice(which(distancia_cook > umbral_cook)) %>%
-  select(subject., sex, age, motor, DFA, PPE) %>%
+  select(subject., sex, age, motor, DFA, PPE, cook) %>%
   mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
   tabla("Paciente con distancia de Cook por encima del umbral.",
-        col.names = c("Paciente", "Sexo", "Edad", "Motor UPDRS promedio", "DFA", "PPE"))
+        col.names = c("Paciente", "Sexo", "Edad", "Motor UPDRS promedio", "DFA", "PPE",
+                      "Distancia de Cook"))
 ```
 
-```{r reg-influencia-grafico, fig.width=10, fig.height=5.5, fig.cap="Distancia de Cook y residuales estudentizados de cada paciente en el modelo seleccionado."}
-influenceIndexPlot(modelo_seleccionado, vars = c("Cook", "Studentized"),
-                   las = 1, col = "#C77D98", main = "")
+```{r reg-influencia-grafico, fig.width=10, fig.height=5.5, fig.cap="Distancia de Cook y residuales estudentizados de cada paciente en el modelo seleccionado. Las líneas punteadas marcan el umbral de Cook y los límites de ±3."}
+influencia <- tibble(paciente = seq_along(distancia_cook),
+                     cook = distancia_cook,
+                     estudentizado = residuales_estudentizados)
+
+p_cook <- ggplot(influencia, aes(x = paciente, y = cook)) +
+  geom_segment(aes(xend = paciente, yend = 0), color = paleta[["rosa_medio"]], linewidth = 1.1) +
+  geom_point(color = paleta[["fucsia"]], size = 1.8) +
+  geom_hline(yintercept = umbral_cook, linetype = "dashed", color = paleta[["vino"]]) +
+  labs(title = "Distancia de Cook", x = NULL, y = "Distancia de Cook")
+
+p_estudentizado <- ggplot(influencia, aes(x = paciente, y = estudentizado)) +
+  geom_hline(yintercept = 0, color = "gray50") +
+  geom_hline(yintercept = c(-3, 3), linetype = "dashed", color = paleta[["vino"]]) +
+  geom_segment(aes(xend = paciente, yend = 0), color = paleta[["rosa_medio"]], linewidth = 1.1) +
+  geom_point(color = paleta[["fucsia"]], size = 1.8) +
+  labs(title = "Residuales estudentizados", x = "Paciente (número de fila)",
+       y = "Residual estudentizado")
+
+p_cook / p_estudentizado
 ```
 
-Ningún paciente es atípico: los residuales estudentizados van de -1.97 a 2.05, lejos de ±3. La prueba de Bonferroni tampoco encuentra ninguno; el mayor, el del paciente 35, tiene un p-valor sin ajustar de 0.048, que deja de ser significativo al corregir por las 42 pruebas.
+Ningún paciente es atípico (Tabla \@ref(tab:reg-atipicos-resumen)): los residuales estudentizados van de -1.97 a 2.05, lejos de ±3. La prueba de Bonferroni tampoco encuentra ninguno; el mayor, el del paciente 35, tiene un p-valor sin ajustar de 0.048, que deja de ser significativo al corregir por las 42 pruebas.
 
-Con la distancia de Cook el umbral es 0.111, y solo lo supera el paciente 36 (0.235). En la Figura \@ref(fig:reg-influencia-grafico) se observa que su barra se separa claramente del resto, aunque su residual estudentizado es moderado. Es decir, el modelo no lo predice mal, pero su combinación de valores pesa mucho en la estimación de los coeficientes; en la Tabla \@ref(tab:reg-atipicos) se ve que tiene un `PPE` de 0.412. No hay razón para sacarlo: es un paciente real del estudio, y el modelo cumple los supuestos con él incluido.
+Con la distancia de Cook el umbral es 0.111, y solo lo supera el paciente 36 (0.235). En la Figura \@ref(fig:reg-influencia-grafico) se observa que su barra se separa claramente del resto, aunque su residual estudentizado es moderado. Es decir, el modelo no lo predice mal, pero su combinación de valores pesa mucho en la estimación de los coeficientes; en la Tabla \@ref(tab:reg-atipicos) se ve que tiene un PPE de 0.412. No hay razón para sacarlo: es un paciente real del estudio, y el modelo cumple los supuestos con él incluido.
 
 En resumen, el modelo seleccionado cumple los cuatro supuestos sobre los errores (independencia, normalidad, media cero y varianza constante) y no tiene atípicos.
 
@@ -381,13 +502,13 @@ ajuste_modelo(modelo_categorico) %>%
 Los coeficientes de la Tabla \@ref(tab:reg-categorico-coef) se leen así:
 
 - **Intercepto (18.46):** es la severidad promedio estimada de un hombre menor de 60 años.
-- **`sexFemenino` (-0.52, p = 0.837):** a igual grupo de edad, las mujeres tienen medio punto menos que los hombres, una diferencia que no es significativa. Es lo mismo que dio la prueba t por sexo del capítulo 2.
-- **`grupo_edad60 a 70` (1.64, p = 0.57):** a igual sexo, el grupo intermedio tiene 1.64 puntos más que los menores de 60, sin diferencia significativa.
-- **`grupo_edadMayor de 70` (6.72, p = 0.029):** a igual sexo, los mayores de 70 tienen 6.72 puntos más que los menores de 60, y esta diferencia sí es significativa.
+- **Sexo femenino (-0.52, p-valor = 0.837):** a igual grupo de edad, las mujeres tienen medio punto menos que los hombres, una diferencia que no es significativa. Es lo mismo que dio la prueba t por sexo del capítulo 2.
+- **Grupo de 60 a 70 años (1.64, p-valor = 0.57):** a igual sexo, el grupo intermedio tiene 1.64 puntos más que los menores de 60, sin diferencia significativa.
+- **Grupo de mayores de 70 años (6.72, p-valor = 0.029):** a igual sexo, los mayores de 70 tienen 6.72 puntos más que los menores de 60, y esta diferencia sí es significativa.
 
-Es la misma diferencia de casi 7 puntos que encontramos con el ANOVA del capítulo 2. Allá la prueba de Tukey no la declaró significativa (p ajustado = 0.062) porque corrige por las tres comparaciones entre grupos; la prueba t del coeficiente no hace esa corrección.
+Es la misma diferencia de casi 7 puntos que encontramos con el ANOVA del capítulo 2. Allá la prueba de Tukey no la declaró significativa (p-valor ajustado = 0.062) porque corrige por las tres comparaciones entre grupos; la prueba t del coeficiente no hace esa corrección.
 
-Según la Tabla \@ref(tab:reg-categorico-ajuste), el modelo en conjunto no es significativo (F = 1.93, p = 0.142), con un R² de 0.132 y un R² ajustado de 0.063.
+Según la Tabla \@ref(tab:reg-categorico-ajuste), el modelo en conjunto no es significativo (F(3, 38) = 1.93, p-valor = 0.142), con un R² de 0.132 y un R² ajustado de 0.063.
 
 ### Modelo seleccionado con las variables categóricas
 
@@ -407,7 +528,9 @@ ajuste_modelo(modelo_mixto) %>%
 
 Para saber si el sexo y el grupo de edad aportan en conjunto, comparamos con la prueba F parcial el modelo mixto frente al que solo tiene `DFA` y `PPE`:
 
+::: {.hipotesis}
 $$H_0: \beta_{\text{sexFemenino}} = \beta_{\text{60 a 70}} = \beta_{\text{Mayor de 70}} = 0 \qquad H_1: \text{al menos uno es distinto de 0}$$
+:::
 
 ```{r reg-mixto-f-parcial}
 modelo_acustico <- lm(motor ~ DFA + PPE, data = pacientes)
@@ -415,14 +538,15 @@ modelo_acustico <- lm(motor ~ DFA + PPE, data = pacientes)
 anova(modelo_acustico, modelo_mixto) %>%
   as.data.frame() %>%
   mutate(modelo = c("DFA + PPE", "DFA + PPE + sexo + grupo de edad"), .before = 1) %>%
-  mutate(across(where(is.numeric), ~ round(.x, 4))) %>%
+  mutate(`Pr(>F)` = if_else(is.na(`Pr(>F)`), NA_character_, formato_p(`Pr(>F)`, 4)),
+         across(where(is.numeric), ~ round(.x, 4))) %>%
   tabla("Prueba F parcial: aporte conjunto del sexo y el grupo de edad.",
         col.names = c("Modelo", "gl residuales", "SC residual", "gl", "SC", "F", "p-valor"))
 ```
 
-En la Tabla \@ref(tab:reg-mixto-coef), al controlar por `DFA` y `PPE`, la diferencia de los mayores de 70 frente a los menores de 60 baja a 4.5 puntos y deja de ser significativa (p = 0.149). El sexo sigue sin aportar (p = 0.751) y `PPE` queda justo en el límite (p = 0.05). Según la Tabla \@ref(tab:reg-mixto-ajuste), el R² sube a 0.228 y el R² ajustado a 0.121, casi igual al del modelo seleccionado, pero el modelo en conjunto no es significativo (p = 0.084).
+En la Tabla \@ref(tab:reg-mixto-coef), al controlar por DFA y PPE, la diferencia de los mayores de 70 frente a los menores de 60 baja a 4.5 puntos y deja de ser significativa (p-valor = 0.149). El sexo sigue sin aportar (p-valor = 0.751) y PPE queda justo en el límite (p-valor = 0.05). Según la Tabla \@ref(tab:reg-mixto-ajuste), el R² sube a 0.228 y el R² ajustado a 0.121, casi igual al del modelo seleccionado, pero el modelo en conjunto no es significativo (F(5, 36) = 2.13, p-valor = 0.084).
 
-La prueba F parcial da F = 1.36 con 3 y 36 grados de libertad y p = 0.27 (Tabla \@ref(tab:reg-mixto-f-parcial)), así que no se rechaza $H_0$: agregar el sexo y el grupo de edad a `DFA` y `PPE` no mejora el modelo de forma significativa.
+La prueba F parcial da F(3, 36) = 1.36, p-valor = 0.27 (Tabla \@ref(tab:reg-mixto-f-parcial)), así que no se rechaza $H_0$: agregar el sexo y el grupo de edad a DFA y PPE no mejora el modelo de forma significativa.
 
 ## Comparación de los modelos
 
@@ -440,6 +564,6 @@ list(
                       "p-valor (F global)", "AIC"))
 ```
 
-En la Tabla \@ref(tab:reg-comparacion), el modelo seleccionado (`age` + `DFA` + `PPE`) es el único con la prueba F global significativa (p = 0.0497) y el de menor AIC (293.04). El modelo mixto tiene un R² ajustado apenas mayor (0.1211 frente a 0.1196), pero usa cinco predictores en vez de tres, tiene un AIC más alto (294.7) y su prueba global no es significativa. Con una diferencia tan pequeña preferimos el modelo más simple. El modelo completo es el peor en R² ajustado y en AIC, y el de solo categóricas queda en medio.
+En la Tabla \@ref(tab:reg-comparacion), el modelo seleccionado (edad + DFA + PPE) es el único con la prueba F global significativa (p-valor = 0.0497) y el de menor AIC (293.04). El modelo mixto tiene un R² ajustado apenas mayor (0.1211 frente a 0.1196), pero usa cinco predictores en vez de tres, tiene un AIC más alto (294.7) y su prueba global no es significativa. Con una diferencia tan pequeña preferimos el modelo más simple. El modelo completo es el peor en R² ajustado y en AIC, y el de solo categóricas queda en medio.
 
 El mejor modelo es, entonces, el seleccionado. Explica el 18.4 % de la variabilidad de la severidad motora entre pacientes (12 % con el R² ajustado), cumple los supuestos y no tiene multicolinealidad. Pero es un ajuste bajo: la edad y la voz explican una parte pequeña de la severidad, y el resto depende de cosas que no están en estos datos.
